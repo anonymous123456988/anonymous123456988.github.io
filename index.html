@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ToolHub · 工具聚合平台</title>
+<title>TinySpace</title>
 <style>
 :root{--brand:#2563eb;--brand-dark:#1d4ed8;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--bg:#f6f8fa;--card:#fff;--danger:#dc2626;--ok:#16a34a;--warn:#d97706}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -139,8 +139,8 @@ table.data .thumb{width:34px;height:34px;border-radius:8px;object-fit:cover;back
 <div id="app"></div>
 <script>
 /* ========= 配置 ========= */
-const ADMIN_USER = "admin";
-const ADMIN_PASS_SHA256 = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"; // 123456
+const ADMIN_USER = "kali";
+const ADMIN_PASS_SHA256 = "1cb16bbcc9bf57e66657fd7c2463ba630524a42cf2b1a6a5606f9be5943043aa"; // 123456
 const STORAGE_KEY = "qxb_tool_platform_v1";
 const AUTH_KEY = "qxb_auth_v1";
 
@@ -276,7 +276,7 @@ function renderToolDetail(id){
 function renderLogin(redirectView){
   const root=document.getElementById("app");
   root.innerHTML=`${renderTopbar({search:false})}<div class="login-wrap"><div class="login">
-    <h2>后台管理</h2><p>仅管理员可访问，登录状态将在本浏览器持久保留。</p>
+    <h2>后台管理</h2><p>welcome</p>
     <label>用户名</label><input id="u" autocomplete="username" value="${esc(ADMIN_USER)}">
     <label>密码</label><input id="p" type="password" autocomplete="current-password">
     <button class="btn btn-primary" id="btnLogin">登录</button>
