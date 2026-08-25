@@ -29,7 +29,6 @@
   .btn-ghost{background:transparent;border-color:transparent}
   .btn-ghost:hover{background:var(--chip)}
   .container{max-width:1140px;margin:0 auto;padding:0 24px}
-  /* Header */
   .header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
   .header-inner{display:flex;align-items:center;gap:18px;height:60px}
   .logo{font-size:17px;font-weight:800;color:var(--text);letter-spacing:.2px;display:flex;align-items:center;gap:8px}
@@ -39,12 +38,10 @@
   .search input:focus{box-shadow:none;border:none}
   .nav{display:flex;gap:4px;margin-left:auto}
   .nav .btn{padding:6px 12px;font-size:13px}
-  /* Hero */
   .hero{padding:56px 0 28px;text-align:left;border-bottom:1px solid var(--border);margin-bottom:8px}
   .hero .tag{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:3px 10px;border-radius:99px;margin-bottom:14px;letter-spacing:.3px}
   .hero h1{font-size:32px;font-weight:800;line-height:1.25;letter-spacing:-.5px;max-width:720px}
   .hero p{color:var(--muted);margin-top:12px;font-size:15px;max-width:640px}
-  /* Tool grid */
   .section-title{display:flex;align-items:center;justify-content:space-between;margin:28px 0 16px}
   .section-title h2{font-size:18px;font-weight:700}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
@@ -59,17 +56,14 @@
   .tool-card .meta b{color:var(--text);font-weight:600}
   .tool-card .actions{display:flex;gap:8px;margin-top:auto;padding-top:12px}
   .tool-card .actions .btn{flex:1;padding:7px 0;font-size:13px}
-  /* Modal */
   .modal-mask{position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
   .modal-mask.show{display:flex}
   .modal{background:var(--panel);border:1px solid var(--border);border-radius:14px;width:100%;max-width:720px;max-height:86vh;overflow:auto;box-shadow:var(--shadow-md)}
   .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--panel);z-index:2;border-radius:14px 14px 0 0}
   .modal-head h3{font-size:16px;font-weight:700}
   .modal-body{padding:20px}
-  .modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--border)}
   .close{background:transparent;color:var(--muted);font-size:20px;line-height:1;padding:4px 8px;border-radius:6px}
   .close:hover{background:var(--chip);color:var(--text)}
-  /* Detail */
   .detail-icon{width:80px;height:80px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg-soft);margin-bottom:14px;border:1px solid var(--border);overflow:hidden}
   .detail-icon img{width:100%;height:100%;object-fit:cover;display:block}
   .detail-meta{display:flex;gap:20px;color:var(--muted);font-size:13px;margin:10px 0 16px;flex-wrap:wrap}
@@ -80,7 +74,6 @@
   .readme pre{background:#fff;padding:12px;border-radius:8px;border:1px solid var(--border);overflow:auto;margin:8px 0}
   .readme a{color:var(--brand)}
   .readme ul,.readme ol{padding-left:22px;margin:6px 0}
-  /* Comments */
   .comments{margin-top:24px;border-top:1px solid var(--border);padding-top:18px}
   .comments h4{font-size:14px;margin-bottom:12px;font-weight:700}
   .comment{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
@@ -90,13 +83,11 @@
   .comment-form{display:flex;flex-direction:column;gap:8px;margin-top:8px}
   .comment-form .row{display:flex;gap:8px}
   .comment-form input{flex:1}
-  /* Toast */
   .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:10px;box-shadow:var(--shadow-md);opacity:0;transition:.25s;z-index:200;font-size:14px;display:flex;align-items:center;gap:8px}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .toast.ok{border-color:#b7e4c7}.toast.ok .dot{background:var(--ok)}
   .toast.err{border-color:#f5c2c0}.toast.err .dot{background:var(--err)}
   .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--brand)}
-  /* Admin */
   .admin{display:flex;gap:0;min-height:calc(100vh - 60px)}
   .sidebar{width:220px;background:var(--bg-soft);border-right:1px solid var(--border);padding:16px 10px;flex-shrink:0}
   .sidebar .brand{font-size:12px;color:var(--muted);padding:0 10px 12px;border-bottom:1px solid var(--border);margin-bottom:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
@@ -125,7 +116,6 @@
   .icon-pick{display:flex;gap:10px;align-items:center}
   .icon-pick .prev{width:52px;height:52px;border-radius:11px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid var(--border);overflow:hidden}
   .icon-pick .prev img{width:100%;height:100%;object-fit:cover;display:block}
-  .tag-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;background:var(--chip);color:var(--muted);margin-left:6px;font-weight:500}
   .login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:20px}
   .login{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:380px;box-shadow:var(--shadow-md)}
   .login h2{font-size:19px;margin-bottom:18px;text-align:center;font-weight:800}
@@ -134,8 +124,6 @@
   .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok)}
   .badge.err{background:#fef2f2;color:var(--err)}
   .flex-between{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-  .toolbar input{flex:1;min-width:200px}
   .announce-box{background:var(--brand-soft);border:1px solid #d6e4ff;border-radius:10px;padding:12px 14px;margin-bottom:18px;display:flex;gap:10px;align-items:flex-start}
   .announce-box .pin{font-size:16px;color:var(--brand)}
   .announce-box .txt{font-size:13px;color:#264a7a;line-height:1.6}
@@ -155,7 +143,6 @@
 </head>
 <body>
 
-<!-- ============ 前台顶部 ============ -->
 <header class="header" id="header" style="display:none">
   <div class="container header-inner">
     <div class="logo"><span class="mark">T</span>ToolHub</div>
@@ -164,13 +151,12 @@
       <input id="searchInput" placeholder="搜索工具名称或编号…">
     </div>
     <nav class="nav">
-      <button class="btn btn-ghost" onclick="App.go('#/')">首页</button>
-      <button class="btn btn-ghost" id="adminEnterBtn" onclick="App.enterAdmin()">后台管理</button>
+      <button class="btn btn-ghost" data-go="#/">首页</button>
+      <button class="btn btn-ghost" id="adminEnterBtn" data-action="enter-admin">后台管理</button>
     </nav>
   </div>
 </header>
 
-<!-- ============ 前台首页 ============ -->
 <section class="container" id="homeView">
   <div class="hero">
     <span class="tag">TinySpace</span>
@@ -186,18 +172,16 @@
   <div class="footer">© <span id="footYear"></span> TinySpace 2026.08.25</div>
 </section>
 
-<!-- ============ 工具详情弹窗 ============ -->
 <div class="modal-mask" id="detailMask">
   <div class="modal">
     <div class="modal-head">
       <h3 id="detailTitle">工具详情</h3>
-      <button class="close" onclick="App.closeModal('detailMask')">✕</button>
+      <button class="close" data-action="close-modal" data-target="detailMask">✕</button>
     </div>
     <div class="modal-body" id="detailBody"></div>
   </div>
 </div>
 
-<!-- ============ 后台登录 ============ -->
 <section class="login-wrap" id="loginView" style="display:none">
   <div class="login">
     <h2>后台管理登录</h2>
@@ -209,23 +193,22 @@
       <label>密码</label>
       <input id="loginPass" type="password" placeholder="密码" autocomplete="current-password">
     </div>
-    <button class="btn btn-primary" onclick="App.doLogin()">登 录</button>
-    <p style="color:var(--muted);font-size:12px;margin-top:14px;text-align:center">默认账号 admin / kalianonymous2026（密码以 SHA-256 哈希存储）</p>
+    <button class="btn btn-primary" data-action="do-login">登 录</button>
+    <p style="color:var(--muted);font-size:12px;margin-top:14px;text-align:center">welcome</p>
   </div>
 </section>
 
-<!-- ============ 后台管理 ============ -->
 <section class="admin" id="adminView" style="display:none">
   <aside class="sidebar">
     <div class="brand">后台管理</div>
-    <a href="#/admin/dash" class="active" data-view="dash" onclick="App.switchAdmin('dash',this,event)"><span class="ic">▦</span>数据面板</a>
-    <a href="#/admin/logs" data-view="logs" onclick="App.switchAdmin('logs',this,event)"><span class="ic">≡</span>日志</a>
-    <a href="#/admin/publish" data-view="publish" onclick="App.switchAdmin('publish',this,event)"><span class="ic">＋</span>工具上架</a>
-    <a href="#/admin/tools" data-view="tools" onclick="App.switchAdmin('tools',this,event)"><span class="ic">⚙</span>工具管理</a>
-    <a href="#/admin/comments" data-view="comments" onclick="App.switchAdmin('comments',this,event)"><span class="ic">✎</span>评论管理</a>
-    <a href="#/admin/announce" data-view="announce" onclick="App.switchAdmin('announce',this,event)"><span class="ic">◆</span>公告</a>
+    <a href="#/admin/dash" class="active" data-view="dash"><span class="ic">▦</span>数据面板</a>
+    <a href="#/admin/logs" data-view="logs"><span class="ic">≡</span>日志</a>
+    <a href="#/admin/publish" data-view="publish"><span class="ic">＋</span>工具上架</a>
+    <a href="#/admin/tools" data-view="tools"><span class="ic">⚙</span>工具管理</a>
+    <a href="#/admin/comments" data-view="comments"><span class="ic">✎</span>评论管理</a>
+    <a href="#/admin/announce" data-view="announce"><span class="ic">◆</span>公告</a>
     <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:12px">
-      <a href="#/" onclick="App.logout(event)" style="color:var(--muted)"><span class="ic">⏻</span>退出登录</a>
+      <a href="#/" data-action="logout" style="color:var(--muted)"><span class="ic">⏻</span>退出登录</a>
     </div>
   </aside>
   <div class="main">
@@ -243,7 +226,7 @@
     </div>
     <div id="view-logs" style="display:none">
       <div class="panel">
-        <div class="flex-between" style="margin-bottom:14px"><h3 style="margin:0">系统日志</h3><button class="btn btn-danger" onclick="App.clearLogs()">清空日志</button></div>
+        <div class="flex-between" style="margin-bottom:14px"><h3 style="margin:0">公开日志（后台编辑后发布）</h3><button class="btn btn-danger" data-action="clear-logs">清空日志</button></div>
         <div id="logsTable"></div>
       </div>
     </div>
@@ -256,24 +239,24 @@
           <div class="icon-pick">
             <div class="prev" id="f-iconPrev">📦</div>
             <div style="display:flex;flex-direction:column;gap:6px;flex:1">
-              <input id="f-iconFile" type="file" accept="image/*" onchange="App.handleIconFile(this)">
-              <span class="hint">上传图片作为图标（≤1MB，推荐 1:1 正方形）；也可在下方填写 emoji 备选。</span>
+              <input id="f-iconFile" type="file" accept="image/*">
+              <span class="hint">上传图片作为图标（≤600KB，推荐 1:1 正方形）；也可在下方填写 emoji 备选。</span>
             </div>
           </div>
         </div>
-        <div class="form-row"><label>图标备选 emoji（未上传图片时使用）</label><input id="f-icon" placeholder="输入 emoji，如 🚀" value="📦" oninput="if(!document.getElementById('f-iconFile').dataset.b64){document.getElementById('f-iconPrev').textContent=this.value||'📦';document.getElementById('f-iconPrev').style.backgroundImage='none';}"></div>
+        <div class="form-row"><label>图标备选 emoji（未上传图片时使用）</label><input id="f-icon" placeholder="输入 emoji，如 🚀" value="📦"></div>
         <div class="form-row"><label>下载按钮文案（留空则默认"赞助下载"）</label><input id="f-btnText" placeholder="如 赞助下载 / 立即获取 / 前往官网"></div>
         <div class="form-row"><label>赞助下载链接（用户点击按钮后跳转此链接）</label><input id="f-link" placeholder="https://example.com/download/xxx"></div>
         <div class="form-row"><label>README.md（支持基础 Markdown；可上传 .md 文件）</label>
           <div style="display:flex;flex-direction:column;gap:6px">
-            <input id="f-readmeFile" type="file" accept=".md,.markdown,text/markdown" onchange="App.handleReadmeFile(this)">
+            <input id="f-readmeFile" type="file" accept=".md,.markdown,text/markdown">
             <span class="hint">上传 .md 文件将自动读入下方编辑器，仍可手动继续编辑。</span>
           </div>
         </div>
         <div class="form-row"><label>README 内容</label><textarea id="f-readme" placeholder="支持 # 标题、**加粗**、`代码`、[链接](url)、- 列表 等基础语法" style="min-height:180px"></textarea></div>
         <div style="display:flex;gap:10px">
-          <button class="btn btn-primary" id="pubBtn" onclick="App.saveTool()">发布工具</button>
-          <button class="btn" onclick="App.resetPubForm()">重置表单</button>
+          <button class="btn btn-primary" id="pubBtn" data-action="save-tool">发布工具</button>
+          <button class="btn" data-action="reset-pub-form">重置表单</button>
         </div>
         <p class="hint" style="color:var(--muted);font-size:12px;margin-top:12px">提示：下载量仅在用户真实点击按钮并跳转后自动 +1（基于真实跳转行为，拒绝模拟）。</p>
       </div>
@@ -294,7 +277,7 @@
       <div class="panel">
         <h3>首页公告</h3>
         <div class="form-row"><label>公告内容（留空则不显示）</label><textarea id="f-announce" placeholder="例如：欢迎来到 ToolHub！新工具持续上架中…"></textarea></div>
-        <button class="btn btn-primary" onclick="App.saveAnnounce()">保存公告</button>
+        <button class="btn btn-primary" data-action="save-announce">保存公告</button>
       </div>
     </div>
   </div>
@@ -306,6 +289,7 @@
 /* =========================================================
    ToolHub · 单文件网页应用
    存储：localStorage | 鉴权：SHA-256 | 路由：location.hash
+   修复：退出登录失效 / 按钮无响应 / 刷新后工具丢失
    拒绝模拟：下载量仅在真实跳转时 +1
    ========================================================= */
 const App = (function(){
@@ -313,6 +297,8 @@ const App = (function(){
   const ADMIN_PASS_SHA256 = "1cb16bbcc9bf57e66657fd7c2463ba630524a42cf2b1a6a5606f9be5943043aa";
   const KEY = "qxb_tool_platform_v1";
   const AUTH_KEY = "qxb_auth_v1";
+  const VISIT_KEY = "qxb_visit_v1";
+  const ICON_MAX = 600 * 1024; // 图标 base64 上限 600KB
 
   // ---------- SHA-256 ----------
   async function sha256(text){
@@ -328,32 +314,47 @@ const App = (function(){
   }
   function makeToken(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a).map(b=>b.toString(16).padStart(2,"0")).join("");}
 
-  // 判断图标字段是否为图片（data:image/... base64）
   function isImageIcon(s){return typeof s==="string"&&/^data:image\//.test(s);}
-  // 渲染图标：图片用 <img>，否则当 emoji/文本
-  function renderIcon(s,cls){
-    const c=cls||"";
-    if(isImageIcon(s)) return '<span class="'+c+'" style="display:inline-flex;width:100%;height:100%;align-items:center;justify-content:center"><img src="'+s+'" alt=""></span>';
-    return '<span class="'+c+'"><span class="em">'+(s||"📦")+'</span></span>';
+  function renderIcon(s){
+    if(isImageIcon(s)) return '<span style="display:inline-flex;width:100%;height:100%;align-items:center;justify-content:center"><img src="'+s+'" alt=""></span>';
+    return '<span class="em">'+(s||"📦")+'</span>';
   }
 
-  // ---------- 状态 ----------
+  // ---------- 状态 / 持久化 ----------
   let state = load();
   function load(){
-    try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);initState(o);return o;}}catch(e){}
-    return newState();
+    try{
+      const raw = localStorage.getItem(KEY);
+      if(!raw) return newState();
+      const o = JSON.parse(raw);
+      if(!o || typeof o!=="object") return newState();
+      initState(o);
+      return o;
+    }catch(e){
+      // 数据损坏时保留存储原文备份供排查，返回全新状态（不覆盖原数据）
+      try{localStorage.setItem(KEY+"_corrupt_backup", localStorage.getItem(KEY)||"");}catch(_){}
+      return newState();
+    }
   }
-  function newState(){return {tools:[],logs:[],comments:[],announce:"",visitDate:"",visitCount:0,_seq:1};}
+  function newState(){return {tools:[],logs:[],comments:[],announce:"",visitDate:"",visitCount:0,_seq:1,adminHash:ADMIN_PASS_SHA256};}
   function initState(o){
     if(!Array.isArray(o.tools))o.tools=[];if(!Array.isArray(o.logs))o.logs=[];
     if(!Array.isArray(o.comments))o.comments=[];if(typeof o.announce!=="string")o.announce="";
     if(typeof o.visitDate!=="string")o.visitDate="";if(typeof o.visitCount!=="number")o.visitCount=0;
     if(typeof o._seq!=="number")o._seq=1;
+    if(typeof o.adminHash!=="string"||!/^[a-f0-9]{64}$/i.test(o.adminHash))o.adminHash=ADMIN_PASS_SHA256;
     o.tools.forEach(t=>{if(t&&typeof t.number==="undefined")t.number="";if(t&&typeof t.btnText==="undefined")t.btnText="";});
-    if(!state||!state.adminHash) o.adminHash=ADMIN_PASS_SHA256;
+    o.logs.forEach(l=>{if(l&&typeof l.published!=="boolean")l.published=false;});
   }
-  function save(){localStorage.setItem(KEY,JSON.stringify(state));}
-  function todayStr(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();;}
+  function save(){
+    try{
+      localStorage.setItem(KEY, JSON.stringify(state));
+    }catch(err){
+      // 多为 QuotaExceeded（图标 base64 过大）
+      toast("数据保存失败：存储空间不足，请减小图标体积或删除部分工具","err");
+    }
+  }
+  function todayStr(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
 
   // ---------- 认证 ----------
   function getAuth(){try{return JSON.parse(localStorage.getItem(AUTH_KEY)||"null");}catch(e){return null;}}
@@ -361,8 +362,17 @@ const App = (function(){
   function clearAuth(){localStorage.removeItem(AUTH_KEY);}
   function isAuthed(){const a=getAuth();return !!(a&&a.token&&a.user===ADMIN_USER);}
 
-  // ---------- 工具 ----------
-  function tickVisit(){const t=todayStr();if(state.visitDate!==t){state.visitDate=t;state.visitCount=0;}state.visitCount++;save();}
+  // 访问量独立存储，避免与主数据相互覆盖
+  function tickVisit(){
+    try{
+      const t=todayStr();let v={date:"",count:0};
+      try{const r=localStorage.getItem(VISIT_KEY);if(r)v=JSON.parse(r)||v;}catch(e){}
+      if(v.date!==t){v={date:t,count:0};}
+      v.count++;state.visitCount=v.count;state.visitDate=t;
+      localStorage.setItem(VISIT_KEY,JSON.stringify(v));
+    }catch(e){}
+  }
+
   function addLog(action,detail){state.logs.unshift({id:state._seq++,time:new Date().toLocaleString(),action,detail,published:false});if(state.logs.length>200)state.logs.length=200;save();}
   function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
   function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -396,8 +406,8 @@ const App = (function(){
           <div class="name">${esc(t.name)}</div>
           <div class="meta"><span>📅 ${fmtDate(t.createdAt)}</span><span>⬇ <b>${t.downloads||0}</b></span></div>
           <div class="actions">
-            <button class="btn" onclick="App.openDetail('${t.id}')">详情</button>
-            <button class="btn btn-primary" onclick="App.sponsorDownload('${t.id}')">${esc(t.btnText||"赞助下载")}</button>
+            <button class="btn" data-action="open-detail" data-id="${t.id}">详情</button>
+            <button class="btn btn-primary" data-action="sponsor-download" data-id="${t.id}">${esc(t.btnText||"赞助下载")}</button>
           </div>
         </div>
       </div>`).join("");
@@ -421,11 +431,11 @@ const App = (function(){
         <div class="comment-form">
           <div class="row"><input id="c-name" placeholder="昵称"><input id="c-from" placeholder="来源工具（自动）" value="${esc(t.name)}" readonly style="flex:.6;color:var(--muted)"></div>
           <textarea id="c-text" placeholder="发表评论…"></textarea>
-          <button class="btn btn-primary" style="align-self:flex-end" onclick="App.postComment('${t.id}')">发表评论</button>
+          <button class="btn btn-primary" style="align-self:flex-end" data-action="post-comment" data-id="${t.id}">发表评论</button>
         </div>
       </div>`;
     renderComments(id);openModal("detailMask");
-    location.hash="#/tool/"+id;
+    if(location.hash!=="#/tool/"+id) location.hash="#/tool/"+id;
   }
   function renderComments(toolId){
     const box=document.getElementById("commentList");if(!box)return;
@@ -468,7 +478,7 @@ const App = (function(){
     const box=document.getElementById("logsTable");
     if(state.logs.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无日志</div>';return;}
     box.innerHTML='<table><thead><tr><th>时间</th><th>操作</th><th>详情</th><th>状态</th><th>操作</th></tr></thead><tbody>'+
-      state.logs.map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td><td>${l.published?'<span class="badge">已公开</span>':'<span class="badge err">未公开</span>'}</td><td><button class="btn" onclick="App.toggleLogPub('${l.id}')">${l.published?'撤下':'发布'}</button> <button class="btn btn-danger" onclick="App.delLog('${l.id}')">删除</button></td></tr>`).join("")+'</tbody></table>';
+      state.logs.map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td><td>${l.published?'<span class="badge">已公开</span>':'<span class="badge err">未公开</span>'}</td><td><button class="btn" data-action="toggle-log-pub" data-id="${l.id}">${l.published?'撤下':'发布'}</button> <button class="btn btn-danger" data-action="del-log" data-id="${l.id}">删除</button></td></tr>`).join("")+'</tbody></table>';
   }
   function toggleLogPub(id){const l=state.logs.find(x=>x.id===id);if(!l)return;l.published=!l.published;addLog("日志操作","《"+l.action+"》"+(l.published?"已发布公开":"已撤下"));save();renderLogs();renderDashboard();toast(l.published?"日志已公开":"日志已撤下","ok");}
   function delLog(id){state.logs=state.logs.filter(l=>l.id!==id);save();renderLogs();renderDashboard();toast("日志已删除","ok");}
@@ -476,9 +486,7 @@ const App = (function(){
 
   let editId=null;
   function resetPubForm(){editId=null;document.getElementById("pubTitle").textContent="工具上架";document.getElementById("pubBtn").textContent="发布工具";document.getElementById("f-name").value="";document.getElementById("f-number").value="";document.getElementById("f-icon").value="📦";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";document.getElementById("f-btnText").value="";const prev=document.getElementById("f-iconPrev");prev.style.backgroundImage="none";prev.textContent="📦";document.getElementById("f-link").value="";document.getElementById("f-readme").value="";document.getElementById("f-readmeFile").value="";}
-  // 图标图片上传：校验类型+大小(≤1MB)，转 base64 内嵌预览
-  function handleIconFile(input){const f=input.files&&input.files[0];if(!f)return;if(!/^image\//.test(f.type)){toast("请选择图片文件","err");input.value="";return;}if(f.size>1024*1024){toast("图标图片需 ≤ 1MB","err");input.value="";return;}const r=new FileReader();r.onload=function(){const b64=r.result;input.dataset.b64=b64;const prev=document.getElementById("f-iconPrev");prev.style.backgroundImage="url("+b64+")";prev.style.backgroundSize="cover";prev.style.backgroundPosition="center";prev.textContent="";};r.readAsDataURL(f);}
-  // README .md 文件上传：校验扩展名+大小(≤20KB)，读入编辑器
+  function handleIconFile(input){const f=input.files&&input.files[0];if(!f)return;if(!/^image\//.test(f.type)){toast("请选择图片文件","err");input.value="";return;}if(f.size>ICON_MAX){toast("图标图片需 ≤ 600KB","err");input.value="";return;}const r=new FileReader();r.onload=function(){const b64=r.result;input.dataset.b64=b64;const prev=document.getElementById("f-iconPrev");prev.style.backgroundImage="url("+b64+")";prev.style.backgroundSize="cover";prev.style.backgroundPosition="center";prev.textContent="";};r.readAsDataURL(f);}
   function handleReadmeFile(input){const f=input.files&&input.files[0];if(!f)return;if(!/\.(md|markdown)$/i.test(f.name)){toast("请选择 .md / .markdown 文件","err");input.value="";return;}if(f.size>20*1024){toast("README 文件需 ≤ 20KB","err");input.value="";return;}const r=new FileReader();r.onload=function(){document.getElementById("f-readme").value=String(r.result||"");toast("README 已读入编辑器","ok");};r.readAsText(f);}
   function saveTool(){
     const name=document.getElementById("f-name").value.trim();const number=(document.getElementById("f-number").value||"").trim();const link=document.getElementById("f-link").value.trim();const readme=document.getElementById("f-readme").value;const btnText=(document.getElementById("f-btnText").value||"").trim();
@@ -492,9 +500,9 @@ const App = (function(){
   function delTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;if(!confirm("确定删除工具《"+t.name+"》？相关评论也会一并删除。"))return;state.tools=state.tools.filter(x=>x.id!==id);state.comments=state.comments.filter(c=>c.toolId!==id);addLog("删除工具","删除了《"+t.name+"》");save();renderToolsAdmin();renderTools();renderDashboard();toast("工具已删除","ok");}
   function renderToolsAdmin(){const box=document.getElementById("toolsTable");if(state.tools.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无工具</div>';return;}box.innerHTML=`<table><thead><tr><th>图标</th><th>名称</th><th>编号</th><th>下载量</th><th>发布时间</th><th>操作</th></tr></thead><tbody>`+state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt).map(t=>{
     const ic=isImageIcon(t.icon)?`<div class="adm-icon"><img src="${t.icon}" alt=""></div>`:`<div class="adm-icon"><span class="em">${t.icon||"📦"}</span></div>`;
-    return `<tr><td>${ic}</td><td>${esc(t.name)}</td><td>${t.number?`<span class="tnum-badge">${esc(t.number)}</span>`:`<span class="muted">—</span>`}</td><td>${t.downloads||0}</td><td style="color:var(--muted);font-size:12px">${fmtDate(t.createdAt)}</td><td><button class="btn" onclick="App.editTool('${t.id}')">修改</button> <button class="btn btn-danger" onclick="App.delTool('${t.id}')">删除</button></td></tr>`;
+    return `<tr><td>${ic}</td><td>${esc(t.name)}</td><td>${t.number?`<span class="tnum-badge">${esc(t.number)}</span>`:`<span class="muted">—</span>`}</td><td>${t.downloads||0}</td><td style="color:var(--muted);font-size:12px">${fmtDate(t.createdAt)}</td><td><button class="btn" data-action="edit-tool" data-id="${t.id}">修改</button> <button class="btn btn-danger" data-action="del-tool" data-id="${t.id}">删除</button></td></tr>`;
   }).join("")+`</tbody></table>`;}
-  function renderCommentsAdmin(){const box=document.getElementById("commentsTable");if(state.comments.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无评论</div>';return;}box.innerHTML='<table><thead><tr><th>用户</th><th>来源工具</th><th>内容</th><th>时间</th><th>操作</th></tr></thead><tbody>'+state.comments.slice().sort((a,b)=>b.time-a.time).map(c=>`<tr><td><b>${esc(c.name||"匿名")}</b></td><td>${esc(c.from||"")}</td><td style="max-width:360px;white-space:pre-wrap">${esc(c.text)}</td><td style="color:var(--muted);font-size:12px;white-space:nowrap">${fmtDate(c.time)}</td><td><button class="btn btn-danger" onclick="App.delComment('${c.id}')">删除</button></td></tr>`).join("")+'</tbody></table>';}
+  function renderCommentsAdmin(){const box=document.getElementById("commentsTable");if(state.comments.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无评论</div>';return;}box.innerHTML='<table><thead><tr><th>用户</th><th>来源工具</th><th>内容</th><th>时间</th><th>操作</th></tr></thead><tbody>'+state.comments.slice().sort((a,b)=>b.time-a.time).map(c=>`<tr><td><b>${esc(c.name||"匿名")}</b></td><td>${esc(c.from||"")}</td><td style="max-width:360px;white-space:pre-wrap">${esc(c.text)}</td><td style="color:var(--muted);font-size:12px;white-space:nowrap">${fmtDate(c.time)}</td><td><button class="btn btn-danger" data-action="del-comment" data-id="${c.id}">删除</button></td></tr>`).join("")+'</tbody></table>';}
   function delComment(id){state.comments=state.comments.filter(c=>c.id!==id);save();renderCommentsAdmin();renderDashboard();toast("评论已删除","ok");}
   function saveAnnounce(){state.announce=(document.getElementById("f-announce").value||"").trim();save();addLog("编辑公告",state.announce?"更新了首页公告":"清空了首页公告");toast("公告已保存","ok");renderAnnounce();}
   function renderAnnounceAdmin(){document.getElementById("f-announce").value=state.announce||"";}
@@ -515,10 +523,7 @@ const App = (function(){
     const h=location.hash||"#/";
     const m=h.match(/^#\/tool\/([^/]+)$/);
     if(m) return {view:"tool",id:m[1]};
-    if(h.startsWith("#/admin")){
-      const v=(h.match(/^#\/admin\/([^/]+)/)||[])[1]||"dash";
-      return {view:"admin",adminView:v};
-    }
+    if(h.startsWith("#/admin")){const v=(h.match(/^#\/admin\/([^/]+)/)||[])[1]||"dash";return {view:"admin",adminView:v};}
     return {view:"home"};
   }
   function applyRoute(){
@@ -528,29 +533,30 @@ const App = (function(){
       if(!isAuthed()){showLogin();return;}
       const map={dash:1,logs:1,publish:1,tools:1,comments:1,announce:1};
       const v=map[r.adminView]?r.adminView:"dash";
-      showAdmin();
-      const el=document.querySelector(".sidebar a[data-view='"+v+"']")||document.querySelector(".sidebar a");
-      switchAdmin(v,el);
+      showAdmin();switchAdmin(v);
       return;
     }
-    if(isAuthed()){showAdmin();return;}
+    // 已登录用户访问首页 hash 时保留在后台
+    if(isAuthed()&&location.hash.startsWith("#/admin")){showAdmin();return;}
     showHome();
   }
   function go(hash){location.hash=hash;}
   window.addEventListener("hashchange",applyRoute);
 
-  // ---------- 后台导航 ----------
-  function switchAdmin(view,el,e){
-    if(e) e.preventDefault();
+  // ---------- 后台导航（纯视图切换，不依赖事件对象）----------
+  function switchAdmin(view){
+    const valid=["dash","logs","publish","tools","comments","announce"];
+    if(!valid.includes(view)) view="dash";
     document.querySelectorAll(".sidebar a").forEach(a=>a.classList.remove("active"));
-    if(el) el.classList.add("active");
-    ["dash","logs","publish","tools","comments","announce"].forEach(v=>{const dv=document.getElementById("view-"+v);if(dv)dv.style.display=(v===view?"block":"none");});
+    const activeLink=document.querySelector(".sidebar a[data-view='"+view+"']");
+    if(activeLink) activeLink.classList.add("active");
+    valid.forEach(v=>{const dv=document.getElementById("view-"+v);if(dv)dv.style.display=(v===view?"block":"none");});
     if(view==="logs")renderLogs();
-    if(view==="tools")renderToolsAdmin();
-    if(view==="comments")renderCommentsAdmin();
-    if(view==="publish"){resetPubForm();}
-    if(view==="announce")renderAnnounceAdmin();
-    if(view==="dash")renderDashboard();
+    else if(view==="tools")renderToolsAdmin();
+    else if(view==="comments")renderCommentsAdmin();
+    else if(view==="publish")resetPubForm();
+    else if(view==="announce")renderAnnounceAdmin();
+    else if(view==="dash")renderDashboard();
   }
 
   // ---------- 登录/登出 ----------
@@ -562,16 +568,49 @@ const App = (function(){
     const u=document.getElementById("loginUser").value.trim();const p=document.getElementById("loginPass").value;
     const pHash=await sha256(p);
     const ok=(u===ADMIN_USER)&&constantTimeEq(pHash,state.adminHash||ADMIN_PASS_SHA256);
-    if(ok){setLoginFailInfo(null);setAuth(makeToken());addLog("后台登录","管理员登录成功");applyRoute();}
+    if(ok){setLoginFailInfo(null);setAuth(makeToken());addLog("后台登录","管理员登录成功");go("#/admin/dash");}
     else{const c=(fi&&fi.count)||0;const n=c+1;if(n>=FAIL_MAX){setLoginFailInfo({count:n,lockUntil:Date.now()+LOCK_MS});toast("密码错误次数过多，已临时锁定 5 分钟","err");}else{setLoginFailInfo({count:n,lockUntil:0});toast("账号或密码错误","err");}}
   }
   function enterAdmin(){if(isAuthed()){go("#/admin/dash");}else{showLogin();}}
-  function logout(e){if(e)e.preventDefault();clearAuth();addLog("后台登出","管理员已退出");go("#/");toast("已退出登录","ok");}
+  function logout(){clearAuth();addLog("后台登出","管理员已退出");go("#/");toast("已退出登录","ok");}
 
   // ---------- Modal / Toast ----------
   function openModal(id){document.getElementById(id).classList.add("show");}
   function closeModal(id){document.getElementById(id).classList.remove("show");if(location.hash.startsWith("#/tool"))history.back();}
   let toastT;function toast(msg,type){const t=document.getElementById("toast");document.getElementById("toastTxt").textContent=msg;t.className="toast show "+(type||"");clearTimeout(toastT);toastT=setTimeout(()=>t.className="toast",2200);}
+
+  // ---------- 全局事件委托（解决按钮"按不动"）----------
+  document.addEventListener("click", function(ev){
+    const el=ev.target.closest("[data-action]");if(!el) return;
+    const action=el.dataset.action;
+    if(action==="enter-admin"){ev.preventDefault();enterAdmin();return;}
+    if(action==="do-login"){ev.preventDefault();doLogin();return;}
+    if(action==="logout"){ev.preventDefault();logout();return;}
+    if(action==="close-modal"){closeModal(el.dataset.target||"");return;}
+    if(action==="save-tool"){saveTool();return;}
+    if(action==="reset-pub-form"){resetPubForm();return;}
+    if(action==="save-announce"){saveAnnounce();return;}
+    if(action==="clear-logs"){clearLogs();return;}
+    if(action==="open-detail"){openDetail(el.dataset.id);return;}
+    if(action==="sponsor-download"){sponsorDownload(el.dataset.id);return;}
+    if(action==="post-comment"){postComment(el.dataset.id);return;}
+    if(action==="toggle-log-pub"){toggleLogPub(el.dataset.id);return;}
+    if(action==="del-log"){delLog(el.dataset.id);return;}
+    if(action==="edit-tool"){editTool(el.dataset.id);return;}
+    if(action==="del-tool"){delTool(el.dataset.id);return;}
+    if(action==="del-comment"){delComment(el.dataset.id);return;}
+  });
+  // 侧边栏导航：由 hash 路由驱动（a[href=#/admin/...] 原生跳转 + hashchange）
+  document.querySelectorAll(".sidebar a[data-view]").forEach(a=>{
+    a.addEventListener("click", function(ev){ev.preventDefault();const v=this.dataset.view;go("#/admin/"+v);});
+  });
+  // 顶部"首页/后台管理"按钮走 data-go
+  document.querySelectorAll("[data-go]").forEach(b=>{b.addEventListener("click",function(){go(this.dataset.go);});});
+
+  // 文件上传绑定
+  document.getElementById("f-iconFile").addEventListener("change",function(){handleIconFile(this);});
+  document.getElementById("f-readmeFile").addEventListener("change",function(){handleReadmeFile(this);});
+  document.getElementById("f-icon").addEventListener("input",function(){if(!document.getElementById("f-iconFile").dataset.b64){const p=document.getElementById("f-iconPrev");p.style.backgroundImage="none";p.textContent=this.value||"📦";}});
 
   // 搜索
   document.getElementById("searchInput").addEventListener("input",e=>renderTools(e.target.value.trim()));
@@ -579,11 +618,10 @@ const App = (function(){
   // ---------- 启动 ----------
   tickVisit();
   document.getElementById("footYear").textContent=new Date().getFullYear();
-  if(!state.adminHash) state.adminHash=ADMIN_PASS_SHA256;
   renderAnnounce();
   applyRoute();
 
-  return {go,enterAdmin,doLogin,logout,switchAdmin,openDetail,postComment,sponsorDownload,saveTool,editTool,delTool,delComment,saveAnnounce,delLog,clearLogs,toggleLogPub,resetPubForm,handleIconFile,handleReadmeFile,openModal,closeModal,toast};
+  return {go,enterAdmin,doLogin,logout,switchAdmin,openDetail,postComment,sponsorDownload,saveTool,editTool,delTool,delComment,saveAnnounce,delLog,clearLogs,toggleLogPub,resetPubForm,openModal,closeModal,toast};
 })();
 </script>
 </body>
