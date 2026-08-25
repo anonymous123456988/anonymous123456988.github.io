@@ -50,7 +50,9 @@
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
   .tool-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,transform .15s;box-shadow:var(--shadow)}
   .tool-card:hover{border-color:#c7d2e0;transform:translateY(-2px)}
-  .tool-card .icon{height:104px;display:flex;align-items:center;justify-content:center;background:var(--bg-soft);font-size:40px;border-bottom:1px solid var(--border)}
+  .tool-card .icon{height:104px;display:flex;align-items:center;justify-content:center;background:var(--bg-soft);border-bottom:1px solid var(--border);overflow:hidden}
+  .tool-card .icon img{width:100%;height:100%;object-fit:cover;display:block}
+  .tool-card .icon .em{font-size:40px}
   .tool-card .body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:8px}
   .tool-card .name{font-weight:700;font-size:15px}
   .tool-card .meta{color:var(--muted);font-size:12px;display:flex;gap:14px;flex-wrap:wrap}
@@ -68,7 +70,8 @@
   .close{background:transparent;color:var(--muted);font-size:20px;line-height:1;padding:4px 8px;border-radius:6px}
   .close:hover{background:var(--chip);color:var(--text)}
   /* Detail */
-  .detail-icon{width:80px;height:80px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg-soft);margin-bottom:14px;border:1px solid var(--border)}
+  .detail-icon{width:80px;height:80px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg-soft);margin-bottom:14px;border:1px solid var(--border);overflow:hidden}
+  .detail-icon img{width:100%;height:100%;object-fit:cover;display:block}
   .detail-meta{display:flex;gap:20px;color:var(--muted);font-size:13px;margin:10px 0 16px;flex-wrap:wrap}
   .detail-meta b{color:var(--text)}
   .readme{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:16px;line-height:1.7;color:#2a3342;font-size:14px;white-space:pre-wrap;word-break:break-word}
@@ -120,7 +123,8 @@
   .form-row label{font-size:13px;color:var(--muted);font-weight:600}
   .form-row .hint{font-size:12px;color:var(--muted)}
   .icon-pick{display:flex;gap:10px;align-items:center}
-  .icon-pick .prev{width:52px;height:52px;border-radius:11px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid var(--border)}
+  .icon-pick .prev{width:52px;height:52px;border-radius:11px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid var(--border);overflow:hidden}
+  .icon-pick .prev img{width:100%;height:100%;object-fit:cover;display:block}
   .tag-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;background:var(--chip);color:var(--muted);margin-left:6px;font-weight:500}
   .login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:20px}
   .login{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:380px;box-shadow:var(--shadow-md)}
@@ -137,6 +141,10 @@
   .announce-box .txt{font-size:13px;color:#264a7a;line-height:1.6}
   .footer{color:var(--muted);text-align:center;font-size:12px;padding:30px 0 22px;border-top:1px solid var(--border);margin-top:24px}
   .muted{color:var(--muted);font-size:13px}
+  .tnum-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .adm-icon{width:36px;height:36px;border-radius:8px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--border)}
+  .adm-icon img{width:100%;height:100%;object-fit:cover;display:block}
+  .adm-icon .em{font-size:18px}
   @media(max-width:760px){
     .sidebar{display:none}
     .grid{grid-template-columns:1fr}
@@ -153,7 +161,7 @@
     <div class="logo"><span class="mark">T</span>ToolHub</div>
     <div class="search">
       <span style="color:var(--muted)">⌕</span>
-      <input id="searchInput" placeholder="搜索工具名称…">
+      <input id="searchInput" placeholder="搜索工具名称或编号…">
     </div>
     <nav class="nav">
       <button class="btn btn-ghost" onclick="App.go('#/')">首页</button>
@@ -165,7 +173,7 @@
 <!-- ============ 前台首页 ============ -->
 <section class="container" id="homeView">
   <div class="hero">
-    <span class="tag">工具聚合平台</span>
+    <span class="tag">TinySpace</span>
     <h1>发现优质工具，一键获取所需</h1>
     <p id="heroSub">由后台统一维护工具内容与下载入口，集中展示、便捷检索。</p>
   </div>
@@ -175,7 +183,7 @@
   </div>
   <div class="section-title"><h2>全部工具</h2><span class="muted" id="toolCount"></span></div>
   <div class="grid" id="toolGrid"></div>
-  <div class="footer">© <span id="footYear"></span> 2026.08.25 18:32</div>
+  <div class="footer">© <span id="footYear"></span> TinySpace 2026.08.25</div>
 </section>
 
 <!-- ============ 工具详情弹窗 ============ -->
@@ -202,7 +210,7 @@
       <input id="loginPass" type="password" placeholder="密码" autocomplete="current-password">
     </div>
     <button class="btn btn-primary" onclick="App.doLogin()">登 录</button>
-    <p style="color:var(--muted);font-size:12px;margin-top:14px;text-align:center">welcome</p>
+    <p style="color:var(--muted);font-size:12px;margin-top:14px;text-align:center">默认账号 admin / kalianonymous2026（密码以 SHA-256 哈希存储）</p>
   </div>
 </section>
 
@@ -243,28 +251,31 @@
       <div class="panel">
         <h3 id="pubTitle">工具上架</h3>
         <div class="form-row"><label>工具名称</label><input id="f-name" placeholder="例如：GitHub 加速下载器"></div>
-        <div class="form-row"><label>工具图标（上传图片，或留空使用下方 emoji）</label>
+        <div class="form-row"><label>工具编号（可重复，仅后台可见；留空则不设置）</label><input id="f-number" placeholder="如 1001"></div>
+        <div class="form-row"><label>工具图标</label>
           <div class="icon-pick">
             <div class="prev" id="f-iconPrev">📦</div>
-            <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0">
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1">
               <input id="f-iconFile" type="file" accept="image/*" onchange="App.handleIconFile(this)">
-              <input id="f-icon" placeholder="备选 emoji，如 🚀（上传图片后此项忽略）" value="📦" oninput="if(!document.getElementById('f-iconFile').dataset.b64)document.getElementById('f-iconPrev').textContent=this.value||'📦'">
+              <span class="hint">上传图片作为图标（≤1MB，推荐 1:1 正方形）；也可在下方填写 emoji 备选。</span>
             </div>
           </div>
         </div>
-        <div class="form-row"><label>赞助下载链接（用户点击「赞助下载」后跳转此链接）</label><input id="f-link" placeholder="https://example.com/download/xxx"></div>
-        <div class="form-row"><label>README.md（支持基础 Markdown 语法；可上传 .md 文件自动填充）</label>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-            <input id="f-readmeFile" type="file" accept=".md,.markdown,text/markdown" onchange="App.handleReadmeFile(this)" style="flex:1">
-            <span class="hint" style="color:var(--muted);font-size:12px">选择 .md 文件后将自动读入下方编辑器</span>
+        <div class="form-row"><label>图标备选 emoji（未上传图片时使用）</label><input id="f-icon" placeholder="输入 emoji，如 🚀" value="📦" oninput="if(!document.getElementById('f-iconFile').dataset.b64){document.getElementById('f-iconPrev').textContent=this.value||'📦';document.getElementById('f-iconPrev').style.backgroundImage='none';}"></div>
+        <div class="form-row"><label>下载按钮文案（留空则默认"赞助下载"）</label><input id="f-btnText" placeholder="如 赞助下载 / 立即获取 / 前往官网"></div>
+        <div class="form-row"><label>赞助下载链接（用户点击按钮后跳转此链接）</label><input id="f-link" placeholder="https://example.com/download/xxx"></div>
+        <div class="form-row"><label>README.md（支持基础 Markdown；可上传 .md 文件）</label>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <input id="f-readmeFile" type="file" accept=".md,.markdown,text/markdown" onchange="App.handleReadmeFile(this)">
+            <span class="hint">上传 .md 文件将自动读入下方编辑器，仍可手动继续编辑。</span>
           </div>
-          <textarea id="f-readme" placeholder="支持 # 标题、**加粗**、`代码`、[链接](url)、- 列表 等基础语法" style="min-height:180px"></textarea>
         </div>
+        <div class="form-row"><label>README 内容</label><textarea id="f-readme" placeholder="支持 # 标题、**加粗**、`代码`、[链接](url)、- 列表 等基础语法" style="min-height:180px"></textarea></div>
         <div style="display:flex;gap:10px">
           <button class="btn btn-primary" id="pubBtn" onclick="App.saveTool()">发布工具</button>
           <button class="btn" onclick="App.resetPubForm()">重置表单</button>
         </div>
-        <p class="hint" style="color:var(--muted);font-size:12px;margin-top:12px">提示：下载量仅在用户真实点击「赞助下载」并跳转后自动 +1（基于真实跳转行为，拒绝模拟）。</p>
+        <p class="hint" style="color:var(--muted);font-size:12px;margin-top:12px">提示：下载量仅在用户真实点击按钮并跳转后自动 +1（基于真实跳转行为，拒绝模拟）。</p>
       </div>
     </div>
     <div id="view-tools" style="display:none">
@@ -299,7 +310,6 @@
    ========================================================= */
 const App = (function(){
   const ADMIN_USER = "admin";
-  // kalianonymous2026 的 SHA-256（hex），与 hashlib.sha256 计算结果一致
   const ADMIN_PASS_SHA256 = "1cb16bbcc9bf57e66657fd7c2463ba630524a42cf2b1a6a5606f9be5943043aa";
   const KEY = "qxb_tool_platform_v1";
   const AUTH_KEY = "qxb_auth_v1";
@@ -318,6 +328,15 @@ const App = (function(){
   }
   function makeToken(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a).map(b=>b.toString(16).padStart(2,"0")).join("");}
 
+  // 判断图标字段是否为图片（data:image/... base64）
+  function isImageIcon(s){return typeof s==="string"&&/^data:image\//.test(s);}
+  // 渲染图标：图片用 <img>，否则当 emoji/文本
+  function renderIcon(s,cls){
+    const c=cls||"";
+    if(isImageIcon(s)) return '<span class="'+c+'" style="display:inline-flex;width:100%;height:100%;align-items:center;justify-content:center"><img src="'+s+'" alt=""></span>';
+    return '<span class="'+c+'"><span class="em">'+(s||"📦")+'</span></span>';
+  }
+
   // ---------- 状态 ----------
   let state = load();
   function load(){
@@ -328,18 +347,13 @@ const App = (function(){
   function initState(o){
     if(!Array.isArray(o.tools))o.tools=[];if(!Array.isArray(o.logs))o.logs=[];
     if(!Array.isArray(o.comments))o.comments=[];if(typeof o.announce!=="string")o.announce="";
-    if(o.announce.length>2000)o.announce=o.announce.slice(0,2000);
     if(typeof o.visitDate!=="string")o.visitDate="";if(typeof o.visitCount!=="number")o.visitCount=0;
     if(typeof o._seq!=="number")o._seq=1;
-    if(typeof o.adminHash!=="string"||!/^[0-9a-f]{64}$/.test(o.adminHash))o.adminHash=ADMIN_PASS_SHA256;
-    // 工具字段白名单化，过滤异常/超长数据
-    o.tools=o.tools.filter(x=>x&&typeof x===object).map(t=>({id:String(t.id||uid()),name:String(t.name||"").slice(0,120),icon:String(t.icon||"📦").slice(0,500000),link:String(t.link||"").slice(0,2000),readme:String(t.readme||"").slice(0,20000),downloads:Number(t.downloads)||0,createdAt:Number(t.createdAt)||Date.now(),number:t.number?String(t.number).slice(0,40):"",btnText:String(t.btnText||"").slice(0,40)}));
-    o.logs=o.logs.filter(x=>x&&typeof x===object).map(l=>({id:String(l.id||uid()),time:String(l.time||"").slice(0,60),action:String(l.action||"").slice(0,120),detail:String(l.detail||"").slice(0,500),published:!!l.published}));
-    o.comments=o.comments.filter(x=>x&&typeof x===object).map(c=>({id:String(c.id||uid()),toolId:String(c.toolId||""),name:String(c.name||"匿名").slice(0,40),text:String(c.text||"").slice(0,2000),from:String(c.from||"").slice(0,120),time:Number(c.time)||Date.now()}));
+    o.tools.forEach(t=>{if(t&&typeof t.number==="undefined")t.number="";if(t&&typeof t.btnText==="undefined")t.btnText="";});
     if(!state||!state.adminHash) o.adminHash=ADMIN_PASS_SHA256;
   }
   function save(){localStorage.setItem(KEY,JSON.stringify(state));}
-  function todayStr(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+  function todayStr(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();;}
 
   // ---------- 认证 ----------
   function getAuth(){try{return JSON.parse(localStorage.getItem(AUTH_KEY)||"null");}catch(e){return null;}}
@@ -349,22 +363,19 @@ const App = (function(){
 
   // ---------- 工具 ----------
   function tickVisit(){const t=todayStr();if(state.visitDate!==t){state.visitDate=t;state.visitCount=0;}state.visitCount++;save();}
-  function addLog(action,detail){state.logs.unshift({id:state._seq++,time:new Date().toLocaleString(),action,detail});if(state.logs.length>200)state.logs.length=200;save();}
+  function addLog(action,detail){state.logs.unshift({id:state._seq++,time:new Date().toLocaleString(),action,detail,published:false});if(state.logs.length>200)state.logs.length=200;save();}
   function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
   function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
   function fmtDate(s){if(!s)return "—";try{return new Date(s).toLocaleDateString();}catch(e){return s;}}
 
   // ---------- Markdown ----------
-  // 安全：仅放行 http/https/data:image 链接；剥离 on* 事件与 style 属性，防 XSS
-  function safeUrl(u){return /^https?:\/\//i.test(u)||/^data:image\//i.test(u);}
-  function cleanAttr(s){return String(s).replace(/\s+on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi,"").replace(/\s+style\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi,"");}
   function md(text){
     if(!text) return "<p style='color:var(--muted)'>暂无 README 内容</p>";
     let s=text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
     s=s.replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^## (.*)$/gm,"<h2>$1</h2>").replace(/^# (.*)$/gm,"<h1>$1</h1>")
        .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/`([^`]+)`/g,"<code>$1</code>")
-       .replace(/!\[[^\]]*\]\(([^)]+)\)/g,function(_,u){u=cleanAttr(u);return safeUrl(u)?'<img src="'+u+'" style="max-width:100%;border-radius:8px;margin:8px 0">':"";})
-       .replace(/\[([^\]]+)\]\(([^)]+)\)/g,function(_,label,u){u=cleanAttr(u);return safeUrl(u)?'<a href="'+u+'" target="_blank" rel="noopener noreferrer">'+label+"</a>":label;});
+       .replace(/!\[[^\]]*\]\(([^)]+)\)/g,'<img src="$1" style="max-width:100%;border-radius:8px;margin:8px 0">')
+       .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
     s=s.replace(/(?:^- (.+)$)+/gm,function(block){const items=block.trim().split(/\n/).map(l=>l.replace(/^- /,"")).filter(Boolean);return "<ul>"+items.map(i=>"<li>"+i+"</li>").join("")+"</ul>";});
     const lines=s.split("\n");let out="",inBlock=false;
     for(const ln of lines){if(/^<(\/)?(h[1-3]|ul|ol|li|pre|img|blockquote)/.test(ln)){out+=ln;inBlock=false;}else if(ln.trim()===""){inBlock=false;}else{out+=(inBlock?" ":"<p>")+ln+(inBlock?"":"</p>");inBlock=true;}}
@@ -375,18 +386,18 @@ const App = (function(){
   function renderTools(filter){
     const grid=document.getElementById("toolGrid");
     let list=state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt);
-    if(filter){const q=filter.toLowerCase();list=list.filter(t=>t.name.toLowerCase().includes(q));}
+    if(filter){const q=filter.toLowerCase();list=list.filter(t=>(t.name&&t.name.toLowerCase().includes(q))||(t.number&&t.number.toLowerCase().includes(q)));}
     document.getElementById("toolCount").textContent=list.length+" 个工具";
     if(list.length===0){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="big">∅</div>'+(filter?"无匹配工具":"暂无工具，管理员可前往后台上架")+'</div>';return;}
     grid.innerHTML=list.map(t=>`
       <div class="tool-card">
-        <div class="icon">${esc(t.icon||"📦")}</div>
+        <div class="icon">${renderIcon(t.icon)}</div>
         <div class="body">
           <div class="name">${esc(t.name)}</div>
           <div class="meta"><span>📅 ${fmtDate(t.createdAt)}</span><span>⬇ <b>${t.downloads||0}</b></span></div>
           <div class="actions">
             <button class="btn" onclick="App.openDetail('${t.id}')">详情</button>
-            <button class="btn btn-primary" onclick="App.sponsorDownload('${t.id}')">赞助下载</button>
+            <button class="btn btn-primary" onclick="App.sponsorDownload('${t.id}')">${esc(t.btnText||"赞助下载")}</button>
           </div>
         </div>
       </div>`).join("");
@@ -401,7 +412,7 @@ const App = (function(){
     const t=state.tools.find(x=>x.id===id);if(!t)return;
     document.getElementById("detailTitle").textContent=t.name;
     document.getElementById("detailBody").innerHTML=`
-      <div class="detail-icon">${esc(t.icon||"📦")}</div>
+      <div class="detail-icon">${renderIcon(t.icon)}</div>
       <div class="detail-meta"><span>发布：<b>${fmtDate(t.createdAt)}</b></span><span>下载量：<b>${t.downloads||0}</b></span></div>
       <div class="readme">${md(t.readme||"")}</div>
       <div class="comments">
@@ -456,29 +467,33 @@ const App = (function(){
   function renderLogs(){
     const box=document.getElementById("logsTable");
     if(state.logs.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无日志</div>';return;}
-    box.innerHTML='<table><thead><tr><th>时间</th><th>操作</th><th>详情</th><th>操作</th></tr></thead><tbody>'+
-      state.logs.map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td><td><button class="btn btn-danger" onclick="App.delLog('${l.id}')">删除</button></td></tr>`).join("")+'</tbody></table>';
+    box.innerHTML='<table><thead><tr><th>时间</th><th>操作</th><th>详情</th><th>状态</th><th>操作</th></tr></thead><tbody>'+
+      state.logs.map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td><td>${l.published?'<span class="badge">已公开</span>':'<span class="badge err">未公开</span>'}</td><td><button class="btn" onclick="App.toggleLogPub('${l.id}')">${l.published?'撤下':'发布'}</button> <button class="btn btn-danger" onclick="App.delLog('${l.id}')">删除</button></td></tr>`).join("")+'</tbody></table>';
   }
+  function toggleLogPub(id){const l=state.logs.find(x=>x.id===id);if(!l)return;l.published=!l.published;addLog("日志操作","《"+l.action+"》"+(l.published?"已发布公开":"已撤下"));save();renderLogs();renderDashboard();toast(l.published?"日志已公开":"日志已撤下","ok");}
   function delLog(id){state.logs=state.logs.filter(l=>l.id!==id);save();renderLogs();renderDashboard();toast("日志已删除","ok");}
   function clearLogs(){if(!confirm("确定清空全部日志？"))return;state.logs=[];save();renderLogs();renderDashboard();toast("日志已清空","ok");}
 
   let editId=null;
-  function resetPubForm(){editId=null;document.getElementById("pubTitle").textContent="工具上架";document.getElementById("pubBtn").textContent="发布工具";document.getElementById("f-name").value="";document.getElementById("f-icon").value="📦";document.getElementById("f-iconPrev").textContent="📦";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";document.getElementById("f-link").value="";document.getElementById("f-readme").value="";document.getElementById("f-readmeFile").value="";}
+  function resetPubForm(){editId=null;document.getElementById("pubTitle").textContent="工具上架";document.getElementById("pubBtn").textContent="发布工具";document.getElementById("f-name").value="";document.getElementById("f-number").value="";document.getElementById("f-icon").value="📦";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";document.getElementById("f-btnText").value="";const prev=document.getElementById("f-iconPrev");prev.style.backgroundImage="none";prev.textContent="📦";document.getElementById("f-link").value="";document.getElementById("f-readme").value="";document.getElementById("f-readmeFile").value="";}
   // 图标图片上传：校验类型+大小(≤1MB)，转 base64 内嵌预览
   function handleIconFile(input){const f=input.files&&input.files[0];if(!f)return;if(!/^image\//.test(f.type)){toast("请选择图片文件","err");input.value="";return;}if(f.size>1024*1024){toast("图标图片需 ≤ 1MB","err");input.value="";return;}const r=new FileReader();r.onload=function(){const b64=r.result;input.dataset.b64=b64;const prev=document.getElementById("f-iconPrev");prev.style.backgroundImage="url("+b64+")";prev.style.backgroundSize="cover";prev.style.backgroundPosition="center";prev.textContent="";};r.readAsDataURL(f);}
   // README .md 文件上传：校验扩展名+大小(≤20KB)，读入编辑器
   function handleReadmeFile(input){const f=input.files&&input.files[0];if(!f)return;if(!/\.(md|markdown)$/i.test(f.name)){toast("请选择 .md / .markdown 文件","err");input.value="";return;}if(f.size>20*1024){toast("README 文件需 ≤ 20KB","err");input.value="";return;}const r=new FileReader();r.onload=function(){document.getElementById("f-readme").value=String(r.result||"");toast("README 已读入编辑器","ok");};r.readAsText(f);}
   function saveTool(){
-    const name=document.getElementById("f-name").value.trim();const link=document.getElementById("f-link").value.trim();const readme=document.getElementById("f-readme").value;
+    const name=document.getElementById("f-name").value.trim();const number=(document.getElementById("f-number").value||"").trim();const link=document.getElementById("f-link").value.trim();const readme=document.getElementById("f-readme").value;const btnText=(document.getElementById("f-btnText").value||"").trim();
     const iconB64=document.getElementById("f-iconFile").dataset.b64||"";const iconEmoji=document.getElementById("f-icon").value.trim();const icon=iconB64||iconEmoji||"📦";
     if(!name){toast("请输入工具名称","err");return;}if(!link){toast("请填写赞助下载链接","err");return;}
-    if(editId){const t=state.tools.find(x=>x.id===editId);if(!t)return;t.name=name;t.icon=icon;t.link=link;t.readme=readme;addLog("修改工具","修改了《"+name+"》");toast("工具已更新","ok");}
-    else{state.tools.push({id:uid(),name,icon,link,readme,downloads:0,createdAt:Date.now()});addLog("上架工具","发布了《"+name+"》");toast("工具已发布","ok");}
+    if(editId){const t=state.tools.find(x=>x.id===editId);if(!t)return;t.name=name;t.number=number;t.icon=icon;t.btnText=btnText;t.link=link;t.readme=readme;addLog("修改工具","修改了《"+name+"》");toast("工具已更新","ok");}
+    else{state.tools.push({id:uid(),name,number,icon,btnText,link,readme,downloads:0,createdAt:Date.now()});addLog("上架工具","发布了《"+name+"》");toast("工具已发布","ok");}
     save();resetPubForm();renderTools();
   }
-  function editTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;editId=id;document.getElementById("pubTitle").textContent="修改工具";document.getElementById("pubBtn").textContent="保存修改";document.getElementById("f-name").value=t.name;document.getElementById("f-icon").value=t.icon||"📦";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";const prev=document.getElementById("f-iconPrev");if(/^data:image\//.test(t.icon||"")){prev.style.backgroundImage="url("+t.icon+")";prev.style.backgroundSize="cover";prev.style.backgroundPosition="center";prev.textContent="";}else{prev.style.backgroundImage="none";prev.textContent=t.icon||"📦";}document.getElementById("f-link").value=t.link||"";document.getElementById("f-readme").value=t.readme||"";App.go("#/admin/publish");}
+  function editTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;editId=id;document.getElementById("pubTitle").textContent="修改工具";document.getElementById("pubBtn").textContent="保存修改";document.getElementById("f-name").value=t.name;document.getElementById("f-number").value=t.number||"";document.getElementById("f-icon").value=t.icon||"📦";document.getElementById("f-btnText").value=t.btnText||"";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";const prev=document.getElementById("f-iconPrev");if(isImageIcon(t.icon)){prev.style.backgroundImage="url("+t.icon+")";prev.style.backgroundSize="cover";prev.style.backgroundPosition="center";prev.textContent="";}else{prev.style.backgroundImage="none";prev.textContent=t.icon||"📦";}document.getElementById("f-link").value=t.link||"";document.getElementById("f-readme").value=t.readme||"";App.go("#/admin/publish");}
   function delTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;if(!confirm("确定删除工具《"+t.name+"》？相关评论也会一并删除。"))return;state.tools=state.tools.filter(x=>x.id!==id);state.comments=state.comments.filter(c=>c.toolId!==id);addLog("删除工具","删除了《"+t.name+"》");save();renderToolsAdmin();renderTools();renderDashboard();toast("工具已删除","ok");}
-  function renderToolsAdmin(){const box=document.getElementById("toolsTable");if(state.tools.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无工具</div>';return;}box.innerHTML='<table><thead><tr><th>图标</th><th>名称</th><th>下载量</th><th>发布时间</th><th>操作</th></tr></thead><tbody>'+state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt).map(t=>`<tr><td style="font-size:22px">${esc(t.icon||"📦")}</td><td>${esc(t.name)}</td><td>${t.downloads||0}</td><td style="color:var(--muted);font-size:12px">${fmtDate(t.createdAt)}</td><td><button class="btn" onclick="App.editTool('${t.id}')">修改</button> <button class="btn btn-danger" onclick="App.delTool('${t.id}')">删除</button></td></tr>`).join("")+'</tbody></table>';}
+  function renderToolsAdmin(){const box=document.getElementById("toolsTable");if(state.tools.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无工具</div>';return;}box.innerHTML=`<table><thead><tr><th>图标</th><th>名称</th><th>编号</th><th>下载量</th><th>发布时间</th><th>操作</th></tr></thead><tbody>`+state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt).map(t=>{
+    const ic=isImageIcon(t.icon)?`<div class="adm-icon"><img src="${t.icon}" alt=""></div>`:`<div class="adm-icon"><span class="em">${t.icon||"📦"}</span></div>`;
+    return `<tr><td>${ic}</td><td>${esc(t.name)}</td><td>${t.number?`<span class="tnum-badge">${esc(t.number)}</span>`:`<span class="muted">—</span>`}</td><td>${t.downloads||0}</td><td style="color:var(--muted);font-size:12px">${fmtDate(t.createdAt)}</td><td><button class="btn" onclick="App.editTool('${t.id}')">修改</button> <button class="btn btn-danger" onclick="App.delTool('${t.id}')">删除</button></td></tr>`;
+  }).join("")+`</tbody></table>`;}
   function renderCommentsAdmin(){const box=document.getElementById("commentsTable");if(state.comments.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无评论</div>';return;}box.innerHTML='<table><thead><tr><th>用户</th><th>来源工具</th><th>内容</th><th>时间</th><th>操作</th></tr></thead><tbody>'+state.comments.slice().sort((a,b)=>b.time-a.time).map(c=>`<tr><td><b>${esc(c.name||"匿名")}</b></td><td>${esc(c.from||"")}</td><td style="max-width:360px;white-space:pre-wrap">${esc(c.text)}</td><td style="color:var(--muted);font-size:12px;white-space:nowrap">${fmtDate(c.time)}</td><td><button class="btn btn-danger" onclick="App.delComment('${c.id}')">删除</button></td></tr>`).join("")+'</tbody></table>';}
   function delComment(id){state.comments=state.comments.filter(c=>c.id!==id);save();renderCommentsAdmin();renderDashboard();toast("评论已删除","ok");}
   function saveAnnounce(){state.announce=(document.getElementById("f-announce").value||"").trim();save();addLog("编辑公告",state.announce?"更新了首页公告":"清空了首页公告");toast("公告已保存","ok");renderAnnounce();}
@@ -518,8 +533,7 @@ const App = (function(){
       switchAdmin(v,el);
       return;
     }
-    // home
-    if(isAuthed()){showAdmin();return;} // 已登录刷新后台则保留后台
+    if(isAuthed()){showAdmin();return;}
     showHome();
   }
   function go(hash){location.hash=hash;}
@@ -540,7 +554,6 @@ const App = (function(){
   }
 
   // ---------- 登录/登出 ----------
-  // 防爆破：连续失败达阈值则锁定一段时间；账号/密码错误统一提示，防枚举
   const LOGIN_FAIL_KEY="qxb_login_fail_v1";const FAIL_MAX=5;const LOCK_MS=5*60*1000;
   function loginFailInfo(){try{return JSON.parse(localStorage.getItem(LOGIN_FAIL_KEY)||"null");}catch(e){return null;}}
   function setLoginFailInfo(o){localStorage.setItem(LOGIN_FAIL_KEY,JSON.stringify(o));}
@@ -570,8 +583,7 @@ const App = (function(){
   renderAnnounce();
   applyRoute();
 
-  // 对外暴露
-  return {go,enterAdmin,doLogin,logout,switchAdmin,openDetail,postComment,sponsorDownload,saveTool,editTool,delTool,delComment,saveAnnounce,delLog,clearLogs,resetPubForm,handleIconFile,handleReadmeFile,openModal,closeModal,toast};
+  return {go,enterAdmin,doLogin,logout,switchAdmin,openDetail,postComment,sponsorDownload,saveTool,editTool,delTool,delComment,saveAnnounce,delLog,clearLogs,toggleLogPub,resetPubForm,handleIconFile,handleReadmeFile,openModal,closeModal,toast};
 })();
 </script>
 </body>
