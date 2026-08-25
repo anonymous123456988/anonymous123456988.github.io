@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ToolHub · 工具聚合平台</title>
+<title>TinySpace</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
@@ -175,7 +175,7 @@
   </div>
   <div class="section-title"><h2>全部工具</h2><span class="muted" id="toolCount"></span></div>
   <div class="grid" id="toolGrid"></div>
-  <div class="footer">© <span id="footYear"></span> ToolHub · 数据存储在本地浏览器（localStorage）</div>
+  <div class="footer">© <span id="footYear"></span> 2026.08.25 17:49</div>
 </section>
 
 <!-- ============ 工具详情弹窗 ============ -->
@@ -202,7 +202,7 @@
       <input id="loginPass" type="password" placeholder="密码" autocomplete="current-password">
     </div>
     <button class="btn btn-primary" onclick="App.doLogin()">登 录</button>
-    <p style="color:var(--muted);font-size:12px;margin-top:14px;text-align:center">默认账号 admin / 123456（密码以 SHA-256 哈希存储）</p>
+    <p style="color:var(--muted);font-size:12px;margin-top:14px;text-align:center">welcome</p>
   </div>
 </section>
 
@@ -289,7 +289,7 @@
    拒绝模拟：下载量仅在真实跳转时 +1
    ========================================================= */
 const App = (function(){
-  const ADMIN_USER = "admin";
+  const ADMIN_USER = "kali";
   const ADMIN_PASS_SHA256 = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
   const KEY = "qxb_tool_platform_v1";
   const AUTH_KEY = "qxb_auth_v1";
