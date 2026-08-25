@@ -3,545 +3,397 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TinySpace</title>
+<title>ToolHub · 工具聚合平台</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --bg:#ffffff;--bg-soft:#f6f8fa;--panel:#ffffff;--card:#ffffff;--border:#e4e8ee;
-    --text:#1a2230;--muted:#6b7684;--brand:#2563eb;--brand-soft:#eef4ff;
-    --ok:#137752;--warn:#9a6700;--err:#c5221f;--chip:#f2f4f7;
-    --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
-    --shadow-md:0 8px 24px rgba(16,24,40,.08);
-    --radius:10px;
-  }
-  html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
-  a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
-  button{font-family:inherit;cursor:pointer;border:none;outline:none}
-  input,textarea,select{font-family:inherit;font-size:14px;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;outline:none;transition:border-color .15s}
-  input:focus,textarea:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
-  textarea{resize:vertical;min-height:80px}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:8px;font-weight:600;transition:.15s;background:var(--chip);color:var(--text);border:1px solid var(--border);font-size:13px}
-  .btn:hover{background:#e8ecf1}
-  .btn-primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-  .btn-primary:hover{background:#1d4ed8;border-color:#1d4ed8}
-  .btn-danger{background:#fef2f2;color:var(--err);border-color:#fbd5d5}
-  .btn-danger:hover{background:#fee2e2}
-  .btn-ghost{background:transparent;border-color:transparent}
-  .btn-ghost:hover{background:var(--chip)}
-  .container{max-width:1140px;margin:0 auto;padding:0 24px}
-  /* Header */
-  .header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
-  .header-inner{display:flex;align-items:center;gap:18px;height:60px}
-  .logo{font-size:17px;font-weight:800;color:var(--text);letter-spacing:.2px;display:flex;align-items:center;gap:8px}
-  .logo .mark{width:26px;height:26px;border-radius:7px;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
-  .search{display:flex;align-items:center;gap:8px;flex:1;max-width:420px;background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:5px 11px}
-  .search input{border:none;background:transparent;flex:1;padding:4px;font-size:13px}
-  .search input:focus{box-shadow:none;border:none}
-  .nav{display:flex;gap:4px;margin-left:auto}
-  .nav .btn{padding:6px 12px;font-size:13px}
-  /* Hero */
-  .hero{padding:56px 0 28px;text-align:left;border-bottom:1px solid var(--border);margin-bottom:8px}
-  .hero .tag{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:3px 10px;border-radius:99px;margin-bottom:14px;letter-spacing:.3px}
-  .hero h1{font-size:32px;font-weight:800;line-height:1.25;letter-spacing:-.5px;max-width:720px}
-  .hero p{color:var(--muted);margin-top:12px;font-size:15px;max-width:640px}
-  /* Tool grid */
-  .section-title{display:flex;align-items:center;justify-content:space-between;margin:28px 0 16px}
-  .section-title h2{font-size:18px;font-weight:700}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
-  .tool-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,transform .15s;box-shadow:var(--shadow)}
-  .tool-card:hover{border-color:#c7d2e0;transform:translateY(-2px)}
-  .tool-card .icon{height:104px;display:flex;align-items:center;justify-content:center;background:var(--bg-soft);font-size:40px;border-bottom:1px solid var(--border)}
-  .tool-card .body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:8px}
-  .tool-card .name{font-weight:700;font-size:15px}
-  .tool-card .meta{color:var(--muted);font-size:12px;display:flex;gap:14px;flex-wrap:wrap}
-  .tool-card .meta b{color:var(--text);font-weight:600}
-  .tool-card .actions{display:flex;gap:8px;margin-top:auto;padding-top:12px}
-  .tool-card .actions .btn{flex:1;padding:7px 0;font-size:13px}
-  /* Modal */
-  .modal-mask{position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
-  .modal-mask.show{display:flex}
-  .modal{background:var(--panel);border:1px solid var(--border);border-radius:14px;width:100%;max-width:720px;max-height:86vh;overflow:auto;box-shadow:var(--shadow-md)}
-  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--panel);z-index:2;border-radius:14px 14px 0 0}
-  .modal-head h3{font-size:16px;font-weight:700}
-  .modal-body{padding:20px}
-  .modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--border)}
-  .close{background:transparent;color:var(--muted);font-size:20px;line-height:1;padding:4px 8px;border-radius:6px}
-  .close:hover{background:var(--chip);color:var(--text)}
-  /* Detail */
-  .detail-icon{width:80px;height:80px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg-soft);margin-bottom:14px;border:1px solid var(--border)}
-  .detail-meta{display:flex;gap:20px;color:var(--muted);font-size:13px;margin:10px 0 16px;flex-wrap:wrap}
-  .detail-meta b{color:var(--text)}
-  .readme{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:16px;line-height:1.7;color:#2a3342;font-size:14px;white-space:pre-wrap;word-break:break-word}
-  .readme h1,.readme h2,.readme h3{color:var(--text);margin:10px 0 6px}
-  .readme code{background:#fff;border:1px solid var(--border);padding:1px 5px;border-radius:4px;font-size:13px}
-  .readme pre{background:#fff;padding:12px;border-radius:8px;border:1px solid var(--border);overflow:auto;margin:8px 0}
-  .readme a{color:var(--brand)}
-  .readme ul,.readme ol{padding-left:22px;margin:6px 0}
-  /* Comments */
-  .comments{margin-top:24px;border-top:1px solid var(--border);padding-top:18px}
-  .comments h4{font-size:14px;margin-bottom:12px;font-weight:700}
-  .comment{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
-  .comment .c-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  .comment .c-from{color:var(--muted);font-size:12px}
-  .comment .c-text{font-size:14px;line-height:1.6;white-space:pre-wrap}
-  .comment-form{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-  .comment-form .row{display:flex;gap:8px}
-  .comment-form input{flex:1}
-  /* Toast */
-  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:10px;box-shadow:var(--shadow-md);opacity:0;transition:.25s;z-index:200;font-size:14px;display:flex;align-items:center;gap:8px}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .toast.ok{border-color:#b7e4c7}.toast.ok .dot{background:var(--ok)}
-  .toast.err{border-color:#f5c2c0}.toast.err .dot{background:var(--err)}
-  .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--brand)}
-  /* Admin */
-  .admin{display:flex;gap:0;min-height:calc(100vh - 60px)}
-  .sidebar{width:220px;background:var(--bg-soft);border-right:1px solid var(--border);padding:16px 10px;flex-shrink:0}
-  .sidebar .brand{font-size:12px;color:var(--muted);padding:0 10px 12px;border-bottom:1px solid var(--border);margin-bottom:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
-  .sidebar a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:var(--muted);font-size:14px;margin-bottom:2px;font-weight:500}
-  .sidebar a:hover{background:var(--chip);color:var(--text);text-decoration:none}
-  .sidebar a.active{background:var(--brand);color:#fff}
-  .sidebar a.active .ic{color:#fff}
-  .sidebar a .ic{font-size:15px;width:20px;text-align:center;color:var(--muted)}
-  .main{flex:1;padding:24px 28px;min-width:0}
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
-  .stat{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
-  .stat .n{font-size:26px;font-weight:800;letter-spacing:-.5px}
-  .stat .l{color:var(--muted);font-size:12px;margin-top:4px}
-  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
-  .panel h3{font-size:15px;font-weight:700;margin-bottom:14px}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border)}
-  th{color:var(--muted);font-weight:600;font-size:11px;letter-spacing:.4px;text-transform:uppercase;background:var(--bg-soft)}
-  tr:last-child td{border-bottom:none}
-  td .btn{padding:5px 10px;font-size:12px}
-  .empty{text-align:center;color:var(--muted);padding:40px 0}
-  .empty .big{font-size:34px;margin-bottom:8px;color:#c7d2e0}
-  .form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-  .form-row label{font-size:13px;color:var(--muted);font-weight:600}
-  .form-row .hint{font-size:12px;color:var(--muted)}
-  .icon-pick{display:flex;gap:10px;align-items:center}
-  .icon-pick .prev{width:52px;height:52px;border-radius:11px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid var(--border)}
-  .tag-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;background:var(--chip);color:var(--muted);margin-left:6px;font-weight:500}
-  .login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:20px}
-  .login{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:380px;box-shadow:var(--shadow-md)}
-  .login h2{font-size:19px;margin-bottom:18px;text-align:center;font-weight:800}
-  .login .form-row{margin-bottom:16px}
-  .login .btn{width:100%;padding:11px}
-  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok)}
-  .badge.err{background:#fef2f2;color:var(--err)}
-  .flex-between{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-  .toolbar input{flex:1;min-width:200px}
-  .announce-box{background:var(--brand-soft);border:1px solid #d6e4ff;border-radius:10px;padding:12px 14px;margin-bottom:18px;display:flex;gap:10px;align-items:flex-start}
-  .announce-box .pin{font-size:16px;color:var(--brand)}
-  .announce-box .txt{font-size:13px;color:#264a7a;line-height:1.6}
-  .footer{color:var(--muted);text-align:center;font-size:12px;padding:30px 0 22px;border-top:1px solid var(--border);margin-top:24px}
-  .muted{color:var(--muted);font-size:13px}
-  @media(max-width:760px){
-    .sidebar{display:none}
-    .grid{grid-template-columns:1fr}
-    .search{display:none}
-    .hero h1{font-size:26px}
-  }
+:root{--brand:#2563eb;--brand-dark:#1d4ed8;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--bg:#f6f8fa;--card:#fff;--danger:#dc2626;--ok:#16a34a;--warn:#d97706}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,textarea,select{font-family:inherit;font-size:14px;border:1px solid var(--line);border-radius:6px;padding:8px 12px;background:#fff;color:var(--ink);outline:none;transition:border .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+textarea{resize:vertical;min-height:90px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:6px;font-size:14px;font-weight:500;transition:.15s;border:1px solid transparent;white-space:nowrap}
+.btn-primary{background:var(--brand);color:#fff}.btn-primary:hover{background:var(--brand-dark)}
+.btn-ghost{background:#fff;color:var(--ink);border-color:var(--line)}.btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+.btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#b91c1c}
+.btn-sm{padding:5px 12px;font-size:13px}
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+/* Header */
+.topbar{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;backdrop-filter:blur(8px)}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--ink)}
+.brand-mark{width:28px;height:28px;border-radius:6px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.nav{display:flex;gap:8px;align-items:center}
+.nav a,.nav button{font-size:14px;color:var(--sub);padding:6px 12px;border-radius:6px}
+.nav a:hover,.nav button:hover{color:var(--ink);background:var(--bg);text-decoration:none}
+/* Hero */
+.hero{background:#fff;border-bottom:1px solid var(--line);padding:44px 0 36px}
+.hero h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.hero p{color:var(--sub);margin-top:8px;max-width:640px}
+.search-bar{margin-top:20px;display:flex;gap:10px;max-width:620px}
+.search-bar input{flex:1;height:42px;font-size:15px}
+/* Section */
+.section{padding:32px 0}
+.sec-head{display:flex;align-items:end;justify-content:space-between;margin-bottom:18px}
+.sec-head h2{font-size:19px;font-weight:700}
+.sec-head .sub{color:var(--sub);font-size:13px}
+/* Tool grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.tool-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;transition:.18s;position:relative}
+.tool-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(15,23,42,.06);border-color:#dbe4f0}
+.tool-card .row{display:flex;align-items:center;gap:12px}
+.ticon{width:44px;height:44px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;border:1px solid var(--line)}
+.ticon img{width:100%;height:100%;object-fit:cover}
+.tname{font-weight:700;font-size:15px;word-break:break-word}
+.tmeta{font-size:12px;color:var(--sub);display:flex;gap:14px;flex-wrap:wrap}
+.tmeta span{display:inline-flex;align-items:center;gap:4px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:11px;padding:2px 8px;border-radius:99px;background:#eef2ff;color:var(--brand);font-weight:500}
+.card-actions{display:flex;gap:8px;margin-top:auto}
+.card-actions .btn{flex:1}
+.empty{text-align:center;padding:60px 20px;color:var(--sub);background:var(--card);border:1px dashed var(--line);border-radius:12px}
+.empty .big{font-size:40px;margin-bottom:10px}
+/* Modal */
+.modal-mask{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:80;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.modal{background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.18);width:100%;max-width:760px;max-height:90vh;overflow:auto;animation:pop .18s ease}
+.modal-lg{max-width:900px}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:1;border-radius:14px 14px 0 0}
+.modal-head h3{font-size:17px;font-weight:700}
+.modal-body{padding:20px 22px}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 22px;border-top:1px solid var(--line);position:sticky;bottom:0;background:#fff;border-radius:0 0 14px 14px}
+/* README render */
+.readme{font-size:14px;line-height:1.75;color:#24292f;word-break:break-word}
+.readme h1,.readme h2,.readme h3{font-weight:700;margin:16px 0 8px;line-height:1.3}
+.readme h1{font-size:22px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.readme h2{font-size:18px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.readme h3{font-size:15px}
+.readme p{margin:8px 0}
+.readme code{background:#eef1f4;padding:1px 5px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.readme pre{background:#0f172a;color:#e2e8f0;padding:14px;border-radius:8px;overflow:auto;font-size:13px;line-height:1.5}
+.readme pre code{background:none;padding:0;color:inherit}
+.readme a{color:var(--brand)}.readme ul,.readme ol{margin:8px 0 8px 22px}
+.readme li{margin:3px 0}
+.readme blockquote{border-left:3px solid var(--line);padding:4px 14px;color:var(--sub);margin:8px 0;background:#fafbfc;border-radius:0 6px 6px 0}
+.readme img{max-width:100%;border-radius:8px;margin:8px 0}
+/* Comments */
+.comments{margin-top:24px;border-top:1px solid var(--line);padding-top:18px}
+.comments h4{font-size:14px;font-weight:700;margin-bottom:12px}
+.cmt{display:flex;gap:10px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.cmt:last-child{border-bottom:none}
+.cmt .av{width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.cmt .body{flex:1}
+.cmt .who{font-weight:600;font-size:13px}.cmt .when{font-size:11px;color:var(--sub);margin-left:8px}
+.cmt .text{font-size:13px;margin-top:3px;white-space:pre-wrap;word-break:break-word}
+.cmt-form{display:flex;flex-direction:column;gap:8px;margin-top:14px;background:#fafbfc;border:1px solid var(--line);border-radius:10px;padding:14px}
+.cmt-form .row2{display:flex;gap:10px}
+.cmt-form input{flex:1}
+/* Admin */
+.admin-layout{display:flex;gap:0;min-height:calc(100vh - 60px)}
+.sidebar{width:220px;background:#fff;border-right:1px solid var(--line);padding:18px 12px;flex-shrink:0;position:sticky;top:60px;height:calc(100vh - 60px);overflow:auto}
+.sidebar .me{font-size:12px;color:var(--sub);margin-bottom:12px;padding:0 8px}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:var(--ink);font-size:14px;margin-bottom:2px;font-weight:500}
+.sidebar a:hover{background:var(--bg);text-decoration:none}
+.sidebar a.active{background:var(--brand);color:#fff}
+.sidebar a .ic{font-size:16px;width:20px;text-align:center}
+.admin-main{flex:1;padding:26px 30px;min-width:0}
+.page-title{font-size:21px;font-weight:800;margin-bottom:4px}
+.page-desc{color:var(--sub);margin-bottom:20px;font-size:13px}
+.card-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:22px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.stat .num{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.stat .lbl{font-size:12px;color:var(--sub);margin-top:4px}
+table.data{width:100%;border-collapse:collapse;font-size:13px}
+table.data th,table.data td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+table.data th{background:#fafbfc;font-weight:600;color:var(--sub);font-size:12px;position:sticky;top:0}
+table.data tr:last-child td{border-bottom:none}
+table.data .thumb{width:34px;height:34px;border-radius:8px;object-fit:cover;background:var(--bg);border:1px solid var(--line)}
+.form-grid{display:grid;grid-template-columns:140px 1fr;gap:14px 16px;align-items:start}
+.form-grid label{font-weight:600;font-size:13px;padding-top:9px;color:#374151}
+.form-grid .full{grid-column:1/-1}
+.helper{font-size:12px;color:var(--sub);margin-top:4px}
+.upload-box{border:1px dashed var(--line);border-radius:10px;padding:16px;text-align:center;background:#fafbfc;cursor:pointer;transition:.15s}
+.upload-box:hover{border-color:var(--brand);background:#f0f5ff}
+.upload-box .upic{font-size:24px;margin-bottom:6px}
+.upload-box input[type=file]{display:none}
+.icon-preview{width:64px;height:64px;border-radius:12px;object-fit:cover;background:var(--bg);border:1px solid var(--line);margin-top:10px;display:none}
+.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.toast{position:fixed;top:20px;right:20px;background:#111;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.2);animation:pop .2s ease}
+.login-wrap{min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;padding:20px}
+.login{background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px;width:100%;max-width:380px;box-shadow:0 8px 30px rgba(15,23,42,.06)}
+.login h2{font-size:20px;font-weight:800;margin-bottom:6px}
+.login p{color:var(--sub);font-size:13px;margin-bottom:20px}
+.login label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}
+.login .btn{width:100%;margin-top:16px;height:42px}
+.tnum-badge{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;background:#f1f5f9;color:#475569;padding:2px 7px;border-radius:5px;border:1px solid #e2e8f0}
+.muted-note{font-size:12px;color:var(--sub);background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:16px}
+.badge-pub{font-size:11px;padding:2px 8px;border-radius:99px;background:#dcfce7;color:var(--ok);font-weight:600}
+.badge-unpub{font-size:11px;padding:2px 8px;border-radius:99px;background:#fef3c7;color:var(--warn);font-weight:600}
 </style>
 </head>
 <body>
-
-<!-- ============ 前台顶部 ============ -->
-<header class="header" id="header" style="display:none">
-  <div class="container header-inner">
-    <div class="logo"><span class="mark">T</span>ToolHub</div>
-    <div class="search">
-      <span style="color:var(--muted)">⌕</span>
-      <input id="searchInput" placeholder="搜索工具名称…">
-    </div>
-    <nav class="nav">
-      <button class="btn btn-ghost" onclick="App.go('#/')">首页</button>
-      <button class="btn btn-ghost" id="adminEnterBtn" onclick="App.enterAdmin()">后台管理</button>
-    </nav>
-  </div>
-</header>
-
-<!-- ============ 前台首页 ============ -->
-<section class="container" id="homeView">
-  <div class="hero">
-    <span class="tag">工具聚合平台</span>
-    <h1>发现优质工具，一键获取所需</h1>
-    <p id="heroSub">由后台统一维护工具内容与下载入口，集中展示、便捷检索。</p>
-  </div>
-  <div class="announce-box" id="announceBox" style="display:none">
-    <div class="pin">◆</div>
-    <div class="txt" id="announceTxt"></div>
-  </div>
-  <div class="section-title"><h2>全部工具</h2><span class="muted" id="toolCount"></span></div>
-  <div class="grid" id="toolGrid"></div>
-  <div class="footer">© <span id="footYear"></span> 2026.08.25 17:49</div>
-</section>
-
-<!-- ============ 工具详情弹窗 ============ -->
-<div class="modal-mask" id="detailMask">
-  <div class="modal">
-    <div class="modal-head">
-      <h3 id="detailTitle">工具详情</h3>
-      <button class="close" onclick="App.closeModal('detailMask')">✕</button>
-    </div>
-    <div class="modal-body" id="detailBody"></div>
-  </div>
-</div>
-
-<!-- ============ 后台登录 ============ -->
-<section class="login-wrap" id="loginView" style="display:none">
-  <div class="login">
-    <h2>后台管理登录</h2>
-    <div class="form-row">
-      <label>管理员账号</label>
-      <input id="loginUser" placeholder="admin" autocomplete="username">
-    </div>
-    <div class="form-row">
-      <label>密码</label>
-      <input id="loginPass" type="password" placeholder="密码" autocomplete="current-password">
-    </div>
-    <button class="btn btn-primary" onclick="App.doLogin()">登 录</button>
-    <p style="color:var(--muted);font-size:12px;margin-top:14px;text-align:center">welcome</p>
-  </div>
-</section>
-
-<!-- ============ 后台管理 ============ -->
-<section class="admin" id="adminView" style="display:none">
-  <aside class="sidebar">
-    <div class="brand">后台管理</div>
-    <a href="#/admin/dash" class="active" data-view="dash" onclick="App.switchAdmin('dash',this,event)"><span class="ic">▦</span>数据面板</a>
-    <a href="#/admin/logs" data-view="logs" onclick="App.switchAdmin('logs',this,event)"><span class="ic">≡</span>日志</a>
-    <a href="#/admin/publish" data-view="publish" onclick="App.switchAdmin('publish',this,event)"><span class="ic">＋</span>工具上架</a>
-    <a href="#/admin/tools" data-view="tools" onclick="App.switchAdmin('tools',this,event)"><span class="ic">⚙</span>工具管理</a>
-    <a href="#/admin/comments" data-view="comments" onclick="App.switchAdmin('comments',this,event)"><span class="ic">✎</span>评论管理</a>
-    <a href="#/admin/announce" data-view="announce" onclick="App.switchAdmin('announce',this,event)"><span class="ic">◆</span>公告</a>
-    <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:12px">
-      <a href="#/" onclick="App.logout(event)" style="color:var(--muted)"><span class="ic">⏻</span>退出登录</a>
-    </div>
-  </aside>
-  <div class="main">
-    <div id="view-dash">
-      <div class="stats">
-        <div class="stat"><div class="n" id="stVisits">0</div><div class="l">今日访问量</div></div>
-        <div class="stat"><div class="n" id="stTools">0</div><div class="l">工具数量</div></div>
-        <div class="stat"><div class="n" id="stDowns">0</div><div class="l">累计下载量</div></div>
-        <div class="stat"><div class="n" id="stCmts">0</div><div class="l">评论总数</div></div>
-      </div>
-      <div class="panel">
-        <h3>最近动态</h3>
-        <div id="recentLogs" class="empty"><div class="big">∅</div>暂无日志记录</div>
-      </div>
-    </div>
-    <div id="view-logs" style="display:none">
-      <div class="panel">
-        <div class="flex-between" style="margin-bottom:14px"><h3 style="margin:0">系统日志</h3><button class="btn btn-danger" onclick="App.clearLogs()">清空日志</button></div>
-        <div id="logsTable"></div>
-      </div>
-    </div>
-    <div id="view-publish" style="display:none">
-      <div class="panel">
-        <h3 id="pubTitle">工具上架</h3>
-        <div class="form-row"><label>工具名称</label><input id="f-name" placeholder="例如：GitHub 加速下载器"></div>
-        <div class="form-row"><label>工具图标</label>
-          <div class="icon-pick">
-            <div class="prev" id="f-iconPrev">📦</div>
-            <input id="f-icon" placeholder="输入 emoji 作为图标，如 🚀" value="📦" oninput="document.getElementById('f-iconPrev').textContent=this.value||'📦'">
-          </div>
-        </div>
-        <div class="form-row"><label>赞助下载链接（用户点击「赞助下载」后跳转此链接）</label><input id="f-link" placeholder="https://example.com/download/xxx"></div>
-        <div class="form-row"><label>README.md（支持基础 Markdown 语法）</label><textarea id="f-readme" placeholder="支持 # 标题、**加粗**、`代码`、[链接](url)、- 列表 等基础语法" style="min-height:180px"></textarea></div>
-        <div style="display:flex;gap:10px">
-          <button class="btn btn-primary" id="pubBtn" onclick="App.saveTool()">发布工具</button>
-          <button class="btn" onclick="App.resetPubForm()">重置表单</button>
-        </div>
-        <p class="hint" style="color:var(--muted);font-size:12px;margin-top:12px">提示：下载量仅在用户真实点击「赞助下载」并跳转后自动 +1（基于真实跳转行为，拒绝模拟）。</p>
-      </div>
-    </div>
-    <div id="view-tools" style="display:none">
-      <div class="panel">
-        <h3>工具管理</h3>
-        <div id="toolsTable"></div>
-      </div>
-    </div>
-    <div id="view-comments" style="display:none">
-      <div class="panel">
-        <h3>用户评论</h3>
-        <div id="commentsTable"></div>
-      </div>
-    </div>
-    <div id="view-announce" style="display:none">
-      <div class="panel">
-        <h3>首页公告</h3>
-        <div class="form-row"><label>公告内容（留空则不显示）</label><textarea id="f-announce" placeholder="例如：欢迎来到 ToolHub！新工具持续上架中…"></textarea></div>
-        <button class="btn btn-primary" onclick="App.saveAnnounce()">保存公告</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="toast" id="toast"><span class="dot"></span><span id="toastTxt">提示</span></div>
-
+<div id="app"></div>
 <script>
-/* =========================================================
-   ToolHub · 单文件网页应用
-   存储：localStorage | 鉴权：SHA-256 | 路由：location.hash
-   拒绝模拟：下载量仅在真实跳转时 +1
-   ========================================================= */
-const App = (function(){
-  const ADMIN_USER = "kali";
-  const ADMIN_PASS_SHA256 = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
-  const KEY = "qxb_tool_platform_v1";
-  const AUTH_KEY = "qxb_auth_v1";
+/* ========= 配置 ========= */
+const ADMIN_USER = "admin";
+const ADMIN_PASS_SHA256 = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"; // 123456
+const STORAGE_KEY = "qxb_tool_platform_v1";
+const AUTH_KEY = "qxb_auth_v1";
 
-  // ---------- SHA-256 ----------
-  async function sha256(text){
-    const buf = new TextEncoder().encode(String(text));
-    const hash = await crypto.subtle.digest("SHA-256", buf);
-    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
-  }
-  function constantTimeEq(a,b){
-    if(typeof a!=="string"||typeof b!=="string"||a.length!==b.length) return false;
-    let diff=0;
-    for(let i=0;i<a.length;i++) diff|=a.charCodeAt(i)^b.charCodeAt(i);
-    return diff===0;
-  }
-  function makeToken(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a).map(b=>b.toString(16).padStart(2,"0")).join("");}
+/* ========= 状态 ========= */
+let state = load();
+function load(){ try{ const r=JSON.parse(localStorage.getItem(STORAGE_KEY)); if(r&&Array.isArray(r.tools)) return r; }catch(e){} return defaults(); }
+function defaults(){ return { tools:[], comments:[], logs:[], announcement:"", adminHash:ADMIN_PASS_SHA256, adminUser:ADMIN_USER, logSeq:0 }; }
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function uid(){ return "t_"+Math.random().toString(36).slice(2,9)+Date.now().toString(36); }
 
-  // ---------- 状态 ----------
-  let state = load();
-  function load(){
-    try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);initState(o);return o;}}catch(e){}
-    return newState();
-  }
-  function newState(){return {tools:[],logs:[],comments:[],announce:"",visitDate:"",visitCount:0,_seq:1};}
-  function initState(o){
-    if(!Array.isArray(o.tools))o.tools=[];if(!Array.isArray(o.logs))o.logs=[];
-    if(!Array.isArray(o.comments))o.comments=[];if(typeof o.announce!=="string")o.announce="";
-    if(typeof o.visitDate!=="string")o.visitDate="";if(typeof o.visitCount!=="number")o.visitCount=0;
-    if(typeof o._seq!=="number")o._seq=1;
-    if(!state||!state.adminHash) o.adminHash=ADMIN_PASS_SHA256;
-  }
-  function save(){localStorage.setItem(KEY,JSON.stringify(state));}
-  function todayStr(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+/* ========= 鉴权 ========= */
+function getAuth(){ try{ return JSON.parse(localStorage.getItem(AUTH_KEY)||"null"); }catch(e){return null;} }
+function setAuth(token){ localStorage.setItem(AUTH_KEY, JSON.stringify({token,user:ADMIN_USER,at:Date.now()})); }
+function clearAuth(){ localStorage.removeItem(AUTH_KEY); }
+async function sha256(t){ const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join(""); }
+function constantTimeEq(a,b){ if(a.length!==b.length) return false; let d=0; for(let i=0;i<a.length;i++) d|=(a.charCodeAt(i)^b.charCodeAt(i)); return d===0; }
+async function verifyLogin(u,p){ if(u!==state.adminUser) return false; return constantTimeEq(await sha256(p), state.adminHash); }
 
-  // ---------- 认证 ----------
-  function getAuth(){try{return JSON.parse(localStorage.getItem(AUTH_KEY)||"null");}catch(e){return null;}}
-  function setAuth(token){localStorage.setItem(AUTH_KEY,JSON.stringify({token,user:ADMIN_USER,at:Date.now()}));}
-  function clearAuth(){localStorage.removeItem(AUTH_KEY);}
-  function isAuthed(){const a=getAuth();return !!(a&&a.token&&a.user===ADMIN_USER);}
+/* ========= 路由 ========= */
+function parseHash(){ const h=location.hash||"#/"; const p=h.replace(/^#\//,"").split("/"); return { view:p[0]||"home", arg:p[1]||null }; }
+function navigate(h){ location.hash=h; }
+window.addEventListener("hashchange", render);
+window.addEventListener("DOMContentLoaded", ()=>{ if(!state.adminHash) state.adminHash=ADMIN_PASS_SHA256; save(); render(); });
 
-  // ---------- 工具 ----------
-  function tickVisit(){const t=todayStr();if(state.visitDate!==t){state.visitDate=t;state.visitCount=0;}state.visitCount++;save();}
-  function addLog(action,detail){state.logs.unshift({id:state._seq++,time:new Date().toLocaleString(),action,detail});if(state.logs.length>200)state.logs.length=200;save();}
-  function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-  function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
-  function fmtDate(s){if(!s)return "—";try{return new Date(s).toLocaleDateString();}catch(e){return s;}}
-
-  // ---------- Markdown ----------
-  function md(text){
-    if(!text) return "<p style='color:var(--muted)'>暂无 README 内容</p>";
-    let s=text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    s=s.replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^## (.*)$/gm,"<h2>$1</h2>").replace(/^# (.*)$/gm,"<h1>$1</h1>")
-       .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/`([^`]+)`/g,"<code>$1</code>")
-       .replace(/!\[[^\]]*\]\(([^)]+)\)/g,'<img src="$1" style="max-width:100%;border-radius:8px;margin:8px 0">')
-       .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
-    s=s.replace(/(?:^- (.+)$)+/gm,function(block){const items=block.trim().split(/\n/).map(l=>l.replace(/^- /,"")).filter(Boolean);return "<ul>"+items.map(i=>"<li>"+i+"</li>").join("")+"</ul>";});
-    const lines=s.split("\n");let out="",inBlock=false;
-    for(const ln of lines){if(/^<(\/)?(h[1-3]|ul|ol|li|pre|img|blockquote)/.test(ln)){out+=ln;inBlock=false;}else if(ln.trim()===""){inBlock=false;}else{out+=(inBlock?" ":"<p>")+ln+(inBlock?"":"</p>");inBlock=true;}}
-    return out;
+/* ========= 渲染入口 ========= */
+function render(){
+  const r=parseHash();
+  const auth=getAuth();
+  if(r.view==="admin"){
+    if(!auth){ renderLogin(r.arg); return; }
+    renderAdmin(r.arg||"dash"); return;
   }
+  if(r.view==="tool"&&r.arg){ renderToolDetail(r.arg); return; }
+  renderHome();
+}
 
-  // ---------- 渲染：前台 ----------
-  function renderTools(filter){
-    const grid=document.getElementById("toolGrid");
-    let list=state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt);
-    if(filter){const q=filter.toLowerCase();list=list.filter(t=>t.name.toLowerCase().includes(q));}
-    document.getElementById("toolCount").textContent=list.length+" 个工具";
-    if(list.length===0){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="big">∅</div>'+(filter?"无匹配工具":"暂无工具，管理员可前往后台上架")+'</div>';return;}
-    grid.innerHTML=list.map(t=>`
-      <div class="tool-card">
-        <div class="icon">${esc(t.icon||"📦")}</div>
-        <div class="body">
-          <div class="name">${esc(t.name)}</div>
-          <div class="meta"><span>📅 ${fmtDate(t.createdAt)}</span><span>⬇ <b>${t.downloads||0}</b></span></div>
-          <div class="actions">
-            <button class="btn" onclick="App.openDetail('${t.id}')">详情</button>
-            <button class="btn btn-primary" onclick="App.sponsorDownload('${t.id}')">赞助下载</button>
-          </div>
-        </div>
-      </div>`).join("");
-  }
-  function renderAnnounce(){
-    const box=document.getElementById("announceBox");const t=state.announce&&state.announce.trim();
-    if(!t){box.style.display="none";return;}box.style.display="flex";document.getElementById("announceTxt").textContent=t;
-  }
+/* ========= 顶部 ========= */
+function renderTopbar(opts={}){
+  const auth=getAuth();
+  return `<header class="topbar"><div class="container topbar-inner">
+    <a href="#/" class="brand"><span class="brand-mark">T</span> ToolHub</a>
+    <nav class="nav">
+      ${opts.search!==false?`<input id="topSearch" placeholder="搜索工具名称 / 编号…" style="height:36px;width:230px">`:""}
+      ${auth?`<a href="#/admin/dash">后台管理</a><button class="btn btn-ghost btn-sm" id="btnLogout">退出</button>`:`<a href="#/admin">后台管理</a>`}
+    </nav>
+  </div></header>`;
+}
 
-  // ---------- 详情 ----------
-  function openDetail(id){
-    const t=state.tools.find(x=>x.id===id);if(!t)return;
-    document.getElementById("detailTitle").textContent=t.name;
-    document.getElementById("detailBody").innerHTML=`
-      <div class="detail-icon">${esc(t.icon||"📦")}</div>
-      <div class="detail-meta"><span>发布：<b>${fmtDate(t.createdAt)}</b></span><span>下载量：<b>${t.downloads||0}</b></span></div>
-      <div class="readme">${md(t.readme||"")}</div>
+/* ========= 首页 ========= */
+function renderHome(){
+  const ann=state.announcement||"";
+  const root=document.getElementById("app");
+  root.innerHTML=`${renderTopbar({})}
+    <section class="hero"><div class="container">
+      <h1>工具聚合平台</h1>
+      <p>精选开发与安全工具，一站式检索、查阅说明文档并获取下载资源。由后台统一管理与发布。</p>
+      <div class="search-bar"><input id="heroSearch" placeholder="输入工具名称或编号搜索…"><button class="btn btn-primary" id="btnHeroSearch">搜索</button></div>
+    </div></section>
+    ${ann?`<section class="section" style="padding-top:20px"><div class="container"><div class="muted-note" style="margin:0"><b>公告：</b>${esc(ann)}</div></div></section>`:""}
+    <section class="section"><div class="container">
+      <div class="sec-head"><div><h2>全部工具</h2><div class="sub">共 ${state.tools.length} 款工具</div></div></div>
+      <div id="toolGrid"></div>
+    </div></section>`;
+  bindSearch("heroSearch",()=>{});
+  document.getElementById("btnHeroSearch").addEventListener("click",()=>{ const v=document.getElementById("heroSearch").value.trim(); renderToolList(v); });
+  renderToolList("");
+  // 顶部搜索框
+  bindSearch("topSearch",()=>{});
+}
+function bindSearch(id,onList){
+  const el=document.getElementById(id); if(!el) return;
+  el.addEventListener("input",()=> renderToolList(el.value.trim()));
+  el.addEventListener("keydown",e=>{ if(e.key==="Enter") renderToolList(el.value.trim()); });
+}
+function renderToolList(q){
+  const grid=document.getElementById("toolGrid"); if(!grid) return;
+  const kw=q.toLowerCase();
+  let list=state.tools.slice();
+  // 编号不公开：首页仅按名称搜索；若输入纯数字且后台允许编号查找，则在首页也支持编号（PPT：用户可通过搜索编号查找）
+  if(kw.length){ list=list.filter(t=> t.name.toLowerCase().includes(kw) || (String(t.number||"").toLowerCase().includes(kw)) ); }
+  if(!list.length){ grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="big">🔍</div><div>${q?`无与「${esc(q)}」匹配的工具`:"暂无工具，管理员可前往后台上架。"}</div></div>`; return; }
+  grid.innerHTML=list.map(t=>{
+    const ic=t.icon&&t.icon.startsWith("data:")?`<img src="${t.icon}" alt="">`:`<span style="font-size:22px">📦</span>`;
+    return `<div class="tool-card">
+      <div class="row"><div class="ticon">${ic}</div><div><div class="tname">${esc(t.name)}</div><div class="tmeta"><span>📅 ${esc(t.date||"")}</span><span>⬇ ${t.downloads|0}</span></div></div></div>
+      <div class="card-actions">
+        <button class="btn btn-ghost btn-sm" data-act="detail" data-id="${t.id}">详情</button>
+        <button class="btn btn-primary btn-sm" data-act="sponsor" data-id="${t.id}">${esc(t.btnText||"赞助并下载")}</button>
+      </div>
+    </div>`;
+  }).join("");
+  grid.querySelectorAll('button[data-act="detail"]').forEach(b=>b.addEventListener("click",()=>navigate("#/tool/"+b.dataset.id)));
+  grid.querySelectorAll('button[data-act="sponsor"]').forEach(b=>b.addEventListener("click",()=>doSponsor(b.dataset.id)));
+}
+function doSponsor(id){
+  const t=state.tools.find(x=>x.id===id); if(!t||!t.sponsorUrl) return;
+  const ok=window.open(t.sponsorUrl,"_blank"); if(!ok) alert("弹窗被拦截，请允许后重试。");
+  t.downloads=(t.downloads|0)+1; addLog("下载",`「${t.name}」被下载（编号 ${t.number||"-"}）`); save(); renderToolList("");
+}
+
+/* ========= 工具详情 ========= */
+function renderToolDetail(id){
+  const t=state.tools.find(x=>x.id===id);
+  const root=document.getElementById("app");
+  if(!t){ root.innerHTML=`${renderTopbar({})}<section class="section"><div class="container"><div class="empty"><div class="big">😕</div>工具不存在或已下架。<a href="#/">返回首页</a></div></div></section>`; return; }
+  const ic=t.icon&&t.icon.startsWith("data:")?`<img src="${t.icon}" alt="">`:`<span style="font-size:30px">📦</span>`;
+  const cmts=state.comments.filter(c=>c.toolId===id).sort((a,b)=>b.at-a.at);
+  root.innerHTML=`${renderTopbar({})}<section class="section"><div class="container"><a href="#/" class="btn btn-ghost btn-sm">← 返回首页</a>
+    <div class="modal-body" style="padding:26px 0">
+      <div class="row" style="display:flex;gap:18px;align-items:center;margin-bottom:18px">
+        <div class="ticon" style="width:72px;height:72px;border-radius:14px">${ic}</div>
+        <div><div class="tname" style="font-size:22px">${esc(t.name)}</div>
+        <div class="tmeta"><span>📅 ${esc(t.date||"")}</span><span>⬇ ${t.downloads|0}</span></div></div>
+        <div style="margin-left:auto"><button class="btn btn-primary" id="btnSponsor">${esc(t.btnText||"赞助并下载")}</button></div>
+      </div>
+      <h3 style="font-size:16px;font-weight:700;margin:8px 0 10px">README</h3>
+      <div class="readme">${renderMarkdown(t.readme||"*暂无说明文档。*")}</div>
       <div class="comments">
-        <h4>评论区（${state.comments.filter(c=>c.toolId===id).length}）</h4>
-        <div id="commentList"></div>
-        <div class="comment-form">
-          <div class="row"><input id="c-name" placeholder="昵称"><input id="c-from" placeholder="来源工具（自动）" value="${esc(t.name)}" readonly style="flex:.6;color:var(--muted)"></div>
-          <textarea id="c-text" placeholder="发表评论…"></textarea>
-          <button class="btn btn-primary" style="align-self:flex-end" onclick="App.postComment('${t.id}')">发表评论</button>
-        </div>
-      </div>`;
-    renderComments(id);openModal("detailMask");
-    location.hash="#/tool/"+id;
-  }
-  function renderComments(toolId){
-    const box=document.getElementById("commentList");if(!box)return;
-    const list=state.comments.filter(c=>c.toolId===toolId).sort((a,b)=>b.time-a.time);
-    if(list.length===0){box.innerHTML='<div style="color:var(--muted);font-size:13px;padding:10px 0">暂无评论</div>';return;}
-    box.innerHTML=list.map(c=>`<div class="comment"><div class="c-head"><b>${esc(c.name||"匿名")}</b><span class="c-from">${esc(c.from||"")} · ${fmtDate(c.time)}</span></div><div class="c-text">${esc(c.text)}</div></div>`).join("");
-  }
-  function postComment(toolId){
-    const name=document.getElementById("c-name").value.trim()||"匿名";
-    const text=document.getElementById("c-text").value.trim();
-    if(!text){toast("请输入评论内容","err");return;}
-    const t=state.tools.find(x=>x.id===toolId);
-    state.comments.push({id:uid(),toolId,name,text,from:t?t.name:"",time:Date.now()});
-    addLog("发表评论",name+" 评论了《"+(t?t.name:"")+"》");save();renderComments(toolId);
-    document.getElementById("c-text").value="";toast("评论已发表","ok");
-  }
+        <h4>评论区（${cmts.length}）</h4>
+        ${cmts.length?cmts.map(c=>`<div class="cmt"><div class="av">${esc((c.author||"?").slice(0,1).toUpperCase())}</div><div class="body"><span class="who">${esc(c.author||"匿名")}</span><span class="when">${fmtTime(c.at)}</span><div class="text">${esc(c.text)}</div></div></div>`).join(""):`<div class="muted-note">暂无评论。</div>`}
+        <div class="cmt-form"><div class="row2"><input id="cmtName" placeholder="昵称"><button class="btn btn-primary btn-sm" id="btnCmt">发表评论</button></div><input id="cmtText" placeholder="写下你的看法…"></div>
+      </div>
+    </div></section>`;
+  document.getElementById("btnSponsor").addEventListener("click",()=>doSponsor(id));
+  document.getElementById("btnCmt").addEventListener("click",()=>{
+    const name=document.getElementById("cmtName").value.trim()||"匿名";
+    const text=document.getElementById("cmtText").value.trim(); if(!text){alert("请输入评论内容");return;}
+    state.comments.push({id:uid(),toolId:id,author:name,text,at:Date.now()}); addLog("评论",`${name} 评论了「${t.name}」`); save(); renderToolDetail(id);
+  });
+}
 
-  // ---------- 赞助下载（真实跳转，拒绝模拟）----------
-  function sponsorDownload(id){
-    const t=state.tools.find(x=>x.id===id);if(!t)return;
-    if(!t.link){toast("该工具尚未配置下载链接","err");return;}
-    t.downloads=(t.downloads||0)+1;addLog("赞助下载","《"+t.name+"》下载量 +1（真实跳转）");save();
-    renderTools(document.getElementById("searchInput").value.trim());
-    window.open(t.link,"_blank","noopener");toast("正在跳转下载链接…","ok");
-  }
+/* ========= 登录 ========= */
+function renderLogin(redirectView){
+  const root=document.getElementById("app");
+  root.innerHTML=`${renderTopbar({search:false})}<div class="login-wrap"><div class="login">
+    <h2>后台管理</h2><p>仅管理员可访问，登录状态将在本浏览器持久保留。</p>
+    <label>用户名</label><input id="u" autocomplete="username" value="${esc(ADMIN_USER)}">
+    <label>密码</label><input id="p" type="password" autocomplete="current-password">
+    <button class="btn btn-primary" id="btnLogin">登录</button>
+    <div id="err" style="color:var(--danger);font-size:13px;margin-top:12px;display:none"></div>
+  </div></div>`;
+  const err=document.getElementById("err");
+  const tryLogin=async()=>{ err.style.display="none"; const u=document.getElementById("u").value.trim(), p=document.getElementById("p").value; if(!u||!p){err.textContent="请输入用户名和密码";err.style.display="block";return;} if(await verifyLogin(u,p)){ const tok=Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,"0")).join(""); setAuth(tok); navigate("#/admin/"+(redirectView||"dash")); }else{ err.textContent="用户名或密码错误"; err.style.display="block"; } };
+  document.getElementById("btnLogin").addEventListener("click",tryLogin);
+  document.getElementById("p").addEventListener("keydown",e=>{if(e.key==="Enter")tryLogin();});
+}
 
-  // ---------- 后台：数据/日志/工具/评论/公告 ----------
-  function renderDashboard(){
-    document.getElementById("stVisits").textContent=state.visitCount;
-    document.getElementById("stTools").textContent=state.tools.length;
-    document.getElementById("stDowns").textContent=state.tools.reduce((s,t)=>s+(t.downloads||0),0);
-    document.getElementById("stCmts").textContent=state.comments.length;
-    const box=document.getElementById("recentLogs");
-    if(state.logs.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无日志记录</div>';return;}
-    box.innerHTML='<table><thead><tr><th>时间</th><th>操作</th><th>详情</th></tr></thead><tbody>'+
-      state.logs.slice(0,10).map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td></tr>`).join("")+'</tbody></table>';
-  }
-  function renderLogs(){
-    const box=document.getElementById("logsTable");
-    if(state.logs.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无日志</div>';return;}
-    box.innerHTML='<table><thead><tr><th>时间</th><th>操作</th><th>详情</th><th>操作</th></tr></thead><tbody>'+
-      state.logs.map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td><td><button class="btn btn-danger" onclick="App.delLog('${l.id}')">删除</button></td></tr>`).join("")+'</tbody></table>';
-  }
-  function delLog(id){state.logs=state.logs.filter(l=>l.id!==id);save();renderLogs();renderDashboard();toast("日志已删除","ok");}
-  function clearLogs(){if(!confirm("确定清空全部日志？"))return;state.logs=[];save();renderLogs();renderDashboard();toast("日志已清空","ok");}
+/* ========= 后台 ========= */
+function renderAdmin(view){
+  const VIEWS={dash:"数据面板",logs:"日志",publish:"工具上架",manage:"工具管理",cmt:"评论管理",ann:"公告"};
+  const root=document.getElementById("app");
+  root.innerHTML=`${renderTopbar({search:false})}<div class="admin-layout"><aside class="sidebar">
+    <div class="me">登录为 <b>${esc(ADMIN_USER)}</b></div>
+    ${Object.entries(VIEWS).map(([k,v])=>`<a href="#/admin/${k}" class="${view===k?"active":""}"><span class="ic">${iconOf(k)}</span>${v}</a>`).join("")}
+  </aside><main class="admin-main" id="adminMain"></main></div>`;
+  document.getElementById("btnLogout")?.addEventListener("click",()=>{ clearAuth(); navigate("#/"); });
+  const main=document.getElementById("adminMain");
+  if(view==="dash") return renderDash(main);
+  if(view==="logs") return renderLogsAdmin(main);
+  if(view==="publish") return renderPublish(main,null);
+  if(view==="manage") return renderManage(main);
+  if(view==="cmt") return renderCmtAdmin(main);
+  if(view==="ann") return renderAnn(main);
+  renderDash(main);
+}
+function iconOf(k){return {dash:"📊",logs:"📋",publish:"➕",manage:"🛠️",cmt:"💬",ann:"📢"}[k]||"•";}
+function toast(msg){ const t=document.createElement("div"); t.className="toast"; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2200); }
+function addLog(type,text){ state.logs.push({id:++state.logSeq,type,text,at:Date.now(),published:false}); save(); }
 
-  let editId=null;
-  function resetPubForm(){editId=null;document.getElementById("pubTitle").textContent="工具上架";document.getElementById("pubBtn").textContent="发布工具";document.getElementById("f-name").value="";document.getElementById("f-icon").value="📦";document.getElementById("f-iconPrev").textContent="📦";document.getElementById("f-link").value="";document.getElementById("f-readme").value="";}
-  function saveTool(){
-    const name=document.getElementById("f-name").value.trim();const icon=document.getElementById("f-icon").value.trim()||"📦";const link=document.getElementById("f-link").value.trim();const readme=document.getElementById("f-readme").value;
-    if(!name){toast("请输入工具名称","err");return;}if(!link){toast("请填写赞助下载链接","err");return;}
-    if(editId){const t=state.tools.find(x=>x.id===editId);if(!t)return;t.name=name;t.icon=icon;t.link=link;t.readme=readme;addLog("修改工具","修改了《"+name+"》");toast("工具已更新","ok");}
-    else{state.tools.push({id:uid(),name,icon,link,readme,downloads:0,createdAt:Date.now()});addLog("上架工具","发布了《"+name+"》");toast("工具已发布","ok");}
-    save();resetPubForm();renderTools();
-  }
-  function editTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;editId=id;document.getElementById("pubTitle").textContent="修改工具";document.getElementById("pubBtn").textContent="保存修改";document.getElementById("f-name").value=t.name;document.getElementById("f-icon").value=t.icon||"📦";document.getElementById("f-iconPrev").textContent=t.icon||"📦";document.getElementById("f-link").value=t.link||"";document.getElementById("f-readme").value=t.readme||"";App.go("#/admin/publish");}
-  function delTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;if(!confirm("确定删除工具《"+t.name+"》？相关评论也会一并删除。"))return;state.tools=state.tools.filter(x=>x.id!==id);state.comments=state.comments.filter(c=>c.toolId!==id);addLog("删除工具","删除了《"+t.name+"》");save();renderToolsAdmin();renderTools();renderDashboard();toast("工具已删除","ok");}
-  function renderToolsAdmin(){const box=document.getElementById("toolsTable");if(state.tools.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无工具</div>';return;}box.innerHTML='<table><thead><tr><th>图标</th><th>名称</th><th>下载量</th><th>发布时间</th><th>操作</th></tr></thead><tbody>'+state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt).map(t=>`<tr><td style="font-size:22px">${esc(t.icon||"📦")}</td><td>${esc(t.name)}</td><td>${t.downloads||0}</td><td style="color:var(--muted);font-size:12px">${fmtDate(t.createdAt)}</td><td><button class="btn" onclick="App.editTool('${t.id}')">修改</button> <button class="btn btn-danger" onclick="App.delTool('${t.id}')">删除</button></td></tr>`).join("")+'</tbody></table>';}
-  function renderCommentsAdmin(){const box=document.getElementById("commentsTable");if(state.comments.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无评论</div>';return;}box.innerHTML='<table><thead><tr><th>用户</th><th>来源工具</th><th>内容</th><th>时间</th><th>操作</th></tr></thead><tbody>'+state.comments.slice().sort((a,b)=>b.time-a.time).map(c=>`<tr><td><b>${esc(c.name||"匿名")}</b></td><td>${esc(c.from||"")}</td><td style="max-width:360px;white-space:pre-wrap">${esc(c.text)}</td><td style="color:var(--muted);font-size:12px;white-space:nowrap">${fmtDate(c.time)}</td><td><button class="btn btn-danger" onclick="App.delComment('${c.id}')">删除</button></td></tr>`).join("")+'</tbody></table>';}
-  function delComment(id){state.comments=state.comments.filter(c=>c.id!==id);save();renderCommentsAdmin();renderDashboard();toast("评论已删除","ok");}
-  function saveAnnounce(){state.announce=(document.getElementById("f-announce").value||"").trim();save();addLog("编辑公告",state.announce?"更新了首页公告":"清空了首页公告");toast("公告已保存","ok");renderAnnounce();}
-  function renderAnnounceAdmin(){document.getElementById("f-announce").value=state.announce||"";}
+/* 数据面板 */
+function renderDash(main){
+  const totalDl=state.tools.reduce((s,t)=>s+(t.downloads|0),0);
+  const today=new Date().toDateString();
+  const pvToday=state.logs.filter(l=>l.type==="访问"&&new Date(l.at).toDateString()===today).length;
+  main.innerHTML=`<div class="page-title">数据面板</div><div class="page-desc">平台运营核心指标概览。</div>
+    <div class="stat-grid"><div class="stat"><div class="num">${pvToday}</div><div class="lbl">今日访问量</div></div><div class="stat"><div class="num">${state.tools.length}</div><div class="lbl">工具数量</div></div><div class="stat"><div class="num">${totalDl}</div><div class="lbl">累计下载量</div></div><div class="stat"><div class="num">${state.comments.length}</div><div class="lbl">评论数</div></div></div>
+    <div class="card-box"><div class="sec-head"><h2 style="font-size:16px">最近动态</h2></div>${state.logs.slice().reverse().slice(0,8).map(l=>`<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px"><span class="tnum-badge">${fmtTime(l.at)}</span><span>${esc(l.text)}</span></span></div>`).join("")||`<div class="muted-note">暂无动态。</div>`}</div>`;
+}
+/* 日志（对外公开日志，后台编辑后公开） */
+function renderLogsAdmin(main){
+  main.innerHTML=`<div class="page-title">日志</div><div class="page-desc">此处为<b>对外公开的日志</b>：由后台编辑/发布后，方在前台「公开日志」区域可见。可新增、编辑、发布/撤下、删除。</div>
+    <div class="card-box"><div class="toolbar"><button class="btn btn-primary btn-sm" id="btnNewLog">新增日志</button></div>
+    <table class="data"><thead><tr><th style="width:140px">时间</th><th>内容</th><th style="width:90px">状态</th><th style="width:180px">操作</th></tr></thead><tbody id="logBody"></tbody></table></div>`;
+  const body=document.getElementById("logBody");
+  const draw=()=>{ body.innerHTML=state.logs.slice().reverse().map(l=>`<tr><td>${fmtTime(l.at)}</td><td><div style="font-weight:600">${esc(l.text)}</div>${l.type?`<div class="muted-note" style="margin:4px 0 0;padding:4px 8px">标签：${esc(l.type)}</div>`:""}</td><td>${l.published?`<span class="badge-pub">已公开</span>`:`<span class="badge-unpub">未公开</span>`}</td><td><button class="btn btn-ghost btn-sm" data-act="toggle" data-id="${l.id}">${l.published?"撤下":"发布"}</button><button class="btn btn-ghost btn-sm" data-act="edit" data-id="${l.id}">编辑</button><button class="btn btn-danger btn-sm" data-act="del" data-id="${l.id}">删除</button></td></tr>`).join("")||`<tr><td colspan="4"><div class="empty" style="padding:30px">暂无日志，点击「新增日志」创建。</div></td></tr>`;
+    body.querySelectorAll('button[data-act]').forEach(b=>b.addEventListener("click",()=>{ const id=+b.dataset.id; const log=state.logs.find(x=>x.id===id); if(!log) return; const act=b.dataset.act; if(act==="del"){ if(!confirm("确定删除该日志？")) return; state.logs=state.logs.filter(x=>x.id!==id); toast("已删除"); } if(act==="toggle"){ log.published=!log.published; toast(log.published?"已公开":"已撤下"); } if(act==="edit"){ const nv=prompt("编辑日志内容：",log.text); if(nv!==null){ log.text=nv.trim()||log.text; toast("已更新"); } } save(); draw(); }));
+  };
+  document.getElementById("btnNewLog").addEventListener("click",()=>{ const v=prompt("请输入新日志内容："); if(!v) return; addLog("公告",""); const log=state.logs[state.logs.length-1]; log.text=v.trim(); log.published=true; toast("已新增并公开"); save(); draw(); });
+  draw();
+}
+/* 工具上架 */
+function renderPublish(main,editId){
+  const editing=editId?state.tools.find(x=>x.id===editId):null;
+  main.innerHTML=`<div class="page-title">${editing?"编辑工具":"工具上架"}</div><div class="page-desc">填写工具信息并发布。图标支持<b>上传图片</b>（自动适配），README 支持<b>上传 .md 文件</b>直接读取；按钮文案可自定义（如"赞助并下载""立即获取""前往官网"等）。</div>
+  <div class="card-box"><div class="form-grid">
+    <label>工具名称</label><div><input id="f_name" value="${esc(editing?editing.name:"")}" placeholder="如：GitHub 仓库分析器" style="width:100%"></div>
+    <label>编号</label><div><input id="f_num" value="${esc(editing?(editing.number||""):"")}" placeholder="自定义编号，可重复，仅后台可见" style="width:260px"><div class="helper">编号用于内部归类与检索，不向普通用户公开，可在后台搜索/管理。</div></div>
+    <label>图标（上传图片）</label><div><label class="upload-box" style="display:block;max-width:320px"><div class="upic">🖼️</div><div>点击上传图标图片</div><div class="helper">支持 PNG/JPG/SVG，将转为内嵌图片</div><input type="file" id="f_iconFile" accept="image/*"></label><img id="f_iconPrev" class="icon-preview" ${editing&&editing.icon&&editing.icon.startsWith("data:")?`src="${editing.icon}" style="display:block"`:""}></div>
+    <label>赞助下载链接</label><div><input id="f_url" value="${esc(editing?editing.sponsorUrl:"")}" placeholder="https://..." style="width:100%"><div class="helper">用户点击下载按钮后将跳转至此链接。</div></div>
+    <label>下载按钮文案</label><div><input id="f_btn" value="${esc(editing?(editing.btnText||""):"")}" placeholder="留空则使用默认「赞助并下载」" style="width:320px"><div class="helper">可为每个工具单独设置，如"赞助并下载""立即获取""前往官网"。</div></div>
+    <label>README（上传 .md）</label><div><label class="upload-box" style="display:block;max-width:420px"><div class="upic">📄</div><div>点击上传 README.md 文件</div><input type="file" id="f_readmeFile" accept=".md,.markdown,text/markdown,text/plain"></label><div class="helper">或直接在下方编辑 Markdown 文本。</div></div>
+    <label>README 内容</label><div><textarea id="f_readme" style="width:100%;min-height:200px">${esc(editing?editing.readme:"# 工具说明\n\n在这里撰写工具的使用说明、功能介绍与注意事项。")}</textarea></div>
+    <div class="full" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px"><button class="btn btn-ghost" id="btnCancel">取消</button><button class="btn btn-primary" id="btnSave">${editing?"保存修改":"发布工具"}</button></div>
+  </div></div>`;
+  let iconData=editing&&editing.icon&&editing.icon.startsWith("data:")?editing.icon:"";
+  document.getElementById("f_iconFile").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ iconData=r.result; const p=document.getElementById("f_iconPrev"); p.src=r.result; p.style.display="block"; }; r.readAsDataURL(f); });
+  document.getElementById("f_readmeFile").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ document.getElementById("f_readme").value=r.result; }; r.readAsText(f,"utf-8"); });
+  document.getElementById("btnCancel").addEventListener("click",()=>navigate("#/admin/manage"));
+  document.getElementById("btnSave").addEventListener("click",()=>{
+    const name=document.getElementById("f_name").value.trim(); if(!name){alert("请输入工具名称");return;}
+    const num=document.getElementById("f_num").value.trim();
+    const url=document.getElementById("f_url").value.trim();
+    const btn=document.getElementById("f_btn").value.trim();
+    const readme=document.getElementById("f_readme").value;
+    if(editing){ editing.name=name; editing.number=num; editing.icon=iconData||editing.icon; editing.sponsorUrl=url; editing.btnText=btn; editing.readme=readme; editing.updatedAt=Date.now(); addLog("修改",`修改了工具「${name}」`); toast("已保存"); }
+    else { state.tools.push({id:uid(),name,number:num,icon:iconData,date:new Date().toISOString().slice(0,10),sponsorUrl:url,btnText:btn,readme,downloads:0,createdAt:Date.now()}); addLog("上架",`上架了工具「${name}」`); toast("已发布"); }
+    save(); navigate("#/admin/manage");
+  });
+}
+/* 工具管理 */
+function renderManage(main){
+  main.innerHTML=`<div class="page-title">工具管理</div><div class="page-desc">查看、修改、删除已上架工具。编号仅在此处可见，不向普通用户公开。</div>
+    <div class="card-box"><div class="toolbar"><input id="mSearch" placeholder="按名称 / 编号搜索…" style="max-width:280px"></div>
+    <table class="data"><thead><tr><th style="width:60px">图标</th><th>名称</th><th style="width:120px">编号</th><th style="width:110px">下载量</th><th style="width:120px">发布日期</th><th style="width:170px">操作</th></tr></thead><tbody id="mBody"></tbody></table></div>`;
+  const body=document.getElementById("mBody"); const sq=document.getElementById("mSearch");
+  const draw=()=>{ const kw=(sq.value||"").toLowerCase(); const list=state.tools.filter(t=>!kw||t.name.toLowerCase().includes(kw)||(t.number||"").toLowerCase().includes(kw)).slice().reverse(); body.innerHTML=list.map(t=>`<tr><td>${t.icon&&t.icon.startsWith("data:")?`<img class="thumb" src="${t.icon}">`:`<div class="thumb" style="display:flex;align-items:center;justify-content:center">📦</div>`}</td><td><b>${esc(t.name)}</b></td><td><span class="tnum-badge">${esc(t.number||"-")}</span></td><td>${t.downloads|0}</td><td>${esc(t.date||"")}</td><td><button class="btn btn-ghost btn-sm" data-act="edit" data-id="${t.id}">修改</button><button class="btn btn-danger btn-sm" data-act="del" data-id="${t.id}">删除</button></td></tr>`).join("")||`<tr><td colspan="6"><div class="empty" style="padding:30px">暂无工具。</div></td></tr>`;
+    body.querySelectorAll('button[data-act]').forEach(b=>b.addEventListener("click",()=>{ const id=b.dataset.id, t=state.tools.find(x=>x.id===id); if(!t) return; if(b.dataset.act==="del"){ if(!confirm(`确定删除「${t.name}」？相关评论将一并清除。`)) return; state.tools=state.tools.filter(x=>x.id!==id); state.comments=state.comments.filter(c=>c.toolId!==id); addLog("删除",`删除了工具「${t.name}」`); toast("已删除"); save(); draw(); } if(b.dataset.act==="edit"){ renderPublish(main,id); } }));
+  };
+  sq.addEventListener("input",draw); draw();
+}
+/* 评论管理 */
+function renderCmtAdmin(main){
+  main.innerHTML=`<div class="page-title">评论管理</div><div class="page-desc">查看与删除用户评论，可筛选来源工具。</div>
+    <div class="card-box"><div class="toolbar"><select id="cFilter" style="max-width:280px"><option value="">全部工具</option>${state.tools.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join("")}</select></div>
+    <table class="data"><thead><tr><th style="width:140px">用户</th><th>内容</th><th style="width:160px">来源工具</th><th style="width:150px">时间</th><th style="width:90px">操作</th></tr></thead><tbody id="cBody"></tbody></table></div>`;
+  const body=document.getElementById("cBody"); const cf=document.getElementById("cFilter");
+  const draw=()=>{ const list=state.comments.filter(c=>!cf.value||c.toolId===cf.value).sort((a,b)=>b.at-a.at); body.innerHTML=list.map(c=>{ const t=state.tools.find(x=>x.id===c.toolId); return `<tr><td>${esc(c.author||"匿名")}</td><td>${esc(c.text)}</td><td>${t?`<span class="tnum-badge">${esc(t.name)}</span>`:`<span class="muted-note" style="margin:0;padding:2px 6px">已删除工具</span>`}</td><td>${fmtTime(c.at)}</td><td><button class="btn btn-danger btn-sm" data-act="del" data-id="${c.id}">删除</button></td></tr>`; }).join("")||`<tr><td colspan="5"><div class="empty" style="padding:30px">暂无评论。</div></td></tr>`;
+    body.querySelectorAll('button[data-act="del"]').forEach(b=>b.addEventListener("click",()=>{ const id=b.dataset.id; if(!confirm("删除该评论？")) return; state.comments=state.comments.filter(x=>x.id!==id); toast("已删除"); save(); draw(); }));
+  };
+  cf.addEventListener("change",draw); draw();
+}
+/* 公告 */
+function renderAnn(main){
+  main.innerHTML=`<div class="page-title">公告</div><div class="page-desc">编辑首页顶部公告，留空则不显示。</div>
+    <div class="card-box"><textarea id="aText" style="width:100%;min-height:120px">${esc(state.announcement||"")}</textarea><div style="display:flex;justify-content:flex-end;margin-top:14px"><button class="btn btn-primary" id="aSave">保存公告</button></div></div>`;
+  document.getElementById("aSave").addEventListener("click",()=>{ state.announcement=document.getElementById("aText").value.trim(); addLog("公告","更新了首页公告"); save(); toast("已保存"); });
+}
 
-  // ---------- 视图切换 ----------
-  function showHome(){setUI("home");renderTools(document.getElementById("searchInput").value.trim());}
-  function showAdmin(){setUI("admin");renderDashboard();}
-  function showLogin(){setUI("login");document.getElementById("loginUser").value="";document.getElementById("loginPass").value="";}
-  function setUI(mode){
-    document.getElementById("header").style.display=(mode==="login")?"none":"flex";
-    document.getElementById("homeView").style.display=(mode==="home")?"block":"none";
-    document.getElementById("adminView").style.display=(mode==="admin")?"flex":"none";
-    document.getElementById("loginView").style.display=(mode==="login")?"flex":"none";
-  }
-
-  // ---------- 路由（hash）----------
-  function parseHash(){
-    const h=location.hash||"#/";
-    const m=h.match(/^#\/tool\/([^/]+)$/);
-    if(m) return {view:"tool",id:m[1]};
-    if(h.startsWith("#/admin")){
-      const v=(h.match(/^#\/admin\/([^/]+)/)||[])[1]||"dash";
-      return {view:"admin",adminView:v};
-    }
-    return {view:"home"};
-  }
-  function applyRoute(){
-    const r=parseHash();
-    if(r.view==="tool"){showHome();openDetail(r.id);return;}
-    if(r.view==="admin"){
-      if(!isAuthed()){showLogin();return;}
-      const map={dash:1,logs:1,publish:1,tools:1,comments:1,announce:1};
-      const v=map[r.adminView]?r.adminView:"dash";
-      showAdmin();
-      const el=document.querySelector(".sidebar a[data-view='"+v+"']")||document.querySelector(".sidebar a");
-      switchAdmin(v,el);
-      return;
-    }
-    // home
-    if(isAuthed()){showAdmin();return;} // 已登录刷新后台则保留后台
-    showHome();
-  }
-  function go(hash){location.hash=hash;}
-  window.addEventListener("hashchange",applyRoute);
-
-  // ---------- 后台导航 ----------
-  function switchAdmin(view,el,e){
-    if(e) e.preventDefault();
-    document.querySelectorAll(".sidebar a").forEach(a=>a.classList.remove("active"));
-    if(el) el.classList.add("active");
-    ["dash","logs","publish","tools","comments","announce"].forEach(v=>{const dv=document.getElementById("view-"+v);if(dv)dv.style.display=(v===view?"block":"none");});
-    if(view==="logs")renderLogs();
-    if(view==="tools")renderToolsAdmin();
-    if(view==="comments")renderCommentsAdmin();
-    if(view==="publish"){resetPubForm();}
-    if(view==="announce")renderAnnounceAdmin();
-    if(view==="dash")renderDashboard();
-  }
-
-  // ---------- 登录/登出 ----------
-  async function doLogin(){
-    const u=document.getElementById("loginUser").value.trim();const p=document.getElementById("loginPass").value;
-    const pHash=await sha256(p);
-    if(u===ADMIN_USER && constantTimeEq(pHash,state.adminHash||ADMIN_PASS_SHA256)){setAuth(makeToken());addLog("后台登录","管理员登录成功");applyRoute();}
-    else{toast("账号或密码错误","err");}
-  }
-  function enterAdmin(){if(isAuthed()){go("#/admin/dash");}else{showLogin();}}
-  function logout(e){if(e)e.preventDefault();clearAuth();addLog("后台登出","管理员已退出");go("#/");toast("已退出登录","ok");}
-
-  // ---------- Modal / Toast ----------
-  function openModal(id){document.getElementById(id).classList.add("show");}
-  function closeModal(id){document.getElementById(id).classList.remove("show");if(location.hash.startsWith("#/tool"))history.back();}
-  let toastT;function toast(msg,type){const t=document.getElementById("toast");document.getElementById("toastTxt").textContent=msg;t.className="toast show "+(type||"");clearTimeout(toastT);toastT=setTimeout(()=>t.className="toast",2200);}
-
-  // 搜索
-  document.getElementById("searchInput").addEventListener("input",e=>renderTools(e.target.value.trim()));
-
-  // ---------- 启动 ----------
-  tickVisit();
-  document.getElementById("footYear").textContent=new Date().getFullYear();
-  if(!state.adminHash) state.adminHash=ADMIN_PASS_SHA256;
-  renderAnnounce();
-  applyRoute();
-
-  // 对外暴露
-  return {go,enterAdmin,doLogin,logout,switchAdmin,openDetail,postComment,sponsorDownload,saveTool,editTool,delTool,delComment,saveAnnounce,delLog,clearLogs,resetPubForm,openModal,closeModal,toast};
-})();
+/* ========= 工具函数 ========= */
+function esc(s){ if(s===null||s===undefined) return""; return String(s).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])); }
+function fmtTime(ts){ const d=new Date(ts); const p=n=>String(n).padStart(2,"0"); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; }
+/* 极简 Markdown 渲染（安全：先转义再格式化） */
+function renderMarkdown(md){ let s=esc(md); s=s.replace(/^### (.+)$/gm,"<h3>$1</h3>").replace(/^## (.+)$/gm,"<h2>$1</h2>").replace(/^# (.+)$/gm,"<h1>$1</h1>"); s=s.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/`([^`]+)`/g,"<code>$1</code>"); s=s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,'<img alt="$1" src="$2">'); s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>'); s=s.replace(/^- (.+)$/gm,"<li>$1</li>"); s=s.replace(/(<li>.*<\/li>\n?)+/g,m=>"<ul>"+m+"</ul>"); s=s.replace(/\n{2,}/g,"</p><p>").replace(/\n/g,"<br>"); return "<p>"+s+"</p>"; }
 </script>
 </body>
 </html>
