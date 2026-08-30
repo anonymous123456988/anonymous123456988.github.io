@@ -2,12 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TinySpace</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  *{margin:0;padding:0;box-sizing:border-box}
   :root{
     --bg:#ffffff;--bg-soft:#f6f8fa;--panel:#ffffff;--card:#ffffff;--border:#e4e8ee;
     --text:#1a2230;--muted:#6b7684;--brand:#2563eb;--brand-soft:#eef4ff;
@@ -15,211 +13,192 @@
     --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
     --shadow-md:0 8px 24px rgba(16,24,40,.08);
     --radius:10px;
-    --header-h:56px;
   }
   html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
-  body{min-height:100vh;overflow-x:hidden;-webkit-text-size-adjust:100%}
   a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
-  button{font-family:inherit;cursor:pointer;border:none;outline:none;min-height:36px}
-  input,textarea,select{font-family:inherit;font-size:16px;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;outline:none;transition:border-color .15s;width:100%}
-  @media(max-width:760px){input,textarea,select{font-size:16px}} /* 防止 iOS 自动缩放 */
+  button{font-family:inherit;cursor:pointer;border:none;outline:none}
+  input,textarea,select{font-family:inherit;font-size:14px;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;outline:none;transition:border-color .15s}
   input:focus,textarea:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
   textarea{resize:vertical;min-height:80px}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:8px;font-weight:600;transition:.15s;background:var(--chip);color:var(--text);border:1px solid var(--border);font-size:13px;min-height:36px;white-space:nowrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:8px;font-weight:600;transition:.15s;background:var(--chip);color:var(--text);border:1px solid var(--border);font-size:13px}
   .btn:hover{background:#e8ecf1}
   .btn-primary{background:var(--brand);color:#fff;border-color:var(--brand)}
   .btn-primary:hover{background:#1d4ed8;border-color:#1d4ed8}
   .btn-danger{background:#fef2f2;color:var(--err);border-color:#fbd5d5}
   .btn-danger:hover{background:#fee2e2}
-  .btn-sm{padding:5px 10px;font-size:12px;min-height:30px}
   .btn-ghost{background:transparent;border-color:transparent}
   .btn-ghost:hover{background:var(--chip)}
-  .btn-block{width:100%}
+  .btn-sm{padding:5px 10px;font-size:12px}
   .container{max-width:1140px;margin:0 auto;padding:0 24px}
-  @media(max-width:760px){.container{padding:0 14px}}
   .header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
-  .header-inner{display:flex;align-items:center;gap:12px;height:var(--header-h)}
-  .logo{font-size:16px;font-weight:800;color:var(--text);letter-spacing:.2px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .header-inner{display:flex;align-items:center;gap:18px;height:60px}
+  .logo{font-size:17px;font-weight:800;color:var(--text);letter-spacing:.2px;display:flex;align-items:center;gap:8px}
   .logo .mark{width:26px;height:26px;border-radius:7px;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
-  .search{display:flex;align-items:center;gap:8px;flex:1;min-width:0;background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:5px 11px}
-  .search input{border:none;background:transparent;flex:1;padding:4px;font-size:14px;min-height:0;width:auto}
+  .search{display:flex;align-items:center;gap:8px;flex:1;max-width:420px;background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:5px 11px}
+  .search input{border:none;background:transparent;flex:1;padding:4px;font-size:13px}
   .search input:focus{box-shadow:none;border:none}
-  .nav{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
+  .nav{display:flex;gap:4px;margin-left:auto}
   .nav .btn{padding:6px 12px;font-size:13px}
-  @media(max-width:760px){
-    .header-inner{gap:8px}
-    .logo span:not(.mark){display:none} /* 移动端只显示 T 方块 */
-    .nav .btn{padding:6px 8px;font-size:12px}
-  }
-  .hero{padding:36px 0 22px;text-align:left;border-bottom:1px solid var(--border);margin-bottom:8px}
-  @media(max-width:760px){.hero{padding:22px 0 16px}}
-  .hero .tag{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:3px 10px;border-radius:99px;margin-bottom:12px;letter-spacing:.3px}
-  .hero h1{font-size:30px;font-weight:800;line-height:1.25;letter-spacing:-.5px;max-width:720px}
+  .hero{padding:56px 0 28px;text-align:left;border-bottom:1px solid var(--border);margin-bottom:8px}
+  .hero .tag{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:3px 10px;border-radius:99px;margin-bottom:14px;letter-spacing:.3px}
+  .hero h1{font-size:32px;font-weight:800;line-height:1.25;letter-spacing:-.5px;max-width:720px}
   .hero p{color:var(--muted);margin-top:12px;font-size:15px;max-width:640px}
-  @media(max-width:760px){.hero h1{font-size:22px}.hero p{font-size:13px}}
-  .section-title{display:flex;align-items:center;justify-content:space-between;margin:24px 0 14px;gap:10px;flex-wrap:wrap}
+  .section-title{display:flex;align-items:center;justify-content:space-between;margin:28px 0 16px;flex-wrap:wrap;gap:10px}
   .section-title h2{font-size:18px;font-weight:700}
-  @media(max-width:760px){.section-title{margin:18px 0 12px}}
+  .series-chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;padding:0;list-style:none}
+  .series-chips .chip{background:var(--chip);border:1px solid var(--border);border-radius:99px;padding:6px 14px;font-size:13px;cursor:pointer;transition:.15s}
+  .series-chips .chip:hover{background:#e8ecf1}
+  .series-chips .chip.active{background:var(--brand);color:#fff;border-color:var(--brand)}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
-  @media(max-width:760px){.grid{grid-template-columns:1fr;gap:12px}}
   .tool-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,transform .15s;box-shadow:var(--shadow)}
-  .tool-card:hover{border-color:#c7d2e0}
+  .tool-card:hover{border-color:#c7d2e0;transform:translateY(-2px)}
   .tool-card .icon{height:104px;display:flex;align-items:center;justify-content:center;background:var(--bg-soft);border-bottom:1px solid var(--border);overflow:hidden}
   .tool-card .icon img{width:100%;height:100%;object-fit:cover;display:block}
   .tool-card .icon .em{font-size:40px}
-  @media(max-width:760px){.tool-card .icon{height:88px}}
   .tool-card .body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:8px}
-  .tool-card .name{font-weight:700;font-size:15px;line-height:1.4}
+  .tool-card .name{font-weight:700;font-size:15px}
   .tool-card .meta{color:var(--muted);font-size:12px;display:flex;gap:14px;flex-wrap:wrap}
   .tool-card .meta b{color:var(--text);font-weight:600}
   .tool-card .actions{display:flex;gap:8px;margin-top:auto;padding-top:12px}
   .tool-card .actions .btn{flex:1;padding:7px 0;font-size:13px}
-  .series-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:var(--brand-soft);color:var(--brand);margin-top:2px}
   .modal-mask{position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
   .modal-mask.show{display:flex}
-  @media(max-width:760px){.modal-mask{padding:0;align-items:flex-end}.modal{border-radius:14px 14px 0 0;max-height:92vh}}
   .modal{background:var(--panel);border:1px solid var(--border);border-radius:14px;width:100%;max-width:720px;max-height:86vh;overflow:auto;box-shadow:var(--shadow-md)}
   .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--panel);z-index:2;border-radius:14px 14px 0 0}
   .modal-head h3{font-size:16px;font-weight:700}
   .modal-body{padding:20px}
-  @media(max-width:760px){.modal-body{padding:16px}}
-  .close{background:transparent;color:var(--muted);font-size:22px;line-height:1;padding:4px 8px;border-radius:6px;min-height:0}
+  .close{background:transparent;color:var(--muted);font-size:20px;line-height:1;padding:4px 8px;border-radius:6px}
   .close:hover{background:var(--chip);color:var(--text)}
   .detail-icon{width:80px;height:80px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg-soft);margin-bottom:14px;border:1px solid var(--border);overflow:hidden}
   .detail-icon img{width:100%;height:100%;object-fit:cover;display:block}
   .detail-meta{display:flex;gap:20px;color:var(--muted);font-size:13px;margin:10px 0 16px;flex-wrap:wrap}
   .detail-meta b{color:var(--text)}
-  .readme{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:16px;line-height:1.7;color:#2a3342;font-size:14px;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+  .readme{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:16px;line-height:1.7;color:#2a3342;font-size:14px;white-space:pre-wrap;word-break:break-word}
   .readme h1,.readme h2,.readme h3{color:var(--text);margin:10px 0 6px}
-  .readme code{background:#fff;border:1px solid var(--border);padding:1px 5px;border-radius:4px;font-size:13px;white-space:pre-wrap}
-  .readme pre{background:#fff;padding:12px;border-radius:8px;border:1px solid var(--border);overflow:auto;margin:8px 0;white-space:pre}
+  .readme code{background:#fff;border:1px solid var(--border);padding:1px 5px;border-radius:4px;font-size:13px}
+  .readme pre{background:#fff;padding:12px;border-radius:8px;border:1px solid var(--border);overflow:auto;margin:8px 0}
   .readme a{color:var(--brand)}
   .readme ul,.readme ol{padding-left:22px;margin:6px 0}
   .comments{margin-top:24px;border-top:1px solid var(--border);padding-top:18px}
   .comments h4{font-size:14px;margin-bottom:12px;font-weight:700}
   .comment{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
-  .comment .c-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
+  .comment .c-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
   .comment .c-from{color:var(--muted);font-size:12px}
-  .comment .c-text{font-size:14px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+  .comment .c-text{font-size:14px;line-height:1.6;white-space:pre-wrap}
   .comment-form{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-  .comment-form .row{display:flex;gap:8px;flex-wrap:wrap}
-  .comment-form input{flex:1;min-width:120px}
-  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:10px;box-shadow:var(--shadow-md);opacity:0;transition:.25s;z-index:200;font-size:14px;display:flex;align-items:center;gap:8px;max-width:90vw;pointer-events:none}
+  .comment-form .row{display:flex;gap:8px}
+  .comment-form input{flex:1}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:10px;box-shadow:var(--shadow-md);opacity:0;transition:.25s;z-index:200;font-size:14px;display:flex;align-items:center;gap:8px;max-width:90vw}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  @media(max-width:760px){.toast{bottom:16px;font-size:13px;padding:10px 14px}}
   .toast.ok{border-color:#b7e4c7}.toast.ok .dot{background:var(--ok)}
   .toast.err{border-color:#f5c2c0}.toast.err .dot{background:var(--err)}
   .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--brand);flex-shrink:0}
-  .admin{display:flex;gap:0;min-height:calc(100vh - var(--header-h))}
-  @media(max-width:760px){.admin{position:relative}}
-  .sidebar{width:220px;background:var(--bg-soft);border-right:1px solid var(--border);padding:16px 10px;flex-shrink:0;overflow-y:auto}
-  @media(max-width:760px){
-    .sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:78%;max-width:280px;z-index:90;
-      transform:translateX(-100%);transition:transform .25s;box-shadow:var(--shadow-md)}
-    .sidebar.open{transform:translateX(0)}
-    .sidebar-backdrop{display:none;position:fixed;inset:var(--header-h) 0 0 0;background:rgba(16,24,40,.3);z-index:89}
-    .sidebar-backdrop.open{display:block}
-  }
+  .admin{display:flex;gap:0;min-height:calc(100vh - 60px)}
+  .sidebar{width:220px;background:var(--bg-soft);border-right:1px solid var(--border);padding:16px 10px;flex-shrink:0}
   .sidebar .brand{font-size:12px;color:var(--muted);padding:0 10px 12px;border-bottom:1px solid var(--border);margin-bottom:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
-  .sidebar a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:8px;color:var(--muted);font-size:14px;margin-bottom:2px;font-weight:500;min-height:0}
+  .sidebar a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:var(--muted);font-size:14px;margin-bottom:2px;font-weight:500}
   .sidebar a:hover{background:var(--chip);color:var(--text);text-decoration:none}
   .sidebar a.active{background:var(--brand);color:#fff}
   .sidebar a.active .ic{color:#fff}
-  .sidebar a .ic{font-size:15px;width:20px;text-align:center;color:var(--muted);flex-shrink:0}
-  .main{flex:1;padding:24px 28px;min-width:0;width:100%}
-  @media(max-width:760px){.main{padding:16px 14px}}
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+  .sidebar a .ic{font-size:15px;width:20px;text-align:center;color:var(--muted)}
+  .sidebar .menu-toggle{display:none}
+  .main{flex:1;padding:24px 28px;min-width:0}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
   .stat{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
-  .stat .n{font-size:26px;font-weight:800;letter-spacing:-.5px;word-break:break-all}
+  .stat .n{font-size:26px;font-weight:800;letter-spacing:-.5px}
   .stat .l{color:var(--muted);font-size:12px;margin-top:4px}
-  .stat .sync{font-size:11px;margin-top:6px}
-  .stat .sync.ok{color:var(--ok)}.stat .sync.err{color:var(--warn)}
-  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
-  @media(max-width:760px){.panel{padding:16px}}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
   .panel h3{font-size:15px;font-weight:700;margin-bottom:14px}
-  /* 表格移动端横向滚动 */
-  .table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
-  table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
-  @media(max-width:760px){table{min-width:520px;font-size:12px}}
+  table{width:100%;border-collapse:collapse;font-size:13px}
   th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
-  th{color:var(--muted);font-weight:600;font-size:11px;letter-spacing:.4px;text-transform:uppercase;background:var(--bg-soft);white-space:nowrap}
+  th{color:var(--muted);font-weight:600;font-size:11px;letter-spacing:.4px;text-transform:uppercase;background:var(--bg-soft)}
   tr:last-child td{border-bottom:none}
   td .btn{padding:5px 10px;font-size:12px}
-  td .btn+.btn{margin-left:4px}
   .empty{text-align:center;color:var(--muted);padding:40px 0}
   .empty .big{font-size:34px;margin-bottom:8px;color:#c7d2e0}
   .form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
   .form-row label{font-size:13px;color:var(--muted);font-weight:600}
   .form-row .hint{font-size:12px;color:var(--muted)}
-  .icon-pick{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .icon-pick{display:flex;gap:10px;align-items:center}
   .icon-pick .prev{width:52px;height:52px;border-radius:11px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid var(--border);overflow:hidden;flex-shrink:0}
   .icon-pick .prev img{width:100%;height:100%;object-fit:cover;display:block}
-  .icon-pick .file-box{flex:1;min-width:200px}
-  .login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - var(--header-h));padding:20px}
+  .login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:20px}
   .login{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:380px;box-shadow:var(--shadow-md)}
   .login h2{font-size:19px;margin-bottom:18px;text-align:center;font-weight:800}
   .login .form-row{margin-bottom:16px}
   .login .btn{width:100%;padding:11px}
-  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok);white-space:nowrap}
+  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok)}
   .badge.err{background:#fef2f2;color:var(--err)}
   .badge.warn{background:#fff4d6;color:var(--warn)}
-  .badge.brand{background:var(--brand-soft);color:var(--brand)}
   .flex-between{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
   .announce-box{background:var(--brand-soft);border:1px solid #d6e4ff;border-radius:10px;padding:12px 14px;margin-bottom:18px;display:flex;gap:10px;align-items:flex-start}
-  .announce-box .pin{font-size:16px;color:var(--brand);flex-shrink:0}
-  .announce-box .txt{font-size:13px;color:#264a7a;line-height:1.6;word-break:break-word}
+  .announce-box .pin{font-size:16px;color:var(--brand)}
+  .announce-box .txt{font-size:13px;color:#264a7a;line-height:1.6}
   .footer{color:var(--muted);text-align:center;font-size:12px;padding:30px 0 22px;border-top:1px solid var(--border);margin-top:24px}
   .muted{color:var(--muted);font-size:13px}
-  .tnum-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;word-break:break-all}
+  .tnum-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
   .adm-icon{width:36px;height:36px;border-radius:8px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--border)}
   .adm-icon img{width:100%;height:100%;object-fit:cover;display:block}
   .adm-icon .em{font-size:18px}
   .unlock-tip{font-size:12px;color:var(--muted);margin-top:6px}
-  .menu-btn{display:none}
-  @media(max-width:760px){.menu-btn{display:inline-flex}}
-  .series-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-  .series-nav .chip{padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:13px;transition:.15s}
-  .series-nav .chip.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-  .series-nav .chip:hover{background:var(--chip)}
-  .series-nav .chip.active:hover{background:var(--brand)}
-  .series-card{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .series-card .fill{flex:1;min-width:160px}
-  .sync-banner{font-size:12px;color:var(--muted);background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .sync-banner code{background:#fff;padding:1px 6px;border-radius:4px;border:1px solid var(--border);font-size:11px;word-break:break-all}
+  .sync-bar{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);padding:8px 14px;background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;margin-bottom:16px;flex-wrap:wrap}
+  .sync-bar .dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+  .sync-bar .dot.syncing{background:var(--warn);animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .menu-toggle{display:none}
+  @media(max-width:760px){
+    .sidebar{position:fixed;top:60px;left:0;bottom:0;z-index:60;transform:translateX(-100%);transition:transform .2s;width:240px}
+    .sidebar.open{transform:translateX(0)}
+    .grid{grid-template-columns:1fr}
+    .search{display:none}
+    .hero h1{font-size:26px}
+    .hero{padding:32px 0 20px}
+    .menu-toggle{display:inline-flex}
+    .nav .btn{padding:6px 8px;font-size:12px}
+    .main{padding:16px 14px}
+    .panel{padding:14px}
+    table{font-size:12px}
+    th,td{padding:8px 6px}
+    .modal{max-width:100%;max-height:92vh}
+  }
 </style>
 </head>
 <body>
 
 <header class="header" id="header" style="display:none">
   <div class="container header-inner">
-    <button class="btn btn-ghost menu-btn" id="menuBtn" aria-label="打开菜单" style="padding:6px 10px">☰</button>
-    <a href="#/" class="logo" style="text-decoration:none"><span class="mark">T</span><span>ToolHub</span></a>
+    <button class="btn btn-ghost menu-toggle" id="menuToggle" style="margin-right:4px">☰</button>
+    <div class="logo"><span class="mark">T</span>ToolHub</div>
     <div class="search">
-      <span style="color:var(--muted);flex-shrink:0">⌕</span>
-      <input id="searchInput" placeholder="搜索名称/系列，或输入编码解锁隐藏…">
+      <span style="color:var(--muted)">⌕</span>
+      <input id="searchInput" placeholder="搜索工具名称或输入编码(编号)解锁隐藏工具…">
     </div>
     <nav class="nav">
       <button class="btn btn-ghost" data-go="#/">首页</button>
-      <button class="btn btn-ghost" id="adminEnterBtn" data-action="enter-admin">后台</button>
+      <button class="btn btn-ghost" id="adminEnterBtn" data-action="enter-admin">后台管理</button>
     </nav>
   </div>
 </header>
-<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
 <section class="container" id="homeView">
   <div class="hero">
     <span class="tag">TinySpace</span>
     <h1>发现优质工具，一键获取所需</h1>
-    <p id="heroSub">由后台统一维护工具内容与下载入口，集中展示、便捷检索。可按系列归类浏览，隐藏工具需输入对应编码(编号)搜索后方可显示与下载。</p>
+    <p id="heroSub">由后台统一维护工具内容与下载入口，集中展示、便捷检索。隐藏工具需输入对应编码(编号)搜索后方可显示与下载。数据集中存储于网站所在仓库，多设备实时同步。</p>
   </div>
   <div class="announce-box" id="announceBox" style="display:none">
     <div class="pin">◆</div>
     <div class="txt" id="announceTxt"></div>
   </div>
-  <div class="section-title"><h2 id="sectionTitle">全部工具</h2><span class="muted" id="toolCount"></span></div>
-  <div class="series-nav" id="seriesNav"></div>
+  <div class="sync-bar" id="syncBar">
+    <span class="dot" id="syncDot"></span>
+    <span id="syncText">数据加载中…</span>
+    <span style="margin-left:auto" id="syncMode"></span>
+  </div>
+  <ul class="series-chips" id="seriesChips"></ul>
+  <div class="section-title"><h2 id="listTitle">全部工具</h2><span class="muted" id="toolCount"></span></div>
   <div class="grid" id="toolGrid"></div>
-  <div class="footer">© <span id="footYear"></span> TinySpace 交流群：1108628724</div>
+  <div class="footer">© <span id="footYear"></span> TinySpace 2026.08.25</div>
 </section>
 
 <div class="modal-mask" id="detailMask">
@@ -243,7 +222,7 @@
       <label>密码</label>
       <input id="loginPass" type="password" placeholder="密码" autocomplete="current-password">
     </div>
-    <button class="btn btn-primary btn-block" data-action="do-login">登 录</button>
+    <button class="btn btn-primary" data-action="do-login">登 录</button>
     <p style="color:var(--muted);font-size:12px;margin-top:14px;text-align:center">welcome</p>
   </div>
 </section>
@@ -252,23 +231,23 @@
   <aside class="sidebar" id="sidebar">
     <div class="brand">后台管理</div>
     <a href="#/admin/dash" class="active" data-view="dash"><span class="ic">▦</span>数据面板</a>
-    <a href="#/admin/series" data-view="series"><span class="ic">▤</span>系列管理</a>
     <a href="#/admin/logs" data-view="logs"><span class="ic">≡</span>日志</a>
     <a href="#/admin/publish" data-view="publish"><span class="ic">＋</span>工具上架</a>
     <a href="#/admin/tools" data-view="tools"><span class="ic">⚙</span>工具管理</a>
+    <a href="#/admin/series" data-view="series"><span class="ic">▤</span>系列管理</a>
     <a href="#/admin/comments" data-view="comments"><span class="ic">✎</span>评论管理</a>
     <a href="#/admin/announce" data-view="announce"><span class="ic">◆</span>公告</a>
+    <a href="#/admin/sync" data-view="sync"><span class="ic">⇅</span>数据同步</a>
     <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:12px">
       <a href="#/" data-action="logout" style="color:var(--muted)"><span class="ic">⏻</span>退出登录</a>
     </div>
   </aside>
   <div class="main">
     <div id="view-dash">
-      <div class="sync-banner" id="syncBanner"></div>
       <div class="stats">
-        <div class="stat"><div class="n" id="stVisits">0</div><div class="l">今日访问量(PV)</div><div class="sync" id="stVisitsSync"></div></div>
+        <div class="stat"><div class="n" id="stVisits">0</div><div class="l">今日访问量</div></div>
         <div class="stat"><div class="n" id="stTools">0</div><div class="l">工具数量</div></div>
-        <div class="stat"><div class="n" id="stDowns">0</div><div class="l">累计下载量</div><div class="sync" id="stDownsSync"></div></div>
+        <div class="stat"><div class="n" id="stDowns">0</div><div class="l">累计下载量</div></div>
         <div class="stat"><div class="n" id="stCmts">0</div><div class="l">评论总数</div></div>
         <div class="stat"><div class="n" id="stSeries">0</div><div class="l">系列数量</div></div>
       </div>
@@ -277,27 +256,10 @@
         <div id="recentLogs" class="empty"><div class="big">∅</div>暂无日志记录</div>
       </div>
     </div>
-    <div id="view-series" style="display:none">
-      <div class="panel">
-        <div class="flex-between" style="margin-bottom:14px"><h3 style="margin:0">系列管理（可设置编号、隐藏/展示整个系列）</h3></div>
-        <div class="form-row"><label>系列名称</label><input id="s-name" placeholder="例如：设计资源、开发工具集"></div>
-        <div class="form-row"><label>系列编号/编码（可重复，仅后台可见；前台可用此编号筛选）</label><input id="s-number" placeholder="如 S01"></div>
-        <div class="form-row"><label>系列图标 emoji（可选）</label><input id="s-icon" placeholder="如 🎨" value="📁"></div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-primary" id="sBtn" data-action="save-series">添加系列</button>
-          <button class="btn" data-action="reset-series-form">重置</button>
-        </div>
-        <p class="hint" style="color:var(--muted);font-size:12px;margin-top:12px">说明：隐藏系列后，该系列下所有工具在前台将不可见；隐藏工具优先于系列展示。</p>
-      </div>
-      <div class="panel">
-        <h3>已有系列</h3>
-        <div id="seriesTable"></div>
-      </div>
-    </div>
     <div id="view-logs" style="display:none">
       <div class="panel">
         <div class="flex-between" style="margin-bottom:14px"><h3 style="margin:0">公开日志（后台编辑后发布）</h3><button class="btn btn-danger btn-sm" data-action="clear-logs">清空日志</button></div>
-        <div class="table-wrap"><div id="logsTable"></div></div>
+        <div id="logsTable"></div>
       </div>
     </div>
     <div id="view-publish" style="display:none">
@@ -305,22 +267,24 @@
         <h3 id="pubTitle">工具上架</h3>
         <div class="form-row"><label>工具名称</label><input id="f-name" placeholder="例如：GitHub 加速下载器"></div>
         <div class="form-row"><label>工具编号/编码（可重复，仅后台可见；留空则不设置。前台输入此编码可解锁隐藏工具）</label><input id="f-number" placeholder="如 1001"></div>
-        <div class="form-row"><label>所属系列</label><select id="f-series"><option value="">— 不归属任何系列 —</option></select></div>
-        <div class="form-row"><label>工具图标（上传图片，≤600KB；未上传时用下方 emoji）</label>
+        <div class="form-row"><label>所属系列</label><select id="f-series"><option value="">— 无系列 —</option></select></div>
+        <div class="form-row"><label>工具图标</label>
           <div class="icon-pick">
             <div class="prev" id="f-iconPrev">📦</div>
-            <div class="file-box">
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1">
               <input id="f-iconFile" type="file" accept="image/*">
-              <span class="hint">推荐 1:1 正方形；也可填写下方 emoji 备选。</span>
+              <span class="hint">上传图片作为图标（≤600KB，推荐 1:1 正方形）；也可在下方填写 emoji 备选。</span>
             </div>
           </div>
         </div>
         <div class="form-row"><label>图标备选 emoji（未上传图片时使用）</label><input id="f-icon" placeholder="输入 emoji，如 🚀" value="📦"></div>
         <div class="form-row"><label>下载按钮文案（留空则默认"赞助下载"）</label><input id="f-btnText" placeholder="如 赞助下载 / 立即获取 / 前往官网"></div>
-        <div class="form-row"><label>赞助下载链接（用户点击按钮后真实跳转此链接）</label><input id="f-link" placeholder="https://example.com/download/xxx"></div>
+        <div class="form-row"><label>赞助下载链接（用户点击按钮后跳转此链接）</label><input id="f-link" placeholder="https://example.com/download/xxx"></div>
         <div class="form-row"><label>README.md（支持基础 Markdown；可上传 .md 文件）</label>
-          <input id="f-readmeFile" type="file" accept=".md,.markdown,text/markdown">
-          <span class="hint">上传 .md 文件将自动读入下方编辑器，仍可手动继续编辑。</span>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <input id="f-readmeFile" type="file" accept=".md,.markdown,text/markdown">
+            <span class="hint">上传 .md 文件将自动读入下方编辑器，仍可手动继续编辑。</span>
+          </div>
         </div>
         <div class="form-row"><label>README 内容</label><textarea id="f-readme" placeholder="支持 # 标题、**加粗**、`代码`、[链接](url)、- 列表 等基础语法" style="min-height:180px"></textarea></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -333,13 +297,32 @@
     <div id="view-tools" style="display:none">
       <div class="panel">
         <h3>工具管理</h3>
-        <div class="table-wrap"><div id="toolsTable"></div></div>
+        <div id="toolsTable"></div>
+      </div>
+    </div>
+    <div id="view-series" style="display:none">
+      <div class="panel">
+        <h3>系列管理</h3>
+        <p class="hint" style="margin-bottom:14px">可将工具归属到某个系列，并设置系列的编号；隐藏系列后，该系列下所有工具对外均不可见（需编码解锁）。</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-start">
+          <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:200px">
+            <input id="s-name" placeholder="系列名称，如「开发工具集」">
+            <span class="hint">系列编号/编码（留空自动生成）：</span>
+            <input id="s-number" placeholder="如 dev001">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div class="icon-pick"><div class="prev" id="s-iconPrev">📁</div><input id="s-iconFile" type="file" accept="image/*" style="max-width:180px"></div>
+            <span class="hint">系列图标（可选）</span>
+          </div>
+          <button class="btn btn-primary" id="s-addBtn" data-action="save-series" style="align-self:flex-end">添加/更新系列</button>
+        </div>
+        <div id="seriesTable"></div>
       </div>
     </div>
     <div id="view-comments" style="display:none">
       <div class="panel">
         <h3>用户评论</h3>
-        <div class="table-wrap"><div id="commentsTable"></div></div>
+        <div id="commentsTable"></div>
       </div>
     </div>
     <div id="view-announce" style="display:none">
@@ -349,6 +332,23 @@
         <button class="btn btn-primary" data-action="save-announce">保存公告</button>
       </div>
     </div>
+    <div id="view-sync" style="display:none">
+      <div class="panel">
+        <h3>数据同步（GitHub 仓库存储）</h3>
+        <p class="hint" style="margin-bottom:14px">数据集中存储于本网站所在 GitHub 仓库的 JSON 文件中，任何设备访问均读取同一份数据。请在下方的 <b>db-config.js</b>（与本文件同目录）中填写仓库信息，并在 GitHub 后台生成一个 <b>Personal Access Token (Classic)</b>，勾选 <b>repo</b> 权限。</p>
+        <div class="form-row"><label>GitHub 仓库 owner/用户名</label><input id="cfg-owner" placeholder="例如：yourname"></div>
+        <div class="form-row"><label>仓库名（即 GitHub Pages 所在仓库）</label><input id="cfg-repo" placeholder="例如：yourname.github.io"></div>
+        <div class="form-row"><label>分支（GitHub Pages 来源分支，通常为 main 或 gh-pages）</label><input id="cfg-branch" placeholder="main"></div>
+        <div class="form-row"><label>数据目录（JSON 文件存放目录，相对于仓库根目录）</label><input id="cfg-dir" placeholder="data"></div>
+        <div class="form-row"><label>Personal Access Token（仅本机保存，不传输到第三方）</label><input id="cfg-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" data-action="save-sync-cfg">保存配置</button>
+          <button class="btn" data-action="test-sync">测试连接并拉取</button>
+          <button class="btn" data-action="push-now">立即上传本地数据</button>
+        </div>
+        <p class="hint" style="margin-top:12px">说明：填写并保存后会自动从仓库拉取数据覆盖本地；之后所有增删改都会在保存时自动推送回仓库，实现多设备同步。</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -356,58 +356,91 @@
 
 <script>
 /* =========================================================
-   TinySpace · 单文件网页应用
-   ----------------------------------------------------------
-   【统计跨设备方案】纯浏览器 localStorage 只能存本机，
-   A 电脑的统计天然无法自动同步到 B 电脑。因此本版本采用
-   「配置驱动的远程上报 + 本地兜底」双轨架构：
-     - 若配置了 REMOTE_API 端点，PV / 下载量会真实上报到
-       中心服务器（附配套接收脚本），此时统计为全站聚合、
-       跨设备/跨电脑统一；
-     - 未配置时退化为本地统计（标注"本机"），保证单文件
-       离线也能完整运行，绝不模拟伪造数据。
-   同源多标签页之间额外通过 BroadcastChannel + storage 事件
-   实时同步，做到"同站多开"即时一致。
-   ----------------------------------------------------------
-   存储：localStorage | 鉴权：SHA-256 | 路由：location.hash
-   功能：系列归类(编号/隐藏) · 工具隐藏 + 编码解锁 · 公开日志
-   拒绝模拟：下载量仅在真实跳转时 +1，统计只记录真实行为
+   ToolHub · 单文件网页应用
+   ★ 数据存储：GitHub 仓库（GitHub API 读写仓库内 JSON 文件）
+     —— 数据文件位于网站所在仓库目录（默认 /data/），多设备实时同步
+     —— 未配置 GitHub 时自动降级为 localStorage（单机模式，仍可用）
+   ★ 鉴权：SHA-256 | 路由：location.hash
+   ★ 功能：工具隐藏 + 编码(编号)解锁 / 系列(编号+隐藏) / 下载按钮文案
+   ★ 拒绝模拟：下载量仅在真实跳转时 +1
    ========================================================= */
 const App = (function(){
   const ADMIN_USER = "admin";
   const ADMIN_PASS_SHA256 = "1cb16bbcc9bf57e66657fd7c2463ba630524a42cf2b1a6a5606f9be5943043aa";
   const KEY = "qxb_tool_platform_v1";
   const AUTH_KEY = "qxb_auth_v1";
-  const VISIT_KEY = "qxb_visit_v1";
-  const SYNC_STATE_KEY = "qxb_sync_state_v1";
+  const CFG_KEY = "qxb_github_sync_v1";
   const ICON_MAX = 600 * 1024;
 
-  /* ===== 远程统计端点配置（可选）==========================
-     填写你自己的后端接收地址即可开启跨设备统计：
-       REMOTE_API = "https://你的域名/api/track"   // 结尾不要 /
-     配套接收脚本见本文件底部注释（Python Flask 示例）。
-     留空 "" 则完全使用本地统计（单文件离线模式）。
-     安全：上报仅含 event/download/toolId/number，不含敏感信息；
-     生产环境请务必自行加签/鉴权，避免被刷。
-  ========================================================= */
-  const REMOTE_API = "";
-
-  // 当前选中的系列筛选（前台，"all"=全部）
-  let currentSeries = "all";
-
-  // 内存级：本次会话已通过编码解锁的工具 id 集合（刷新后重置，需重新输入编码）
+  // ---------- 内存级：本次会话已通过编码解锁的工具 id ----------
   const unlocked = new Set();
+  // 当前选中的系列筛选（null = 全部）
+  let activeSeries = null;
+
+  // ==================== GitHub 存储层 ====================
+  // 配置可通过同目录 db-config.js 注入（window.DB_CONFIG），也可在「数据同步」页填写
+  function defaultCfg(){return {owner:"",repo:"",branch:"main",dir:"data",token:""};}
+  function getCfg(){
+    let c=defaultCfg();
+    try{const s=localStorage.getItem(CFG_KEY);if(s)Object.assign(c,JSON.parse(s));}catch(e){}
+    if(window.DB_CONFIG&&typeof window.DB_CONFIG==="object")Object.assign(c,window.DB_CONFIG);
+    return c;
+  }
+  // 数据文件路径（相对于仓库根）
+  function fileUrl(cfg, name){return (cfg.dir?cfg.dir+"/":"")+name+".json";}
+  // GitHub API base
+  function apiBase(cfg){return "https://api.github.com/repos/"+encodeURIComponent(cfg.owner)+"/"+encodeURIComponent(cfg.repo);}
+
+  // 是否启用远程同步（配置了必要信息即启用）
+  function isRemoteEnabled(){
+    const c=getCfg();
+    return !!(c.owner&&c.repo&&c.token);
+  }
+
+  // 从 GitHub 仓库拉取单个 JSON 文件；文件不存在时返回 fallback
+  async function fetchRemoteFile(name, fallback){
+    const cfg=getCfg();
+    const url=apiBase(cfg)+"/contents/"+encodeURIComponent(fileUrl(cfg,name))+"?ref="+encodeURIComponent(cfg.branch);
+    const res=await fetch(url,{headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json"}});
+    if(res.status===404) return fallback; // 文件尚未创建
+    if(!res.ok){const t=await res.text().catch(()=>"");throw new Error("拉取 "+name+" 失败("+res.status+"): "+(t||res.statusText));}
+    const data=await res.json();
+    // GitHub 返回 base64 内容
+    const content=atob((data.content||"").replace(/\s/g,""));
+    return JSON.parse(decodeURIComponent(escape(content)));
+  }
+
+  // 将 JSON 写入 GitHub 仓库（创建或更新，需 token 有 repo 权限）
+  async function writeRemoteFile(name, obj){
+    const cfg=getCfg();
+    const path=fileUrl(cfg,name);
+    const url=apiBase(cfg)+"/contents/"+encodeURIComponent(path);
+    let sha=null;
+    // 先获取当前文件的 sha（更新必需）
+    try{
+      const head=await fetch(url+"?ref="+encodeURIComponent(cfg.branch),{headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json"}});
+      if(head.ok){const j=await head.json();sha=j.sha;}
+    }catch(e){/* 无 sha 则创建 */}
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(obj,null,2))));
+    const body={message:"ToolHub: update "+name+".json",content,branch:cfg.branch};
+    if(sha)body.sha=sha;
+    const res=await fetch(url,{method:"PUT",headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify(body)});
+    if(!res.ok){const t=await res.text().catch(()=>"");throw new Error("写入 "+name+" 失败("+res.status+"): "+(t||res.statusText));}
+  }
+
+  // 本地缓存（单机兜底 & 离线可读写）
+  function loadLocal(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null;}catch(e){return null;}}
+  function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 
   // ---------- SHA-256 ----------
   async function sha256(text){
-    const buf = new TextEncoder().encode(String(text));
-    const hash = await crypto.subtle.digest("SHA-256", buf);
+    const buf=new TextEncoder().encode(String(text));
+    const hash=await crypto.subtle.digest("SHA-256",buf);
     return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
   }
   function constantTimeEq(a,b){
     if(typeof a!=="string"||typeof b!=="string"||a.length!==b.length) return false;
-    let diff=0;
-    for(let i=0;i<a.length;i++) diff|=a.charCodeAt(i)^b.charCodeAt(i);
+    let diff=0;for(let i=0;i<a.length;i++) diff|=a.charCodeAt(i)^b.charCodeAt(i);
     return diff===0;
   }
   function makeToken(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a).map(b=>b.toString(16).padStart(2,"0")).join("");}
@@ -418,134 +451,106 @@ const App = (function(){
     return '<span class="em">'+(s||"📦")+'</span>';
   }
 
-  // ---------- 状态 / 持久化 ----------
-  let state = load();
-  function load(){
-    try{
-      const raw = localStorage.getItem(KEY);
-      if(!raw) return newState();
-      const o = JSON.parse(raw);
-      if(!o || typeof o!=="object") return newState();
-      initState(o);
-      return o;
-    }catch(e){
-      try{localStorage.setItem(KEY+"_corrupt_backup", localStorage.getItem(KEY)||"");}catch(_){}
-      return newState();
-    }
-  }
-  function newState(){return {tools:[],series:[],logs:[],comments:[],announce:"",visitDate:"",visitCount:0,_seq:1,adminHash:ADMIN_PASS_SHA256};}
+  // ---------- 状态 ----------
+  let state = newState();
+  function newState(){return {tools:[],series:[],logs:[],comments:[],announce:"",_seq:1,adminHash:ADMIN_PASS_SHA256};}
   function initState(o){
-    if(!Array.isArray(o.tools))o.tools=[];if(!Array.isArray(o.logs))o.logs=[];
-    if(!Array.isArray(o.comments))o.comments=[];if(!Array.isArray(o.series))o.series=[];
+    if(!o||typeof o!=="object") o=newState();
+    if(!Array.isArray(o.tools))o.tools=[];if(!Array.isArray(o.series))o.series=[];
+    if(!Array.isArray(o.logs))o.logs=[];if(!Array.isArray(o.comments))o.comments=[];
     if(typeof o.announce!=="string")o.announce="";
-    if(typeof o.visitDate!=="string")o.visitDate="";if(typeof o.visitCount!=="number")o.visitCount=0;
     if(typeof o._seq!=="number")o._seq=1;
     if(typeof o.adminHash!=="string"||!/^[a-f0-9]{64}$/i.test(o.adminHash))o.adminHash=ADMIN_PASS_SHA256;
     o.tools.forEach(t=>{
-      if(t&&typeof t.number==="undefined")t.number="";
-      if(t&&typeof t.btnText==="undefined")t.btnText="";
-      if(t&&typeof t.hidden!=="boolean")t.hidden=false;
-      if(t&&typeof t.seriesId==="undefined")t.seriesId="";
+      if(!t)return;
+      if(typeof t.number==="undefined")t.number="";
+      if(typeof t.btnText==="undefined")t.btnText="";
+      if(typeof t.hidden!=="boolean")t.hidden=false;
+      if(typeof t.seriesId==="undefined")t.seriesId="";
+      if(typeof t.downloads!=="number")t.downloads=0;
     });
     o.series.forEach(s=>{
-      if(s&&typeof s.number==="undefined")s.number="";
-      if(s&&typeof s.icon==="undefined")s.icon="📁";
-      if(s&&typeof s.hidden!=="boolean")s.hidden=false;
+      if(!s)return;
+      if(typeof s.number==="undefined")s.number="";
+      if(typeof s.hidden!=="boolean")s.hidden=false;
     });
     o.logs.forEach(l=>{if(l&&typeof l.published!=="boolean")l.published=false;});
+    return o;
   }
-  function save(){
-    try{localStorage.setItem(KEY, JSON.stringify(state));}
-    catch(err){toast("数据保存失败：存储空间不足，请减小图标体积或删除部分工具","err");}
+
+  // 持久化：远程启用时同时推送到 GitHub；始终保留本地缓存
+  async function persist(why){
+    saveLocal();
+    if(isRemoteEnabled()){
+      setSyncStatus("syncing");
+      try{
+        await Promise.all([
+          writeRemoteFile("tools",state.tools),
+          writeRemoteFile("series",state.series),
+          writeRemoteFile("logs",state.logs),
+          writeRemoteFile("comments",state.comments),
+          writeRemoteFile("meta",{announce:state.announce,_seq:state._seq,adminHash:state.adminHash}),
+        ]);
+        setSyncStatus("ok","已同步到仓库");
+        addLogSafe("数据同步","已推送至 GitHub 仓库（"+why+"）");
+      }catch(err){
+        setSyncStatus("err","同步失败："+err.message);
+        toast("远程同步失败，已保留本地："+err.message,"err");
+      }
+    }else{
+      setSyncStatus("local");
+    }
   }
-  function todayStr(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
-
-  // ---------- 跨设备统计：本地计数 + 远程上报 + 同源实时同步 ----------
-  // 同步状态：记录"本站权威聚合值"（来自远程或本地合并），避免多端互相覆盖
-  function getSyncState(){try{return JSON.parse(localStorage.getItem(SYNC_STATE_KEY)||"{}")||{};}catch(e){return {};}}
-  function setSyncState(s){try{localStorage.setItem(SYNC_STATE_KEY,JSON.stringify(s));}catch(e){}}
-
-  // 同源多标签页实时同步（同浏览器多开标签页即刻一致）
-  const channel = ("BroadcastChannel" in window) ? new BroadcastChannel("tiny_space_sync") : null;
-  function broadcast(msg){try{channel&&channel.postMessage(msg);}catch(e){}}
-
-  // 今日 PV：本地按"会话首次访问"去重计数（真实访问，拒绝模拟）
-  function tickVisit(){
+  // 非异步的保存入口（兼容既有调用），统一走 persist
+  function save(why){why=why||"保存";if(isRemoteEnabled()){persist(why);}else{saveLocal();}}
+  function addLogSafe(action,detail){
+    // 仅本地追加，避免日志频繁推送；正式发布/管理操作仍走 persist
     try{
-      const t=todayStr();let v={date:"",count:0};
-      try{const r=localStorage.getItem(VISIT_KEY);if(r)v=JSON.parse(r)||v;}catch(e){}
-      if(v.date!==t){v={date:t,count:0};}
-      // 同一会话(sessionStorage)只计一次 PV，避免刷新刷量
-      const sessKey="qxb_pv_today_"+t;
-      if(!sessionStorage.getItem(sessKey)){v.count++;sessionStorage.setItem(sessKey,"1");}
-      state.visitCount=v.count;state.visitDate=t;
-      localStorage.setItem(VISIT_KEY,JSON.stringify(v));
-      // 同步到同源其他标签页
-      broadcast({type:"visit",count:v.count,date:t});
-      // 远程上报（跨设备聚合的关键）
-      remoteTrack({event:"pv",date:t,count:v.count});
+      if(!state.logs.find(l=>l.action===action&&l.detail===detail&&(Date.now()-new Date(l.time).getTime())<5000)){
+        state.logs.unshift({id:state._seq++,time:new Date().toLocaleString(),action,detail,published:false});
+        if(state.logs.length>200)state.logs.length=200;
+        saveLocal();
+      }
     }catch(e){}
   }
 
-  // 下载量：以远程/本地权威值合并。真实跳转时调用。
-  function addDownload(tool, by){
-    if(!tool) return;
-    const sync=getSyncState();
-    const map=sync.downloads&&typeof sync.downloads==="object"?sync.downloads:{};
-    map[tool.id]=(map[tool.id]||0)+1;
-    sync.downloads=map;setSyncState(sync);
-    tool.downloads=(tool.downloads||0)+1;
-    broadcast({type:"download",toolId:tool.id,number:tool.number,count:tool.downloads});
-    remoteTrack({event:"download",toolId:tool.id,number:tool.number,name:tool.name});
-  }
-  // 将远程拉取的权威聚合值合并进本地（仅用于跨设备恢复显示）
-  function applyRemoteStats(payload){
-    if(!payload||typeof payload!=="object") return;
-    const sync=getSyncState();
-    if(payload.visits){state.visitCount=Math.max(state.visitCount||0,payload.visits);sync.visits=payload.visits;}
-    if(payload.downloads&&typeof payload.downloads==="object"){
-      sync.downloads=payload.downloads;
-      state.tools.forEach(t=>{if(payload.downloads[t.id]!=null)t.downloads=payload.downloads[t.id];});
+  // 启动时加载：远程启用则拉取覆盖本地；否则用本地
+  async function bootstrap(){
+    if(isRemoteEnabled()){
+      setSyncStatus("syncing","正在从仓库拉取数据…");
+      try{
+        const [tools,series,logs,comments,meta]=await Promise.all([
+          fetchRemoteFile("tools",null),fetchRemoteFile("series",null),
+          fetchRemoteFile("logs",null),fetchRemoteFile("comments",null),
+          fetchRemoteFile("meta",null),
+        ]);
+        const merged=newState();
+        if(Array.isArray(tools))merged.tools=tools;
+        if(Array.isArray(series))merged.series=series;
+        if(Array.isArray(logs))merged.logs=logs;
+        if(Array.isArray(comments))merged.comments=comments;
+        if(meta&&typeof meta==="object"){if(typeof meta.announce==="string")merged.announce=meta.announce;if(typeof meta._seq==="number")merged._seq=meta._seq;}
+        // 用拉取到的数据（含本地新增未推送的合并保护：本地 _seq 取较大值）
+        const local=loadLocal();if(local&&local._seq>merged._seq)merged._seq=local._seq;
+        state=initState(merged);
+        saveLocal(); // 本地也更新为远程版本
+        setSyncStatus("ok","已与仓库同步");
+      }catch(err){
+        setSyncStatus("err","拉取失败，使用本地缓存："+err.message);
+        const local=loadLocal();if(local)state=initState(local);
+      }
+    }else{
+      const local=loadLocal();if(local)state=initState(local);
+      setSyncStatus("local");
     }
-    setSyncState(sync);
-    if(document.getElementById("stVisits"))renderDashboard();
   }
 
-  // 远程上报（真实网络请求，失败不影响本地兜底，绝不模拟）
-  let remoteOnline = REMOTE_API ? null : false; // null=未知，false=不可用
-  function remoteTrack(payload){
-    if(!REMOTE_API) return; // 未配置：纯本地模式，不上报
-    payload.site = location.host || "local";
-    payload.t = Date.now();
-    fetch(REMOTE_API, {
-      method:"POST",
-      headers:{"Content-Type":"application/json","X-Track":"1"},
-      body:JSON.stringify(payload),
-      keepalive:true // 页面卸载时也能发出（PV 上报关键）
-    }).then(r=>{remoteOnline=true;renderSyncStatus();return r.json?r.json():null;})
-      .then(data=>{if(data&&data.ok) applyRemoteStats(data.stats||{});})
-      .catch(()=>{remoteOnline=false;renderSyncStatus();})
-      .finally(()=>{});
-  }
-  // 启动时尝试拉取一次远程聚合统计（用于跨设备恢复）
-  function remoteFetchInit(){
-    if(!REMOTE_API) return;
-    fetch(REMOTE_API+"?init=1",{method:"GET",headers:{"X-Track":"1"}})
-      .then(r=>r.json?r.json():null).then(data=>{if(data&&data.ok){remoteOnline=true;applyRemoteStats(data.stats||{});}renderSyncStatus();})
-      .catch(()=>{remoteOnline=false;renderSyncStatus();});
-  }
-  function renderSyncStatus(){
-    const banner=document.getElementById("syncBanner");if(!banner)return;
-    if(!REMOTE_API){
-      banner.innerHTML='<span>📊</span><span>统计模式：<b>本机本地</b>（数据存于当前浏览器）。如需 A/B 电脑统一统计，请配置 <code>REMOTE_API</code> 并部署配套后端（详见脚本底部说明）。</span>';
-      return;
-    }
-    const ok = remoteOnline!==false;
-    banner.innerHTML='<span>📡</span><span>统计模式：<b>远程聚合</b>（跨设备统一）端点 <code>'+esc(REMOTE_API)+'</code></span>'
-      + '<span class="sync '+(ok?"ok":"err")+'" style="margin-left:auto">'+(ok?"● 已连接":"● 连接失败，暂用本机数据")+'</span>';
-    const sv=document.getElementById("stVisitsSync"),sd=document.getElementById("stDownsSync");
-    if(sv)sv.innerHTML='<span class="sync '+(ok?"ok":"err")+'">'+(ok?"跨设备实时":"仅本机")+'</span>';
-    if(sd)sd.innerHTML='<span class="sync '+(ok?"ok":"err")+'">'+(ok?"跨设备实时":"仅本机")+'</span>';
+  function setSyncStatus(type,text){
+    const dot=document.getElementById("syncDot");const txt=document.getElementById("syncText");const mode=document.getElementById("syncMode");
+    if(!dot)return;
+    dot.className="dot"+(type==="syncing"?" syncing":"");
+    if(text) txt.textContent=text;
+    if(mode){mode.textContent=isRemoteEnabled()?"🌐 仓库同步模式":"💾 本地模式（未配置 GitHub）";}
   }
 
   // ---------- 认证 ----------
@@ -554,20 +559,31 @@ const App = (function(){
   function clearAuth(){localStorage.removeItem(AUTH_KEY);}
   function isAuthed(){const a=getAuth();return !!(a&&a.token&&a.user===ADMIN_USER);}
 
-  function addLog(action,detail){state.logs.unshift({id:state._seq++,time:new Date().toLocaleString(),action,detail,published:false});if(state.logs.length>200)state.logs.length=200;save();}
+  // 访问量：本地独立计数（访问统计天然按设备/按页，跨设备汇总需后端；此处记录本机今日访问，配合仓库 logs 记录管理操作）
+  function tickVisit(){
+    try{
+      const today=new Date().toLocaleDateString();
+      let v={date:"",count:0};
+      try{const r=localStorage.getItem("qxb_visit_v1");if(r)v=JSON.parse(r)||v;}catch(e){}
+      if(v.date!==today)v={date:today,count:0};
+      v.count++;
+      localStorage.setItem("qxb_visit_v1",JSON.stringify(v));
+    }catch(e){}
+  }
+
   function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
   function fmtDate(s){if(!s)return "—";try{return new Date(s).toLocaleDateString();}catch(e){return s;}}
+  function safeUrl(u){return typeof u==="string"&&/^(https?:\/\/|data:image\/)/i.test(u)?u:"";}
 
-  // ---------- Markdown（含 URL 白名单，防 XSS）----------
-  function safeUrl(u){return /^https?:\/\//i.test(u)||/^data:image\//i.test(u);}
+  // ---------- Markdown（安全渲染）----------
   function md(text){
     if(!text) return "<p style='color:var(--muted)'>暂无 README 内容</p>";
     let s=text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
     s=s.replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^## (.*)$/gm,"<h2>$1</h2>").replace(/^# (.*)$/gm,"<h1>$1</h1>")
-       .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/`([^`]+)`/g,"<code>$1</code>");
-    s=s.replace(/!\[[^\]]*\]\(([^)]+)\)/g,function(_,u){return safeUrl(u)?'<img src="'+u+'" style="max-width:100%;border-radius:8px;margin:8px 0">':"";})
-       .replace(/\[([^\]]+)\]\(([^)]+)\)/g,function(_,t,u){return safeUrl(u)?'<a href="'+u+'" target="_blank" rel="noopener">'+t+'</a>':esc(t);});
+       .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/`([^`]+)`/g,"<code>$1</code>")
+       .replace(/!\[[^\]]*\]\(([^)]+)\)/g,function(_,u){return safeUrl(u)?'<img src="'+u+'" style="max-width:100%;border-radius:8px;margin:8px 0">':"";})
+       .replace(/\[([^\]]+)\]\(([^)]+)\)/g,function(_,t,u){return safeUrl(u)?'<a href="'+u+'" target="_blank" rel="noopener">'+t+"</a>":t;});
     s=s.replace(/(?:^- (.+)$)+/gm,function(block){const items=block.trim().split(/\n/).map(l=>l.replace(/^- /,"")).filter(Boolean);return "<ul>"+items.map(i=>"<li>"+i+"</li>").join("")+"</ul>";});
     const lines=s.split("\n");let out="",inBlock=false;
     for(const ln of lines){if(/^<(\/)?(h[1-3]|ul|ol|li|pre|img|blockquote)/.test(ln)){out+=ln;inBlock=false;}else if(ln.trim()===""){inBlock=false;}else{out+=(inBlock?" ":"<p>")+ln+(inBlock?"":"</p>");inBlock=true;}}
@@ -575,33 +591,48 @@ const App = (function(){
   }
 
   // ---------- 系列 ----------
-  function getSeries(id){return state.series.find(s=>s.id===id)||null;}
-  function seriesName(id){const s=getSeries(id);return s?"s.name":"";}
-  // 某工具是否因"所属系列被隐藏"而不可见（工具自身 hidden 优先）
-  function isSeriesHidden(t){return t.seriesId?!!(getSeries(t.seriesId)&&getSeries(t.seriesId).hidden):false;}
+  function getSeries(id){return state.series.find(s=>s&&s.id===id);}
+  function seriesName(id){const s=getSeries(id);return s?s.name:"—";}
+  // 系列是否被隐藏（隐藏系列下所有工具对外不可见，需编码解锁）
+  function isSeriesHidden(seriesId){const s=getSeries(seriesId);return !!(s&&s.hidden);}
+  function visibleSeriesIds(){
+    // 前台仅能看到未隐藏的系列（隐藏系列整组不可见，需用其编号/工具编号解锁）
+    return state.series.filter(s=>s&&!s.hidden).map(s=>s.id);
+  }
 
   // ---------- 编码解锁 ----------
   function tryUnlockByCode(code){
     if(!code) return false;
     const c=code.toLowerCase();let unlockedAny=false;
-    state.tools.forEach(t=>{if(t.hidden && t.number && t.number.toLowerCase()===c){unlocked.add(t.id);unlockedAny=true;};});
-    // 系列编号也可解锁：输入系列编号可显示该系列（含隐藏系列）
-    state.series.forEach(s=>{if(s.number && s.number.toLowerCase()===c){unlocked.add("__series__"+s.id);unlockedAny=true;};});
+    // 1) 工具编号匹配
+    state.tools.forEach(t=>{if(t.hidden&&t.number&&t.number.toLowerCase()===c){unlocked.add(t.id);unlockedAny=true;}});
+    // 2) 系列编号匹配：解锁该系列下所有隐藏工具
+    state.series.forEach(s=>{
+      if(s.hidden&&s.number&&s.number.toLowerCase()===c){
+        state.tools.forEach(t=>{if(t.seriesId===s.id&&t.hidden){unlocked.add(t.id);}});
+        unlockedAny=true;
+      }
+    });
     return unlockedAny;
   }
   function isUnlocked(t){
     if(!t.hidden) return true;
     if(unlocked.has(t.id)) return true;
-    // 若工具所属系列被"系列编号"解锁，则其隐藏工具也一并可见
-    if(t.seriesId && unlocked.has("__series__"+t.seriesId)) return true;
+    // 所属系列若未隐藏，系列内工具默认可见；系列隐藏则必须编码解锁
+    if(t.seriesId&&!isSeriesHidden(t.seriesId)) return true;
     return false;
   }
 
   // ---------- 渲染：前台 ----------
-  function renderSeriesNav(){
-    const box=document.getElementById("seriesNav");if(!box)return;
-    const all=[{id:"all",name:"全部"}].concat(state.series.slice().sort((a,b)=>a.name.localeCompare(b.name)));
-    box.innerHTML=all.map(s=>`<span class="chip ${s.id===currentSeries?"active":""}" data-series="${esc(s.id)}">${s.id==="all"?"全部":esc(s.name)}</span>`).join("");
+  function renderSeriesChips(){
+    const box=document.getElementById("seriesChips");if(!box)return;
+    const list=state.series.filter(s=>s&&!s.hidden);
+    let html='<li class="chip'+(activeSeries===null?" active":"")+'" data-series="">全部</li>';
+    list.forEach(s=>{html+='<li class="chip'+(activeSeries===s.id?" active":"")+'" data-series="'+esc(s.id)+'">'+esc(s.name)+'</li>';});
+    box.innerHTML=html;
+    box.querySelectorAll(".chip").forEach(el=>{
+      el.addEventListener("click",()=>{activeSeries=el.getAttribute("data-series")||null;renderTools(document.getElementById("searchInput").value);renderSeriesChips();});
+    });
   }
   function renderTools(filter){
     const grid=document.getElementById("toolGrid");
@@ -612,40 +643,32 @@ const App = (function(){
       const justUnlocked=tryUnlockByCode(q);
       list=list.filter(t=>{
         if(!isUnlocked(t)) return false;
-        // 系列筛选
-        if(currentSeries!=="all" && t.seriesId!==currentSeries) return false;
-        // 名称 / 编号 / 系列名 匹配
-        const sn=seriesName(t.seriesId).toLowerCase();
-        if((t.name&&t.name.toLowerCase().includes(ql))||(t.number&&t.number.toLowerCase().includes(ql))||sn.includes(ql)) return true;
+        if((t.name&&t.name.toLowerCase().includes(ql))||(t.number&&t.number.toLowerCase().includes(ql))) return true;
         return false;
       });
-      if(justUnlocked) toast("已通过编码解锁隐藏内容，可查看并下载","ok");
+      if(justUnlocked) toast("已通过编码解锁隐藏工具，可查看并下载","ok");
     }else{
-      list=list.filter(t=>{
-        if(!isUnlocked(t)) return false;
-        if(currentSeries!=="all" && t.seriesId!==currentSeries) return false;
-        return true;
-      });
+      list=list.filter(t=>isUnlocked(t));
     }
-    document.getElementById("toolCount").textContent=list.length+" 个工具";
-    document.getElementById("sectionTitle").textContent = currentSeries==="all" ? "全部工具" : (seriesName(currentSeries)||"系列")+" · 工具";
-    if(list.length===0){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="big">∅</div>'+(q?"无匹配工具，或编码不正确":"暂无工具，管理员可前往后台上架")+'</div>';return;}
-    grid.innerHTML=list.map(t=>{
-      const sn=seriesName(t.seriesId);
-      return `
+    // 系列筛选
+    if(activeSeries){list=list.filter(t=>t.seriesId===activeSeries);}
+    const total=list.length;
+    document.getElementById("toolCount").textContent=total+" 个工具";
+    const title=activeSeries? (seriesName(activeSeries)+" · "):"全部工具";
+    const lt=document.getElementById("listTitle");if(lt)lt.textContent=title;
+    if(total===0){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="big">∅</div>'+(q?"无匹配工具，或编码不正确":"暂无工具，管理员可前往后台上架")+'</div>';return;}
+    grid.innerHTML=list.map(t=>`
       <div class="tool-card">
         <div class="icon">${renderIcon(t.icon)}</div>
         <div class="body">
           <div class="name">${esc(t.name)}${t.hidden?' <span class="badge warn" title="隐藏工具，需编码解锁">已隐藏</span>':""}</div>
-          ${sn?'<span class="series-tag">📁 '+esc(sn)+'</span>':""}
-          <div class="meta"><span>📅 ${fmtDate(t.createdAt)}</span><span>⬇ <b>${t.downloads||0}</b></span></div>
+          <div class="meta"><span>📅 ${fmtDate(t.createdAt)}</span><span>⬇ <b>${t.downloads||0}</b></span>${t.seriesId?'<span>📂 '+esc(seriesName(t.seriesId))+'</span>':""}</div>
           <div class="actions">
             <button class="btn" data-action="open-detail" data-id="${t.id}">详情</button>
             <button class="btn btn-primary" data-action="sponsor-download" data-id="${t.id}">${esc(t.btnText||"赞助下载")}</button>
           </div>
         </div>
-      </div>`;
-    }).join("");
+      </div>`).join("");
   }
   function renderAnnounce(){
     const box=document.getElementById("announceBox");const t=state.announce&&state.announce.trim();
@@ -655,12 +678,11 @@ const App = (function(){
   // ---------- 详情 ----------
   function openDetail(id){
     const t=state.tools.find(x=>x.id===id);if(!t)return;
-    if(t.hidden && !isUnlocked(t)){toast("该工具已隐藏，请输入对应编码(编号)搜索后解锁查看","err");return;}
+    if(!isUnlocked(t)){toast("该工具已隐藏，请输入对应编码(编号)搜索后解锁查看","err");return;}
     document.getElementById("detailTitle").textContent=t.name;
-    const sn=seriesName(t.seriesId);
     document.getElementById("detailBody").innerHTML=`
       <div class="detail-icon">${renderIcon(t.icon)}</div>
-      <div class="detail-meta"><span>发布：<b>${fmtDate(t.createdAt)}</b></span><span>下载量：<b>${t.downloads||0}</b></span>${sn?'<span>系列：<b>'+esc(sn)+'</b></span>':""}</div>
+      <div class="detail-meta"><span>发布：<b>${fmtDate(t.createdAt)}</b></span><span>下载量：<b>${t.downloads||0}</b></span>${t.seriesId?'<span>系列：<b>'+esc(seriesName(t.seriesId))+'</b></span>':""}</div>
       <div class="readme">${md(t.readme||"")}</div>
       <div class="comments">
         <h4>评论区（${state.comments.filter(c=>c.toolId===id).length}）</h4>
@@ -686,330 +708,448 @@ const App = (function(){
     if(!text){toast("请输入评论内容","err");return;}
     const t=state.tools.find(x=>x.id===toolId);
     state.comments.push({id:uid(),toolId,name,text,from:t?t.name:"",time:Date.now()});
-    addLog("发表评论",name+" 评论了《"+(t?t.name:"")+"》");save();renderComments(toolId);
-    document.getElementById("c-text").value="";toast("评论已发表","ok");
+    renderComments(toolId);document.getElementById("c-text").value="";
+    persist("新增评论");
+    toast("评论已发表","ok");
   }
 
-  // ---------- 赞助下载（真实跳转，拒绝模拟）----------
+  // ---------- 下载（真实跳转，拒绝模拟）----------
   function sponsorDownload(id){
     const t=state.tools.find(x=>x.id===id);if(!t)return;
-    if(t.hidden && !isUnlocked(t)){toast("该工具已隐藏，请输入对应编码(编号)搜索解锁后再下载","err");return;}
-    if(!t.link){toast("该工具尚未配置下载链接","err");return;}
-    if(!/^https?:\/\//i.test(t.link)){toast("下载链接协议不合法","err");return;}
-    // 先记录下载（远程聚合 + 本地），再真实跳转——只有真正执行到这里才算一次有效下载
-    addDownload(t, "user");
-    addLog("赞助下载","《"+t.name+"》下载量 +1（真实跳转）");save();
-    renderTools(document.getElementById("searchInput").value.trim());
-    window.open(t.link,"_blank","noopener,noreferrer");toast("正在跳转下载链接…","ok");
+    if(!isUnlocked(t)){toast("该工具已隐藏，请输入对应编码(编号)搜索后解锁查看","err");return;}
+    const url=safeUrl(t.link);
+    if(!url){toast("该工具尚未配置下载链接","err");return;}
+    t.downloads=(t.downloads||0)+1;
+    addLogSafe("下载","《"+t.name+"》下载量 +1");
+    persist("下载计数");
+    renderTools(document.getElementById("searchInput").value);
+    window.open(url,"_blank",(url.indexOf("http")===0?"noopener,":"")+"_top");
   }
 
-  // ---------- 后台：数据/系列/日志/工具/评论/公告 ----------
-  function renderDashboard(){
-    document.getElementById("stVisits").textContent=state.visitCount;
+  // ---------- 后台：数据面板 ----------
+  function renderDash(){
     document.getElementById("stTools").textContent=state.tools.length;
-    document.getElementById("stDowns").textContent=state.tools.reduce((s,t)=>s+(t.downloads||0),0);
+    document.getElementById("stDowns").textContent=state.tools.reduce((a,t)=>a+(t.downloads||0),0);
     document.getElementById("stCmts").textContent=state.comments.length;
     document.getElementById("stSeries").textContent=state.series.length;
-    renderSyncStatus();
+    // 今日访问量（本机）
+    try{const v=JSON.parse(localStorage.getItem("qxb_visit_v1")||"{}");document.getElementById("stVisits").textContent=v.date===new Date().toLocaleDateString()?v.count:0;}catch(e){document.getElementById("stVisits").textContent=0;}
     const box=document.getElementById("recentLogs");
-    if(state.logs.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无日志记录</div>';return;}
-    box.innerHTML='<div class="table-wrap"><table><thead><tr><th>时间</th><th>操作</th><th>详情</th></tr></thead><tbody>'+
-      state.logs.slice(0,10).map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td></tr>`).join("")+'</tbody></table></div>';
+    if(!box)return;
+    const recent=state.logs.filter(l=>l.published).slice(0,8);
+    if(recent.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无公开日志记录</div>';return;}
+    box.innerHTML='<table><thead><tr><th>时间</th><th>操作</th><th>详情</th></tr></thead><tbody>'+recent.map(l=>`<tr><td style="white-space:nowrap">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail)}</td></tr>`).join("")+'</tbody></table>';
   }
 
-  // ---------- 系列管理 ----------
-  let editSeriesId=null;
-  function resetSeriesForm(){editSeriesId=null;document.getElementById("sBtn").textContent="添加系列";document.getElementById("s-name").value="";document.getElementById("s-number").value="";document.getElementById("s-icon").value="📁";}
-  function saveSeries(){
-    const name=document.getElementById("s-name").value.trim();
-    const number=(document.getElementById("s-number").value||"").trim();
-    const icon=document.getElementById("s-icon").value.trim()||"📁";
-    if(!name){toast("请输入系列名称","err");return;}
-    if(editSeriesId){
-      const s=state.series.find(x=>x.id===editSeriesId);if(!s)return;
-      s.name=name;s.number=number;s.icon=icon;
-      addLog("修改系列","修改了系列《"+name+"》");toast("系列已更新","ok");
-    }else{
-      state.series.push({id:uid(),name,number,icon,hidden:false});
-      addLog("添加系列","添加了系列《"+name+"》");toast("系列已添加","ok");
+  // ---------- 后台：日志（对外公开）----------
+  function renderLogs(){
+    const box=document.getElementById("logsTable");if(!box)return;
+    if(state.logs.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无日志</div>';return;}
+    box.innerHTML='<table><thead><tr><th>时间</th><th>操作</th><th>详情</th><th>状态</th><th>操作</th></tr></thead><tbody>'+state.logs.map(l=>`
+      <tr>
+        <td style="white-space:nowrap">${esc(l.time)}</td>
+        <td><input value="${esc(l.action)}" data-log-field="${l.id}" data-field="action" style="min-width:120px"></td>
+        <td><input value="${esc(l.detail)}" data-log-field="${l.id}" data-field="detail" style="min-width:200px"></td>
+        <td>${l.published?'<span class="badge">已公开</span>':'<span class="badge warn">未公开</span>'}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-sm ${l.published?'btn-danger':'btn-primary'}" data-action="${l.published?'unpublish-log':'publish-log'}" data-id="${l.id}">${l.published?'撤下':'发布'}</button>
+          <button class="btn btn-sm" data-action="save-log-edit" data-id="${l.id}">保存</button>
+          <button class="btn btn-sm btn-danger" data-action="del-log" data-id="${l.id}">删除</button>
+        </td>
+      </tr>`).join("")+'</tbody></table>';
+  }
+  function publishLog(id,publish){const l=state.logs.find(x=>x.id===id);if(!l)return;l.published=publish;renderLogs();renderDash();persist("日志发布状态");toast(publish?"日志已发布对外公开":"已撤下","ok");}
+  function delLog(id){if(!confirm("删除该条日志？"))return;state.logs=state.logs.filter(x=>x.id!==id);renderLogs();renderDash();persist("删除日志");}
+  function clearLogs(){if(!confirm("清空全部日志？此操作不可撤销"))return;state.logs=[];renderLogs();renderDash();persist("清空日志");toast("日志已清空","ok");}
+  function saveLogEdit(id){
+    const l=state.logs.find(x=>x.id===id);if(!l)return;
+    const a=document.querySelector('[data-log-field="'+id+'"][data-field="action"]');
+    const d=document.querySelector('[data-log-field="'+id+'"][data-field="detail"]');
+    if(a)l.action=a.value.trim()||"未命名操作";if(d)l.detail=d.value;
+    renderLogs();persist("编辑日志");toast("已保存","ok");
+  }
+
+  // ---------- 后台：工具上架 / 编辑 ----------
+  let editingId=null;
+  function resetPubForm(){
+    editingId=null;
+    ["f-name","f-number","f-btnText","f-link","f-readme","f-icon"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+    document.getElementById("f-icon").value="📦";
+    document.getElementById("pubTitle").textContent="工具上架";
+    document.getElementById("pubBtn").textContent="发布工具";
+    renderSeriesSelect("f-series","");
+    const prev=document.getElementById("f-iconPrev");if(prev)prev.innerHTML='<span class="em">📦</span>';
+    const fileEl=document.getElementById("f-iconFile");if(fileEl)fileEl.value="";
+    const mdEl=document.getElementById("f-readmeFile");if(mdEl)mdEl.value="";
+  }
+  function renderSeriesSelect(selId,selectedId){
+    const sel=document.getElementById(selId);if(!sel)return;
+    let html='<option value="">— 无系列 —</option>';
+    state.series.forEach(s=>{html+='<option value="'+esc(s.id)+'"'+(s.id===selectedId?" selected":"")+'>'+esc(s.name)+'</option>';});
+    sel.innerHTML=html;
+  }
+  function readFileAsDataURL(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});}
+  function readFileAsText(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsText(file);});}
+  async function saveTool(){
+    const name=document.getElementById("f-name").value.trim();
+    if(!name){toast("请填写工具名称","err");return;}
+    const number=document.getElementById("f-number").value.trim();
+    const btnText=document.getElementById("f-btnText").value.trim();
+    const link=document.getElementById("f-link").value.trim();
+    const readme=document.getElementById("f-readme").value;
+    const iconEl=document.getElementById("f-icon").value.trim();
+    const seriesId=document.getElementById("f-series").value;
+    let icon=iconEl||"📦";
+    const fileEl=document.getElementById("f-iconFile");
+    if(fileEl&&fileEl.files&&fileEl.files[0]){
+      const f=fileEl.files[0];
+      if(!f.type.startsWith("image/")){toast("图标仅支持图片文件","err");return;}
+      if(f.size>ICON_MAX){toast("图标超过 600KB 限制","err");return;}
+      icon=await readFileAsDataURL(f);
     }
-    save();resetSeriesForm();renderSeriesAdmin();renderSeriesOptions();
+    const tool=editingId?state.tools.find(x=>x.id===editingId):{id:uid(),createdAt:Date.now(),downloads:0,hidden:false};
+    if(!tool)return;
+    tool.name=name;tool.number=number;tool.btnText=btnText;tool.link=link;tool.readme=readme;tool.icon=icon;tool.seriesId=seriesId;
+    if(!editingId){state.tools.unshift(tool);addLogSafe("工具上架","《"+name+"》");}
+    else{addLogSafe("工具修改","《"+name+"》");}
+    resetPubForm();renderTools(document.getElementById("searchInput").value);renderToolsAdmin();renderSeriesChips();renderDash();
+    persist(editingId?"编辑工具":"上架工具");
+    toast(editingId?"已更新":"已发布，可前往工具管理查看","ok");
+  }
+  function editTool(id){
+    const t=state.tools.find(x=>x.id===id);if(!t)return;
+    editingId=id;
+    document.getElementById("f-name").value=t.name;
+    document.getElementById("f-number").value=t.number||"";
+    document.getElementById("f-btnText").value=t.btnText||"";
+    document.getElementById("f-link").value=t.link||"";
+    document.getElementById("f-readme").value=t.readme||"";
+    document.getElementById("f-icon").value=(!isImageIcon(t.icon)&&t.icon)||"";
+    renderSeriesSelect("f-series",t.seriesId||"");
+    const prev=document.getElementById("f-iconPrev");if(prev)prev.innerHTML=renderIcon(t.icon);
+    document.getElementById("pubTitle").textContent="编辑工具";
+    document.getElementById("pubBtn").textContent="保存修改";
+    go("#/admin/publish");
+  }
+  function delTool(id){
+    const t=state.tools.find(x=>x.id===id);if(!t)return;
+    if(!confirm("删除工具「"+t.name+"」？其评论也会一并删除"))return;
+    state.tools=state.tools.filter(x=>x.id!==id);
+    state.comments=state.comments.filter(c=>c.toolId!==id);
+    renderTools(document.getElementById("searchInput").value);renderToolsAdmin();renderSeriesChips();renderDash();renderCommentsAdmin();
+    persist("删除工具");
+    toast("已删除","ok");
+  }
+  function toggleHidden(id){
+    const t=state.tools.find(x=>x.id===id);if(!t)return;
+    if(t.hidden===false&&!t.number){toast("请先设置工具编号/编码（在「编辑」中填写），隐藏后用户可用该编码解锁","err");return;}
+    t.hidden=!t.hidden;
+    addLogSafe(t.hidden?"隐藏工具":"展示工具","《"+t.name+"》"+(t.hidden?" (编码:"+t.number+")":""));
+    renderTools(document.getElementById("searchInput").value);renderToolsAdmin();renderDash();
+    persist("切换隐藏");
+    toast(t.hidden?"工具已隐藏，输入编码 "+t.number+" 可解锁":"工具已展示","ok");
+  }
+  function renderToolsAdmin(){
+    const box=document.getElementById("toolsTable");if(!box)return;
+    if(state.tools.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无工具，前往「工具上架」</div>';return;}
+    box.innerHTML='<table><thead><tr><th>图标</th><th>名称</th><th>编号/编码</th><th>系列</th><th>下载量</th><th>状态</th><th>操作</th></tr></thead><tbody>'+state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt).map(t=>`
+      <tr>
+        <td><div class="adm-icon">${renderIcon(t.icon)}</div></td>
+        <td><b>${esc(t.name)}</b></td>
+        <td><span class="tnum-badge">${esc(t.number||"—")}</span></td>
+        <td>${esc(seriesName(t.seriesId))}</td>
+        <td>${t.downloads||0}</td>
+        <td>${t.hidden?'<span class="badge warn">已隐藏</span>':'<span class="badge">公开</span>'}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-sm ${t.hidden?'btn-primary':'btn-danger'}" data-action="${t.hidden?'show-tool':'hide-tool'}" data-id="${t.id}">${t.hidden?'展示':'隐藏'}</button>
+          <button class="btn btn-sm" data-action="edit-tool" data-id="${t.id}">修改</button>
+          <button class="btn btn-sm btn-danger" data-action="del-tool" data-id="${t.id}">删除</button>
+        </td>
+      </tr>`).join("")+'</tbody></table>';
+  }
+
+  // ---------- 后台：系列管理 ----------
+  let editingSeriesId=null;
+  function renderSeriesAdmin(){
+    const box=document.getElementById("seriesTable");if(!box)return;
+    if(state.series.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无系列，先添加一个吧</div>';renderSeriesSelect("f-series","");return;}
+    box.innerHTML='<table><thead><tr><th>图标</th><th>系列名称</th><th>编号/编码</th><th>工具数</th><th>状态</th><th>操作</th></tr></thead><tbody>'+state.series.map(s=>{
+      const cnt=state.tools.filter(t=>t.seriesId===s.id).length;
+      return `<tr>
+        <td><div class="adm-icon">${renderIcon(s.icon)}</div></td>
+        <td><b>${esc(s.name)}</b></td>
+        <td><span class="tnum-badge">${esc(s.number||"—")}</span></td>
+        <td>${cnt}</td>
+        <td>${s.hidden?'<span class="badge warn">已隐藏</span>':'<span class="badge">公开</span>'}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-sm ${s.hidden?'btn-primary':'btn-danger'}" data-action="${s.hidden?'show-series':'hide-series'}" data-id="${s.id}">${s.hidden?'展示':'隐藏'}</button>
+          <button class="btn btn-sm" data-action="edit-series" data-id="${s.id}">编辑</button>
+          <button class="btn btn-sm btn-danger" data-action="del-series" data-id="${s.id}">删除</button>
+        </td>
+      </tr>`;
+    }).join("")+'</tbody></table>';
+    renderSeriesSelect("f-series",editingSeriesId||"");
+  }
+  async function saveSeries(){
+    const name=document.getElementById("s-name").value.trim();
+    if(!name){toast("请填写系列名称","err");return;}
+    let number=document.getElementById("s-number").value.trim();
+    if(!number){number=("S"+String(state._seq).padStart(4,"0"));} // 自动生成编号
+    const fileEl=document.getElementById("s-iconFile");let icon="📁";
+    if(fileEl&&fileEl.files&&fileEl.files[0]){const f=fileEl.files[0];if(f.size>ICON_MAX){toast("系列图标超过 600KB","err");return;}icon=await readFileAsDataURL(f);}
+    if(editingSeriesId){const s=state.series.find(x=>x.id===editingSeriesId);if(s){s.name=name;s.number=number;s.icon=icon;}}
+    else{state.series.push({id:uid(),name,number,icon,hidden:false});addLogSafe("系列创建",name);}
+    editingSeriesId=null;
+    document.getElementById("s-name").value="";document.getElementById("s-number").value="";
+    const prev=document.getElementById("s-iconPrev");if(prev)prev.innerHTML='<span class="em">📁</span>';if(fileEl)fileEl.value="";
+    renderSeriesAdmin();renderSeriesChips();renderDash();
+    persist(editingSeriesId?"编辑系列":"创建系列");
+    toast("系列已保存","ok");
   }
   function editSeries(id){
-    const s=state.series.find(x=>x.id===id);if(!s)return;editSeriesId=id;
-    document.getElementById("sBtn").textContent="保存修改";
+    const s=state.series.find(x=>x.id===id);if(!s)return;
+    editingSeriesId=id;
     document.getElementById("s-name").value=s.name;
     document.getElementById("s-number").value=s.number||"";
-    document.getElementById("s-icon").value=s.icon||"📁";
+    const prev=document.getElementById("s-iconPrev");if(prev)prev.innerHTML=renderIcon(s.icon);
   }
-  function delSeries(id){
-    const s=state.series.find(x=>x.id===id);if(!s)return;
-    const used=state.tools.filter(t=>t.seriesId===id).length;
-    if(used>0 && !confirm("该系列下还有 "+used+" 个工具，删除后这些工具的「所属系列」将变为「不归属」。确定删除系列《"+s.name+"》？")) return;
-    if(!confirm("确定删除系列《"+s.name+"》？")) return;
-    state.series=state.series.filter(x=>x.id!==id);
-    state.tools.forEach(t=>{if(t.seriesId===id)t.seriesId="";});
-    addLog("删除系列","删除了系列《"+s.name+"》");save();renderSeriesAdmin();renderSeriesOptions();renderTools();toast("系列已删除","ok");
-  }
-  // 隐藏/展示整个系列
   function toggleSeriesHidden(id){
     const s=state.series.find(x=>x.id===id);if(!s)return;
     s.hidden=!s.hidden;
-    addLog(s.hidden?"隐藏系列":"展示系列","《"+s.name+"》"+(s.hidden?"已隐藏":"已展示"));
-    save();renderSeriesAdmin();renderTools();
-    toast(s.hidden?"系列已隐藏（其下工具前台不可见，输入系列编号 "+esc(s.number||"")+" 可解锁）":"系列已展示","ok");
+    addLogSafe(s.hidden?"隐藏系列":"展示系列","《"+s.name+"》");
+    renderSeriesAdmin();renderSeriesChips();renderTools(document.getElementById("searchInput").value);renderDash();
+    persist("切换系列隐藏");
+    toast(s.hidden?"系列已隐藏，其下工具需用编码解锁":"系列已展示","ok");
   }
-  function renderSeriesAdmin(){
-    const box=document.getElementById("seriesTable");
-    if(state.series.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无系列，先在上方添加</div>';return;}
-    box.innerHTML='<div class="table-wrap"><table><thead><tr><th>图标</th><th>名称</th><th>编号/编码</th><th>工具数</th><th>状态</th><th>操作</th></tr></thead><tbody>'+
-      state.series.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(s=>{
-        const cnt=state.tools.filter(t=>t.seriesId===s.id).length;
-        return `<tr>
-          <td><div class="adm-icon">${isImageIcon(s.icon)?'<img src="'+s.icon+'">':'<span class="em">'+esc(s.icon||"📁")+'</span>'}</div></td>
-          <td><b>${esc(s.name)}</b></td>
-          <td>${s.number?`<span class="tnum-badge">${esc(s.number)}</span>`:`<span class="muted">—</span>`}</td>
-          <td>${cnt}</td>
-          <td>${s.hidden?'<span class="badge warn">已隐藏</span>':'<span class="badge">公开</span>'}</td>
-          <td><button class="btn btn-sm" data-action="toggle-series-hidden" data-id="${s.id}">${s.hidden?"展示":"隐藏"}</button> <button class="btn btn-sm" data-action="edit-series" data-id="${s.id}">修改</button> <button class="btn btn-sm btn-danger" data-action="del-series" data-id="${s.id}">删除</button></td>
-        </tr>`;
-      }).join("")+'</tbody></table></div>';
-  }
-  // 工具上架/编辑的下拉框
-  function renderSeriesOptions(){
-    const sel=document.getElementById("f-series");if(!sel)return;
-    const cur=sel.value;
-    sel.innerHTML='<option value="">— 不归属任何系列 —</option>'+
-      state.series.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(s=>`<option value="${esc(s.id)}">${esc(s.name)}${s.number?" (#"+esc(s.number)+")":""}</option>`).join("");
-    if(cur) sel.value=cur;
+  function delSeries(id){
+    const s=state.series.find(x=>x.id===id);if(!s)return;
+    if(state.tools.some(t=>t.seriesId===id)){if(!confirm("该系列下还有工具，删除后这些工具的「所属系列」将变为「无」。确定删除？"))return;}
+    state.series=state.series.filter(x=>x.id!==id);
+    state.tools.forEach(t=>{if(t.seriesId===id)t.seriesId="";});
+    renderSeriesAdmin();renderSeriesChips();renderTools(document.getElementById("searchInput").value);renderDash();
+    persist("删除系列");
+    toast("系列已删除","ok");
   }
 
-  function renderLogs(){
-    const box=document.getElementById("logsTable");
-    if(state.logs.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无日志</div>';return;}
-    box.innerHTML='<table><thead><tr><th>时间</th><th>操作</th><th>详情</th><th>状态</th><th>操作</th></tr></thead><tbody>'+
-      state.logs.map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td><td>${l.published?'<span class="badge">已公开</span>':'<span class="badge err">未公开</span>'}</td><td><button class="btn btn-sm" data-action="toggle-log-pub" data-id="${l.id}">${l.published?'撤下':'发布'}</button> <button class="btn btn-sm btn-danger" data-action="del-log" data-id="${l.id}">删除</button></td></tr>`).join("")+'</tbody></table>';
+  // ---------- 后台：评论管理 ----------
+  function renderCommentsAdmin(){
+    const box=document.getElementById("commentsTable");if(!box)return;
+    if(state.comments.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无评论</div>';return;}
+    box.innerHTML='<table><thead><tr><th>昵称</th><th>来源工具</th><th>内容</th><th>时间</th><th>操作</th></tr></thead><tbody>'+state.comments.slice().sort((a,b)=>b.time-a.time).map(c=>`
+      <tr>
+        <td><b>${esc(c.name||"匿名")}</b></td>
+        <td>${esc(c.from||"")}</td>
+        <td style="max-width:360px;white-space:normal">${esc(c.text)}</td>
+        <td style="white-space:nowrap">${fmtDate(c.time)}</td>
+        <td><button class="btn btn-sm btn-danger" data-action="del-comment" data-id="${c.id}">删除</button></td>
+      </tr>`).join("")+'</tbody></table>';
   }
-  function toggleLogPub(id){const l=state.logs.find(x=>x.id===id);if(!l)return;l.published=!l.published;addLog("日志操作","《"+l.action+"》"+(l.published?"已发布公开":"已撤下"));save();renderLogs();renderDashboard();toast(l.published?"日志已公开":"日志已撤下","ok");}
-  function delLog(id){state.logs=state.logs.filter(l=>l.id!==id);save();renderLogs();renderDashboard();toast("日志已删除","ok");}
-  function clearLogs(){if(!confirm("确定清空全部日志？"))return;state.logs=[];save();renderLogs();renderDashboard();toast("日志已清空","ok");}
+  function delComment(id){if(!confirm("删除该评论？"))return;state.comments=state.comments.filter(x=>x.id!==id);renderCommentsAdmin();renderDash();persist("删除评论");toast("已删除","ok");}
 
-  let editId=null;
-  function resetPubForm(){editId=null;document.getElementById("pubTitle").textContent="工具上架";document.getElementById("pubBtn").textContent="发布工具";document.getElementById("f-name").value="";document.getElementById("f-number").value="";renderSeriesOptions();document.getElementById("f-icon").value="📦";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";document.getElementById("f-btnText").value="";const prev=document.getElementById("f-iconPrev");prev.style.backgroundImage="none";prev.textContent="📦";document.getElementById("f-link").value="";document.getElementById("f-readme").value="";document.getElementById("f-readmeFile").value="";}
-  function handleIconFile(input){const f=input.files&&input.files[0];if(!f)return;if(!/^image\//.test(f.type)){toast("请选择图片文件","err");input.value="";return;}if(f.size>ICON_MAX){toast("图标图片需 ≤ 600KB","err");input.value="";return;}const r=new FileReader();r.onload=function(){const b64=r.result;input.dataset.b64=b64;const prev=document.getElementById("f-iconPrev");prev.style.backgroundImage="url("+b64+")";prev.style.backgroundSize="cover";prev.style.backgroundPosition="center";prev.textContent="";};r.readAsDataURL(f);}
-  function handleReadmeFile(input){const f=input.files&&input.files[0];if(!f)return;if(!/\.(md|markdown)$/i.test(f.name)){toast("请选择 .md / .markdown 文件","err");input.value="";return;}if(f.size>20*1024){toast("README 文件需 ≤ 20KB","err");input.value="";return;}const r=new FileReader();r.onload=function(){document.getElementById("f-readme").value=String(r.result||"");toast("README 已读入编辑器","ok");};r.readAsText(f);}
-  function saveTool(){
-    const name=document.getElementById("f-name").value.trim();
-    const number=(document.getElementById("f-number").value||"").trim();
-    const seriesId=(document.getElementById("f-series").value||"").trim();
-    const link=document.getElementById("f-link").value.trim();
-    const readme=document.getElementById("f-readme").value;
-    const btnText=(document.getElementById("f-btnText").value||"").trim();
-    const iconB64=document.getElementById("f-iconFile").dataset.b64||"";
-    const iconEmoji=document.getElementById("f-icon").value.trim();
-    const icon=iconB64||iconEmoji||"📦";
-    if(!name){toast("请输入工具名称","err");return;}if(!link){toast("请填写赞助下载链接","err");return;}
-    if(editId){
-      const t=state.tools.find(x=>x.id===editId);if(!t)return;
-      t.name=name;t.number=number;t.seriesId=seriesId;t.icon=icon;t.btnText=btnText;t.link=link;t.readme=readme;
-      addLog("修改工具","修改了《"+name+"》");toast("工具已更新","ok");
-    }else{
-      state.tools.push({id:uid(),name,number,seriesId,icon,btnText,link,readme,downloads:0,createdAt:Date.now(),hidden:false});
-      addLog("上架工具","发布了《"+name+"》");toast("工具已发布","ok");
-    }
-    save();resetPubForm();renderTools();renderSeriesNav();
+  // ---------- 后台：公告 ----------
+  function renderAnnounceAdmin(){const el=document.getElementById("f-announce");if(el&&state.announce!==undefined)el.value=state.announce||"";}
+  function saveAnnounce(){state.announce=(document.getElementById("f-announce").value||"").trim();renderAnnounce();renderAnnounceAdmin();persist("保存公告");toast("公告已保存","ok");}
+
+  // ---------- 后台：数据同步配置 ----------
+  function renderSyncCfg(){
+    const cfg=getCfg();
+    const setVal=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||"";};
+    setVal("cfg-owner",cfg.owner);setVal("cfg-repo",cfg.repo);setVal("cfg-branch",cfg.branch||"main");setVal("cfg-dir",cfg.dir||"data");setVal("cfg-token",cfg.token);
   }
-  function editTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;editId=id;document.getElementById("pubTitle").textContent="修改工具";document.getElementById("pubBtn").textContent="保存修改";renderSeriesOptions();document.getElementById("f-name").value=t.name;document.getElementById("f-number").value=t.number||"";document.getElementById("f-series").value=t.seriesId||"";document.getElementById("f-icon").value=t.icon||"📦";document.getElementById("f-btnText").value=t.btnText||"";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";const prev=document.getElementById("f-iconPrev");if(isImageIcon(t.icon)){prev.style.backgroundImage="url("+t.icon+")";prev.style.backgroundSize="cover";prev.style.backgroundPosition="center";prev.textContent="";}else{prev.style.backgroundImage="none";prev.textContent=t.icon||"📦";}document.getElementById("f-link").value=t.link||"";document.getElementById("f-readme").value=t.readme||"";App.go("#/admin/publish");}
-  function delTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;if(!confirm("确定删除工具《"+t.name+"》？相关评论也会一并删除。"))return;state.tools=state.tools.filter(x=>x.id!==id);state.comments=state.comments.filter(c=>c.toolId!==id);addLog("删除工具","删除了《"+t.name+"》");save();renderToolsAdmin();renderTools();renderDashboard();renderSeriesNav();toast("工具已删除","ok");}
-  function toggleHidden(id){const t=state.tools.find(x=>x.id===id);if(!t)return;if(!t.number){toast("该工具尚未设置编号(编码)，请先到「修改工具」中设置编号后再隐藏","err");return;}t.hidden=!t.hidden;addLog(t.hidden?"隐藏工具":"展示工具","《"+t.name+"》"+(t.hidden?"已隐藏":"已展示"));save();renderToolsAdmin();renderTools();toast(t.hidden?"工具已隐藏（输入编码 "+esc(t.number)+" 可解锁）":"工具已展示","ok");}
-  function renderToolsAdmin(){const box=document.getElementById("toolsTable");if(state.tools.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无工具</div>';return;}box.innerHTML=`<div class="table-wrap"><table><thead><tr><th>图标</th><th>名称</th><th>编号/编码</th><th>系列</th><th>状态</th><th>下载量</th><th>发布时间</th><th>操作</th></tr></thead><tbody>`+state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt).map(t=>{
-    const ic=isImageIcon(t.icon)?`<div class="adm-icon"><img src="${t.icon}" alt=""></div>`:`<div class="adm-icon"><span class="em">${t.icon||"📦"}</span></div>`;
-    const sn=seriesName(t.seriesId);
-    return `<tr><td>${ic}</td><td>${esc(t.name)}</td><td>${t.number?`<span class="tnum-badge">${esc(t.number)}</span>`:`<span class="muted">—</span>`}</td><td>${sn?`<span class="series-tag">${esc(sn)}</span>`:`<span class="muted">—</span>`}</td><td>${t.hidden?'<span class="badge warn">已隐藏</span>':(isSeriesHidden(t)?'<span class="badge brand">系列隐藏</span>':'<span class="badge">公开</span>')}</td><td>${t.downloads||0}</td><td style="color:var(--muted);font-size:12px;white-space:nowrap">${fmtDate(t.createdAt)}</td><td><button class="btn btn-sm" data-action="toggle-hidden" data-id="${t.id}">${t.hidden?"展示":"隐藏"}</button> <button class="btn btn-sm" data-action="edit-tool" data-id="${t.id}">修改</button> <button class="btn btn-sm btn-danger" data-action="del-tool" data-id="${t.id}">删除</button></td></tr>`;
-  }).join("")+`</tbody></table></div>`;}
-  function renderCommentsAdmin(){const box=document.getElementById("commentsTable");if(state.comments.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无评论</div>';return;}box.innerHTML='<div class="table-wrap"><table><thead><tr><th>用户</th><th>来源工具</th><th>内容</th><th>时间</th><th>操作</th></tr></thead><tbody>'+state.comments.slice().sort((a,b)=>b.time-a.time).map(c=>`<tr><td><b>${esc(c.name||"匿名")}</b></td><td>${esc(c.from||"")}</td><td style="max-width:360px;white-space:pre-wrap;word-break:break-word">${esc(c.text)}</td><td style="color:var(--muted);font-size:12px;white-space:nowrap">${fmtDate(c.time)}</td><td><button class="btn btn-sm btn-danger" data-action="del-comment" data-id="${c.id}">删除</button></td></tr>`).join("")+'</tbody></table></div>';}
-  function delComment(id){state.comments=state.comments.filter(c=>c.id!==id);save();renderCommentsAdmin();renderDashboard();toast("评论已删除","ok");}
-  function saveAnnounce(){state.announce=(document.getElementById("f-announce").value||"").trim();save();addLog("编辑公告",state.announce?"更新了首页公告":"清空了首页公告");toast("公告已保存","ok");renderAnnounce();}
-  function renderAnnounceAdmin(){document.getElementById("f-announce").value=state.announce||"";}
-
-  // ---------- 视图切换 ----------
-  function showHome(){setUI("home");renderTools(document.getElementById("searchInput").value.trim());}
-  function showAdmin(){setUI("admin");renderDashboard();}
-  function showLogin(){setUI("login");document.getElementById("loginUser").value="";document.getElementById("loginPass").value="";}
-  function setUI(mode){
-    document.getElementById("header").style.display=(mode==="login")?"none":"flex";
-    document.getElementById("homeView").style.display=(mode==="home")?"block":"none";
-    document.getElementById("adminView").style.display=(mode==="admin")?"flex":"none";
-    document.getElementById("loginView").style.display=(mode==="login")?"flex":"none";
+  function saveSyncCfg(){
+    const cfg={owner:document.getElementById("cfg-owner").value.trim(),repo:document.getElementById("cfg-repo").value.trim(),branch:document.getElementById("cfg-branch").value.trim()||"main",dir:document.getElementById("cfg-dir").value.trim()||"data",token:document.getElementById("cfg-token").value.trim()};
+    localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+    if(window.DB_CONFIG)Object.assign(window.DB_CONFIG,cfg);
+    toast("配置已保存，下次操作将使用新配置","ok");
+    // 配置完整时自动拉取一次
+    if(cfg.owner&&cfg.repo&&cfg.token){setSyncStatus("syncing","正在拉取…");bootstrap().then(()=>{renderAll();toast("已拉取仓库数据","ok");});}
+  }
+  async function testSync(){
+    if(!isRemoteEnabled()){toast("请先填写完整的仓库信息并保存","err");return;}
+    setSyncStatus("syncing","测试连接…");
+    try{await bootstrap();renderAll();setSyncStatus("ok","连接成功");toast("连接成功，数据已拉取","ok");}catch(err){setSyncStatus("err","连接失败："+err.message);toast("连接失败："+err.message,"err");}
+  }
+  async function pushNow(){
+    if(!isRemoteEnabled()){toast("请先填写完整的仓库信息并保存","err");return;}
+    await persist("手动上传");
   }
 
-  // ---------- 路由（hash）----------
+  // ---------- Toast / Modal ----------
+  let toastTimer=null;
+  function toast(msg,type){
+    const el=document.getElementById("toast");const txt=document.getElementById("toastTxt");
+    if(!el)return;txt.textContent=msg;el.className="toast show"+(type?" "+type:"");
+    clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.className="toast"+(type?" "+type:"");},2600);
+  }
+  function openModal(id){const m=document.getElementById(id);if(m)m.classList.add("show");}
+  function closeModal(id){const m=document.getElementById(id);if(m)m.classList.remove("show");}
+
+  // ---------- 路由 ----------
   function parseHash(){
     const h=location.hash||"#/";
-    const m=h.match(/^#\/tool\/([^/]+)$/);
-    if(m) return {view:"tool",id:m[1]};
-    if(h.startsWith("#/admin")){const v=(h.match(/#\/admin\/([^/]+)/)||[])[1]||"dash";return {view:"admin",adminView:v};}
+    if(h==="#/"||h==="#") return {view:"home"};
+    if(h.indexOf("#/tool/")===0) return {view:"tool",id:h.slice("#/tool/".length)};
+    if(h.indexOf("#/admin/")===0){const v=h.slice("#/admin/".length).split("?")[0];return {view:"admin",adminView:v||"dash"};}
     return {view:"home"};
   }
+  function go(h){location.hash=h;}
   function applyRoute(){
     const r=parseHash();
-    if(r.view==="tool"){showHome();openDetail(r.id);return;}
+    // 关闭移动端侧边栏
+    const sb=document.getElementById("sidebar");if(sb)sb.classList.remove("open");
+    if(r.view==="tool"){openDetail(r.id);renderHome();return;}
     if(r.view==="admin"){
       if(!isAuthed()){showLogin();return;}
-      const map={dash:1,series:1,logs:1,publish:1,tools:1,comments:1,announce:1};
-      const v=map[r.adminView]?r.adminView:"dash";
-      showAdmin();switchAdmin(v);return;
+      showAdmin(r.adminView);return;
     }
-    if(isAuthed()&&location.hash.startsWith("#/admin")){showAdmin();return;}
-    showHome();
+    renderHome();
   }
-  function go(hash){location.hash=hash;}
-  window.addEventListener("hashchange",applyRoute);
-
-  function switchAdmin(view){
-    const valid=["dash","series","logs","publish","tools","comments","announce"];
-    if(!valid.includes(view)) view="dash";
-    document.querySelectorAll(".sidebar a[data-view]").forEach(a=>a.classList.remove("active"));
-    const activeLink=document.querySelector(".sidebar a[data-view='"+view+"']");
-    if(activeLink) activeLink.classList.add("active");
-    valid.forEach(v=>{const dv=document.getElementById("view-"+v);if(dv)dv.style.display=(v===view?"block":"none");});
-    if(view==="series"){resetSeriesForm();renderSeriesAdmin();}
-    else if(view==="logs")renderLogs();
-    else if(view==="tools")renderToolsAdmin();
-    else if(view==="comments")renderCommentsAdmin();
-    else if(view==="publish"){resetPubForm();renderSeriesOptions();}
-    else if(view==="announce")renderAnnounceAdmin();
-    else if(view==="dash")renderDashboard();
-    closeMobileSidebar();
+  function renderHome(){
+    document.getElementById("header").style.display="";
+    document.getElementById("homeView").style.display="";
+    document.getElementById("loginView").style.display="none";
+    document.getElementById("adminView").style.display="none";
+    renderAnnounce();renderSeriesChips();renderTools(document.getElementById("searchInput").value);
   }
+  function showLogin(){
+    document.getElementById("header").style.display="none";
+    document.getElementById("homeView").style.display="none";
+    document.getElementById("adminView").style.display="none";
+    document.getElementById("loginView").style.display="";
+  }
+  function showAdmin(view){
+    document.getElementById("header").style.display="";
+    document.getElementById("homeView").style.display="none";
+    document.getElementById("loginView").style.display="none";
+    document.getElementById("adminView").style.display="flex";
+    ["dash","logs","publish","tools","series","comments","announce","sync"].forEach(v=>{const el=document.getElementById("view-"+v);if(el)el.style.display=v===view?"":"none";});
+    document.querySelectorAll(".sidebar a[data-view]").forEach(a=>a.classList.toggle("active",a.getAttribute("data-view")===view));
+    if(view==="dash"){renderDash();}
+    else if(view==="logs"){renderLogs();}
+    else if(view==="publish"){renderSeriesSelect("f-series","");}
+    else if(view==="tools"){renderToolsAdmin();}
+    else if(view==="series"){renderSeriesAdmin();}
+    else if(view==="comments"){renderCommentsAdmin();}
+    else if(view==="announce"){renderAnnounceAdmin();}
+    else if(view==="sync"){renderSyncCfg();}
+  }
+  function renderAll(){renderAnnounce();renderSeriesChips();renderTools(document.getElementById("searchInput").value);}
 
-  // ---------- 移动端侧边栏 ----------
-  function openMobileSidebar(){document.getElementById("sidebar").classList.add("open");document.getElementById("sidebarBackdrop").classList.add("open");}
-  function closeMobileSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarBackdrop").classList.remove("open");}
-
-  // ---------- 登录/登出 ----------
-  const LOGIN_FAIL_KEY="qxb_login_fail_v1";const FAIL_MAX=5;const LOCK_MS=5*60*1000;
-  function loginFailInfo(){try{return JSON.parse(localStorage.getItem(LOGIN_FAIL_KEY)||"null");}catch(e){return null;}}
-  function setLoginFailInfo(o){localStorage.setItem(LOGIN_FAIL_KEY,JSON.stringify(o));}
+  // ---------- 登录 ----------
   async function doLogin(){
-    const fi=loginFailInfo();if(fi&&fi.lockUntil&&Date.now()<fi.lockUntil){toast("尝试过于频繁，请稍后再试","err");return;}
-    const u=document.getElementById("loginUser").value.trim();const p=document.getElementById("loginPass").value;
-    const pHash=await sha256(p);
-    const ok=(u===ADMIN_USER)&&constantTimeEq(pHash,state.adminHash||ADMIN_PASS_SHA256);
-    if(ok){setLoginFailInfo(null);setAuth(makeToken());addLog("后台登录","管理员登录成功");go("#/admin/dash");}
-    else{const c=(fi&&fi.count)||0;const n=c+1;if(n>=FAIL_MAX){setLoginFailInfo({count:n,lockUntil:Date.now()+LOCK_MS});toast("密码错误次数过多，已临时锁定 5 分钟","err");}else{setLoginFailInfo({count:n,lockUntil:0});toast("账号或密码错误","err");}}
+    const user=document.getElementById("loginUser").value.trim();
+    const pass=document.getElementById("loginPass").value;
+    if(!user||!pass){toast("请输入账号和密码","err");return;}
+    const hash=await sha256(pass);
+    if(user===ADMIN_USER&&constantTimeEq(hash,ADMIN_PASS_SHA256)){
+      setAuth(makeToken());
+      document.getElementById("loginPass").value="";
+      go("#/admin/dash");
+      toast("登录成功","ok");
+    }else{
+      toast("账号或密码错误","err");
+    }
   }
-  function enterAdmin(){if(isAuthed()){go("#/admin/dash");}else{showLogin();}}
-  function logout(){addLog("后台登出","管理员已退出");clearAuth();go("#/");toast("已退出登录","ok");}
+  function logout(){clearAuth();go("#/");toast("已退出登录");}
 
-  // ---------- Modal / Toast ----------
-  function openModal(id){document.getElementById(id).classList.add("show");document.body.style.overflow="hidden";}
-  function closeModal(id){document.getElementById(id).classList.remove("show");document.body.style.overflow="";if(location.hash.startsWith("#/tool"))history.back();}
-  let toastT;function toast(msg,type){const t=document.getElementById("toast");document.getElementById("toastTxt").textContent=msg;t.className="toast show "+(type||"");clearTimeout(toastT);toastT=setTimeout(()=>t.className="toast",2200);}
+  // ---------- 事件委托 ----------
+  function initEvents(){
+    document.addEventListener("click",function(e){
+      const el=e.target.closest("[data-action]");
+      if(!el)return;
+      const action=el.getAttribute("data-action");
+      const id=el.getAttribute("data-id");
+      switch(action){
+        case "do-login":doLogin();break;
+        case "logout":logout();break;
+        case "enter-admin":if(isAuthed())go("#/admin/dash");else showLogin();break;
+        case "close-modal":closeModal(el.getAttribute("data-target"));break;
+        case "open-detail":openDetail(id);break;
+        case "sponsor-download":sponsorDownload(id);break;
+        case "post-comment":postComment(id);break;
+        case "save-tool":saveTool();break;
+        case "reset-pub-form":resetPubForm();break;
+        case "edit-tool":editTool(id);break;
+        case "del-tool":delTool(id);break;
+        case "hide-tool":toggleHidden(id);break;
+        case "show-tool":toggleHidden(id);break;
+        case "save-series":saveSeries();break;
+        case "edit-series":editSeries(id);break;
+        case "hide-series":toggleSeriesHidden(id);break;
+        case "show-series":toggleSeriesHidden(id);break;
+        case "del-series":delSeries(id);break;
+        case "del-comment":delComment(id);break;
+        case "save-announce":saveAnnounce();break;
+        case "publish-log":publishLog(id,true);break;
+        case "unpublish-log":publishLog(id,false);break;
+        case "del-log":delLog(id);break;
+        case "save-log-edit":saveLogEdit(id);break;
+        case "clear-logs":clearLogs();break;
+        case "save-sync-cfg":saveSyncCfg();break;
+        case "test-sync":testSync();break;
+        case "push-now":pushNow();break;
+      }
+    });
+    // 侧边栏导航（hash 驱动）
+    document.addEventListener("click",function(e){
+      const a=e.target.closest(".sidebar a[data-view], .sidebar a[data-go]");
+      if(!a)return;
+      const view=a.getAttribute("data-view");const goHref=a.getAttribute("data-go");
+      if(goHref){e.preventDefault();if(goHref.indexOf("#")===0)go(goHref);return;}
+      if(view){e.preventDefault();go("#/admin/"+view);}
+    });
+    // 移动端菜单开关
+    const menuBtn=document.getElementById("menuToggle");
+    if(menuBtn)menuBtn.addEventListener("click",()=>{const sb=document.getElementById("sidebar");if(sb)sb.classList.toggle("open");});
+    // 搜索（实时）
+    const searchInput=document.getElementById("searchInput");
+    if(searchInput)searchInput.addEventListener("input",function(){renderTools(this.value);});
+    // 回车登录
+    const passEl=document.getElementById("loginPass");
+    if(passEl)passEl.addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});
+    window.addEventListener("hashchange",applyRoute);
+    // 文件上传：图标预览
+    const iconFile=document.getElementById("f-iconFile");
+    if(iconFile)iconFile.addEventListener("change",async function(){
+      const prev=document.getElementById("f-iconPrev");if(!prev||!this.files[0])return;
+      if(this.files[0].size>ICON_MAX){toast("图标超过 600KB","err");return;}
+      prev.innerHTML='<img src="'+await readFileAsDataURL(this.files[0])+'" alt="">';
+    });
+    const readmeFile=document.getElementById("f-readmeFile");
+    if(readmeFile)readmeFile.addEventListener("change",async function(){
+      if(!this.files[0])return;
+      document.getElementById("f-readme").value=await readFileAsText(this.files[0]);
+    });
+    const sIconFile=document.getElementById("s-iconFile");
+    if(sIconFile)sIconFile.addEventListener("change",async function(){
+      const prev=document.getElementById("s-iconPrev");if(!prev||!this.files[0])return;
+      prev.innerHTML='<img src="'+await readFileAsDataURL(this.files[0])+'" alt="">';
+    });
+  }
 
-  // ---------- 全局事件委托 ----------
-  document.addEventListener("click", function(ev){
-    const el=ev.target.closest("[data-action]");if(!el) return;
-    const action=el.dataset.action;
-    if(action==="enter-admin"){ev.preventDefault();enterAdmin();return;}
-    if(action==="do-login"){ev.preventDefault();doLogin();return;}
-    if(action==="logout"){ev.preventDefault();logout();return;}
-    if(action==="close-modal"){closeModal(el.dataset.target||"");return;}
-    if(action==="save-tool"){saveTool();return;}
-    if(action==="reset-pub-form"){resetPubForm();return;}
-    if(action==="save-series"){saveSeries();return;}
-    if(action==="reset-series-form"){resetSeriesForm();return;}
-    if(action==="save-announce"){saveAnnounce();return;}
-    if(action==="clear-logs"){clearLogs();return;}
-    if(action==="open-detail"){openDetail(el.dataset.id);return;}
-    if(action==="sponsor-download"){sponsorDownload(el.dataset.id);return;}
-    if(action==="post-comment"){postComment(el.dataset.id);return;}
-    if(action==="toggle-log-pub"){toggleLogPub(el.dataset.id);return;}
-    if(action==="del-log"){delLog(el.dataset.id);return;}
-    if(action==="edit-tool"){editTool(el.dataset.id);return;}
-    if(action==="del-tool"){delTool(el.dataset.id);return;}
-    if(action==="toggle-hidden"){toggleHidden(el.dataset.id);return;}
-    if(action==="edit-series"){editSeries(el.dataset.id);return;}
-    if(action==="del-series"){delSeries(el.dataset.id);return;}
-    if(action==="toggle-series-hidden"){toggleSeriesHidden(el.dataset.id);return;}
-    if(action==="del-comment"){delComment(el.dataset.id);return;}
-  });
-  // 系列筛选（前台导航 chips）
-  document.addEventListener("click", function(ev){
-    const el=ev.target.closest("[data-series]");if(!el) return;
-    currentSeries=el.dataset.series;renderSeriesNav();renderTools(document.getElementById("searchInput").value.trim());
-  });
-  document.querySelectorAll(".sidebar a[data-view]").forEach(a=>{
-    a.addEventListener("click", function(ev){ev.preventDefault();const v=this.dataset.view;closeMobileSidebar();go("#/admin/"+v);});
-  });
-  document.querySelectorAll("[data-go]").forEach(b=>{b.addEventListener("click",function(){go(this.dataset.go);});});
-  document.getElementById("menuBtn").addEventListener("click",openMobileSidebar);
-  document.getElementById("sidebarBackdrop").addEventListener("click",closeMobileSidebar);
+  // ---------- 初始化 ----------
+  async function init(){
+    initEvents();
+    document.getElementById("footYear").textContent=new Date().getFullYear();
+    // 先渲染骨架，再异步拉取数据，避免白屏
+    renderHome();
+    await bootstrap();
+    renderAll();
+    tickVisit();
+    renderDash();
+    applyRoute();
+    // 管理入口：仅在配置好 GitHub 后提示
+    if(!isRemoteEnabled()){
+      // 初次使用给个温和提示（非阻塞）
+      setTimeout(()=>{/* 静默：界面已有「数据同步」入口 */},0);
+    }
+  }
+  init();
 
-  document.getElementById("f-iconFile").addEventListener("change",function(){handleIconFile(this);});
-  document.getElementById("f-readmeFile").addEventListener("change",function(){handleReadmeFile(this);});
-  document.getElementById("f-icon").addEventListener("input",function(){if(!document.getElementById("f-iconFile").dataset.b64){const p=document.getElementById("f-iconPrev");p.style.backgroundImage="none";p.textContent=this.value||"📦";}});
-
-  // 搜索：输入即过滤；若输入内容精确匹配某隐藏工具/系列编号(编码)，则临时解锁
-  document.getElementById("searchInput").addEventListener("input",e=>renderTools(e.target.value.trim()));
-
-  // 监听同源其他标签页的实时同步（同浏览器多开即时一致）
-  if(channel){channel.addEventListener("message",function(ev){const m=ev.data||{};
-    if(m.type==="visit"){state.visitCount=m.count;if(document.getElementById("stVisits"))renderDashboard();}
-    else if(m.type==="download"){const t=state.tools.find(x=>x.id===m.toolId);if(t)t.downloads=m.count;renderTools(document.getElementById("searchInput").value.trim());if(document.getElementById("stDowns"))renderDashboard();}
-  });}
-  window.addEventListener("storage",function(ev){
-    if(ev.key===KEY){try{const o=JSON.parse(ev.newValue||"{}");if(o&&o.tools)state.tools=o.tools;}catch(e){}renderTools(document.getElementById("searchInput").value.trim());}
-  });
-
-  // ---------- 启动 ----------
-  tickVisit();
-  remoteFetchInit();
-  document.getElementById("footYear").textContent=new Date().getFullYear();
-  renderAnnounce();
-  renderSeriesNav();
-  renderSeriesOptions();
-  applyRoute();
-
-  return {go,enterAdmin,doLogin,logout,switchAdmin,openDetail,postComment,sponsorDownload,saveTool,editTool,delTool,delComment,saveAnnounce,delLog,clearLogs,toggleLogPub,resetPubForm,openModal,closeModal,toast,toggleHidden,renderTools};
+  // 暴露给外部 db-config.js（可选注入配置）
+  window.ToolHub={getState:()=>state,persist,saveSyncCfg};
+  return {};
 })();
 </script>
-<!--
-=================================================================
-  配套远程统计后端示例（Python Flask，可选）
-  ----------------------------------------------------------------
-  为何需要：浏览器 localStorage 只能存本机。要让 A/B/C 多台电脑
-  的统计汇总到一处，必须有一个中心端点。把下方脚本部署到服务器，
-  再把前端 REMOTE_API 设为该接口的 URL 即可。
-
-  pip install flask
-  ---
-  from flask import Flask, request, jsonify
-  from collections import defaultdict
-  app = Flask(__name__)
-  PV = 0
-  DOWN = defaultdict(int)   # toolId -> count
-
-  @app.route("/api/track", methods=["POST"])
-  def track():
-      global PV
-      d = request.get_json(force=True) or {}
-      if d.get("event") == "pv":
-          PV += 1
-      elif d.get("event") == "download":
-          DOWN[d.get("toolId")] = DOWN.get(d.get("toolId"), 0) + 1
-      return jsonify(ok=True, stats={"visits": PV, "downloads": dict(DOWN)})
-
-  @app.route("/api/track", methods=["GET"])
-  def init():
-      return jsonify(ok=True, stats={"visits": PV, "downloads": dict(DOWN)})
-
-  if __name__ == "__main__":
-      app.run(host="0.0.0.0", port=5000)
-  ---
-  安全提示：生产环境务必加签/鉴权（如密钥 + HMAC），并做防刷限流，
-  避免统计接口被恶意刷量。前端 REMOTE_API 留空则完全本地运行。
-=================================================================
--->
 </body>
 </html>
