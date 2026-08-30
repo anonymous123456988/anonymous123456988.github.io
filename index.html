@@ -335,12 +335,12 @@
     <div id="view-sync" style="display:none">
       <div class="panel">
         <h3>数据同步（GitHub 仓库存储）</h3>
-        <p class="hint" style="margin-bottom:14px">数据集中存储于本网站所在 GitHub 仓库的 JSON 文件中，任何设备访问均读取同一份数据。请在下方的 <b>db-config.js</b>（与本文件同目录）中填写仓库信息，并在 GitHub 后台生成一个 <b>Personal Access Token (Classic)</b>，勾选 <b>repo</b> 权限。</p>
+        <p class="hint" style="margin-bottom:14px">数据集中存储于本网站所在 GitHub 仓库的 JSON 文件中，任何设备访问均读取同一份数据。<b>读取为匿名公开访问（任何人可看，无需登录）；仅后台写入需要 Personal Access Token。</b>下方已内置 Fine-grained PAT（Contents: Read and write），默认即可使用；如需更换，可在同目录 <b>db-config.js</b> 覆盖，或在下方填写（留空即沿用内嵌值）。该 PAT 仅参与写操作，<b>绝不出现在读链路</b>。</p>
         <div class="form-row"><label>GitHub 仓库 owner/用户名</label><input id="cfg-owner" placeholder="例如：yourname"></div>
         <div class="form-row"><label>仓库名（即 GitHub Pages 所在仓库）</label><input id="cfg-repo" placeholder="例如：yourname.github.io"></div>
         <div class="form-row"><label>分支（GitHub Pages 来源分支，通常为 main 或 gh-pages）</label><input id="cfg-branch" placeholder="main"></div>
         <div class="form-row"><label>数据目录（JSON 文件存放目录，相对于仓库根目录）</label><input id="cfg-dir" placeholder="data"></div>
-        <div class="form-row"><label>Personal Access Token（仅本机保存，不传输到第三方）</label><input id="cfg-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"></div>
+        <div class="form-row"><label>Personal Access Token（留空则沿用内嵌的 Fine-grained PAT；仅在需要更换时填写）</label><input id="cfg-token" type="password" placeholder="github_pat_xxxxxxxxxxxxxxxxxxxx"><span class="hint" id="cfg-token-hint" style="display:none">★ 当前使用内嵌 PAT，直接保存即可，无需手动填写。</span></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-primary" data-action="save-sync-cfg">保存配置</button>
           <button class="btn" data-action="test-sync">测试连接并拉取</button>
@@ -379,12 +379,37 @@ const App = (function(){
   let activeSeries = null;
 
   // ==================== GitHub 存储层 ====================
-  // 配置可通过同目录 db-config.js 注入（window.DB_CONFIG），也可在「数据同步」页填写
+  // ★ 安全模型（Fine-grained PAT，Contents: Read and write，仅绑定本仓库）：
+  //   - 读（访客/前台）：公开仓库 Contents API 支持【匿名、无需 token】读取
+  //     （官方："This endpoint can be used without authentication ... if only public resources are requested."）
+  //     → 读操作永远不带 Authorization，匿名 fetch，PAT 绝不出现在读链路
+  //   - 写（管理员/后台）：必须带 PAT，且 PAT 需有 Contents: Read and write
+  //     → 写操作才使用下方内嵌的 DB_CONFIG.token
+  //  配置可通过同目录 db-config.js 注入（window.DB_CONFIG），也可在「数据同步」页填写
+  // ---------------------------------------------------------------
+  // ★ 内嵌 Fine-grained PAT（仅用于后台写操作；读操作完全不碰它）
+  //   若需更换，直接改这里（或同目录 db-config.js 覆盖），无需改动任何业务逻辑
+  const EMBEDDED_PAT = "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";
+  const EMBEDDED_REPO = { owner:"anonymous123456988", repo:"anonymous123456988.github.io", branch:"main", dir:"data" };
   function defaultCfg(){return {owner:"",repo:"",branch:"main",dir:"data",token:""};}
-  function getCfg(){
+  // 写配置：合并 内嵌PAT + localStorage「数据同步」页填写 + window.DB_CONFIG
+  // token 仅从此处流出，且仅被 writeRemoteFile / fetchSha / seedRemoteIfEmpty 使用
+  function getWriteCfg(){
     let c=defaultCfg();
-    try{const s=localStorage.getItem(CFG_KEY);if(s)Object.assign(c,JSON.parse(s));}catch(e){}
     if(window.DB_CONFIG&&typeof window.DB_CONFIG==="object")Object.assign(c,window.DB_CONFIG);
+    try{const s=localStorage.getItem(CFG_KEY);if(s)Object.assign(c,JSON.parse(s));}catch(e){}
+    // 内嵌 PAT 作为最终兜底（优先级：localStorage 覆盖 > DB_CONFIG > 内嵌），保证写链路始终有凭据
+    if(!c.token&&EMBEDDED_PAT)c.token=EMBEDDED_PAT;
+    if(!c.owner&&EMBEDDED_REPO.owner)c.owner=EMBEDDED_REPO.owner;
+    if(!c.repo&&EMBEDDED_REPO.repo)c.repo=EMBEDDED_REPO.repo;
+    if(!c.branch)c.branch=EMBEDDED_REPO.branch;
+    if(!c.dir)c.dir=EMBEDDED_REPO.dir;
+    return c;
+  }
+  // 读配置：★ 强制清空 token，保证匿名读取（即使内嵌了 PAT 也不在请求头里出现）
+  function getReadCfg(){
+    const c=getWriteCfg();
+    c.token=""; // 读永远匿名，不携带任何凭据
     return c;
   }
   // 数据文件路径（相对于仓库根）
@@ -394,17 +419,25 @@ const App = (function(){
   // 编码文件路径：逐段编码，保留目录分隔符（★ 关键：不能整体 encodeURIComponent，否则 / 变成 %2F，GitHub 报 404/409）
   function encodePath(path){return path.split("/").map(encodeURIComponent).join("/");}
 
-  // 是否启用远程同步（配置了必要信息即启用）
-  function isRemoteEnabled(){
-    const c=getCfg();
+  // 是否启用【远程读取】（只要配置了 owner+repo 即可，访客无需 token）
+  function isReadEnabled(){
+    const c=getReadCfg();
+    return !!(c.owner&&c.repo);
+  }
+  // 是否启用【远程写入】（必须配置了有效 token）
+  function isWriteEnabled(){
+    const c=getWriteCfg();
     return !!(c.owner&&c.repo&&c.token);
   }
 
   // 从 GitHub 仓库拉取单个 JSON 文件；文件不存在时返回 fallback
+  // ★ 读操作【匿名、不带 token】：利用公开仓库 Contents API 免鉴权读取
+  //   （访客裸读，PAT 不参与读链路，杜绝读权限泄漏）
   async function fetchRemoteFile(name, fallback){
-    const cfg=getCfg();
+    const cfg=getReadCfg(); // ★ 用读配置 → token 必为空
     const url=apiBase(cfg)+"/contents/"+encodePath(fileUrl(cfg,name))+"?ref="+encodeURIComponent(cfg.branch);
-    const res=await fetch(url,{headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json"}});
+    // 注意：不携带 Authorization 头，纯匿名 GET（public repo 免鉴权）
+    const res=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
     if(res.status===404) return fallback; // 文件尚未创建
     if(!res.ok){const t=await res.text().catch(()=>"");throw new Error("拉取 "+name+" 失败("+res.status+"): "+(t||res.statusText));}
     const data=await res.json();
@@ -420,8 +453,9 @@ const App = (function(){
   function enqueueWrite(task){writeQueue=writeQueue.then(()=>task()).catch(()=>{});return writeQueue;}
 
   // 拉取单个文件的【最新 sha】（不关心内容，专用于写前刷新乐观锁）
+  // ★ 写操作链路，必须使用带 PAT 的写配置
   async function fetchSha(name){
-    const cfg=getCfg();
+    const cfg=getWriteCfg(); // ★ 用写配置 → 携带 PAT
     const url=apiBase(cfg)+"/contents/"+encodePath(fileUrl(cfg,name))+"?ref="+encodeURIComponent(cfg.branch);
     const res=await fetch(url,{headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json"}});
     if(res.status===404) return null;       // 文件不存在 → 将走「创建」路径（不带 sha）
@@ -430,10 +464,11 @@ const App = (function(){
     return j.sha||null;
   }
 
-  // 将 JSON 写入 GitHub 仓库（创建或更新，需 token 有 repo 权限）
+  // 将 JSON 写入 GitHub 仓库（创建或更新，需 token 有 Contents: Read and write）
   // ★ 修复 409：每次写前都先 fetchSha() 拿【最新】sha，并在遇到 409 时自动重试一次
+  // ★ 写操作链路，使用带 PAT 的写配置（getWriteCfg）
   async function writeRemoteFile(name, obj){
-    const cfg=getCfg();
+    const cfg=getWriteCfg(); // ★ 用写配置 → 携带 PAT
     const path=fileUrl(cfg,name);
     const url=apiBase(cfg)+"/contents/"+encodePath(path);
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(obj,null,2))));
@@ -519,12 +554,12 @@ const App = (function(){
     return o;
   }
 
-  // 持久化：远程启用时推送到 GitHub；始终保留本地缓存
+  // 持久化：远程【写】启用时推送到 GitHub；始终保留本地缓存
   // ★ 修复 409：写入全部进入串行队列（enqueueWrite），并发调用不再并行 PUT
   async function persist(why){
     why=why||"保存";
     saveLocal(); // 本地先落盘，保证离线可用 & 队列提交前状态已固化
-    if(isRemoteEnabled()){
+    if(isWriteEnabled()){ // ★ 只有配置了 PAT 才推送（写操作需要鉴权）
       setSyncStatus("syncing");
       enqueueWrite(async ()=>{
         try{
@@ -547,7 +582,7 @@ const App = (function(){
     }
   }
   // 非异步的保存入口（兼容既有调用），统一走 persist
-  function save(why){why=why||"保存";if(isRemoteEnabled()){persist(why);}else{saveLocal();}}
+  function save(why){why=why||"保存";if(isWriteEnabled()){persist(why);}else{saveLocal();}}
   function addLogSafe(action,detail){
     // 仅本地追加，避免日志频繁推送；正式发布/管理操作仍走 persist
     try{
@@ -559,10 +594,11 @@ const App = (function(){
     }catch(e){}
   }
 
-  // 启动时加载：远程启用则拉取覆盖本地；否则用本地
+  // 启动时加载：远程【读】启用则匿名拉取覆盖本地；否则用本地
+  // ★ 访客无需 token 也能从公开仓库读取（匿名 GET），实现"任何人可看"
   // 读取采用串行 await（读虽不冲突，但可避免启动时多条并发请求 + 与首次写入抢队列）
   async function bootstrap(){
-    if(isRemoteEnabled()){
+    if(isReadEnabled()){ // ★ 只要配置了 owner/repo（访客场景已满足），即可匿名拉取
       setSyncStatus("syncing","正在从仓库拉取数据…");
       try{
         const tools=await fetchRemoteFile("tools",null);
@@ -596,7 +632,7 @@ const App = (function(){
     if(!dot)return;
     dot.className="dot"+(type==="syncing"?" syncing":"");
     if(text) txt.textContent=text;
-    if(mode){mode.textContent=isRemoteEnabled()?"🌐 仓库同步模式":"💾 本地模式（未配置 GitHub）";}
+    if(mode){mode.textContent=isWriteEnabled()?"🌐 仓库同步模式（可读写）":"🌐 公开只读模式（仅访客读取，需登录后写入）";}
   }
 
   // ---------- 认证 ----------
@@ -617,8 +653,9 @@ const App = (function(){
     catch(e){return {};}
   }
   // 写回仓库 visit.json（走同一套串行队列 + 409 重试，与 tools/logs 等一致）
+  // ★ 写操作，需 PAT（isWriteEnabled）；未配置 PAT 时静默放弃（仅保留本机计数）
   async function writeVisits(map){
-    if(!isRemoteEnabled()) return;
+    if(!isWriteEnabled()) return; // ★ 只有管理员配置了 PAT 才写回仓库
     await new Promise((res)=>enqueueWrite(async()=>{try{await writeRemoteFile("visit",map);}catch(e){}res();}));
   }
 
@@ -634,7 +671,8 @@ const App = (function(){
     renderDash(); // 立即刷新本机数字
 
     // 2) 合并到仓库 visit.json（拉取 → 累加今日 → 写回），天然支持多设备汇总
-    if(!isRemoteEnabled()) return;
+    // ★ 写操作需 PAT；访客（未登录/无 PAT）仅本机计数，不写回仓库
+    if(!isWriteEnabled()) return;
     try{
       const remote=await fetchVisits();
       const todayKey=new Date().toISOString().slice(0,10); // 用 ISO 日期作 key，跨设备时区一致
@@ -825,7 +863,8 @@ const App = (function(){
       const localToday=(localV&&localV.date===todayStr())?Number(localV.count)||0:0;
       visEl.textContent=localToday; // 先显示本机，远程到后修正
       // 异步拉取仓库汇总并覆盖（跨设备：A/B/C 任意设备访问都计入）
-      if(isRemoteEnabled()){
+      // ★ 读操作，匿名即可（isReadEnabled）
+      if(isReadEnabled()){
         fetchVisits().then(remote=>{if(remote&&remote[todayKey]!=null)visEl.textContent=remote[todayKey];})
           .catch(()=>{if(localToday)visEl.textContent=localToday;});
       }
@@ -1048,12 +1087,19 @@ const App = (function(){
 
   // ---------- 后台：数据同步配置 ----------
   function renderSyncCfg(){
-    const cfg=getCfg();
+    const cfg=getWriteCfg(); // ★ 用写配置（含内嵌 PAT），正确回填 token 字段
     const setVal=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||"";};
-    setVal("cfg-owner",cfg.owner);setVal("cfg-repo",cfg.repo);setVal("cfg-branch",cfg.branch||"main");setVal("cfg-dir",cfg.dir||"data");setVal("cfg-token",cfg.token);
+    setVal("cfg-owner",cfg.owner);setVal("cfg-repo",cfg.repo);setVal("cfg-branch",cfg.branch||"main");setVal("cfg-dir",cfg.dir||"data");
+    // ★ token 来自内嵌 PAT 时，输入框显示占位提示（不暴露完整令牌），留空保存即沿用内嵌值
+    const tokEl=document.getElementById("cfg-token");
+    if(tokEl){tokEl.value=(cfg.token===EMBEDDED_PAT)?"":cfg.token;}
+    if(tokEl&&cfg.token===EMBEDDED_PAT){const hint=document.getElementById("cfg-token-hint");if(hint)hint.style.display="";}
   }
   function saveSyncCfg(){
-    const cfg={owner:document.getElementById("cfg-owner").value.trim(),repo:document.getElementById("cfg-repo").value.trim(),branch:document.getElementById("cfg-branch").value.trim()||"main",dir:document.getElementById("cfg-dir").value.trim()||"data",token:document.getElementById("cfg-token").value.trim()};
+    // ★ token 字段留空时自动沿用内嵌 PAT（EMBEDDED_PAT），保证写权限不丢失
+    let token=document.getElementById("cfg-token").value.trim();
+    if(!token&&EMBEDDED_PAT) token=EMBEDDED_PAT;
+    const cfg={owner:document.getElementById("cfg-owner").value.trim(),repo:document.getElementById("cfg-repo").value.trim(),branch:document.getElementById("cfg-branch").value.trim()||"main",dir:document.getElementById("cfg-dir").value.trim()||"data",token};
     localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
     if(window.DB_CONFIG)Object.assign(window.DB_CONFIG,cfg);
     toast("配置已保存，正在初始化并拉取…","ok");
@@ -1064,13 +1110,15 @@ const App = (function(){
     }
   }
   // 首次启用远程：若仓库 data/*.json 尚不存在，自动初始化（避免「读 404 + 首次并发写无 sha」的竞态）
+  // ★ 写操作（探测 + 创建文件），需 PAT → 用 getWriteCfg
   async function seedRemoteIfEmpty(){
-    if(!isRemoteEnabled()) return;
+    if(!isWriteEnabled()) return; // ★ 仅管理员（有 PAT）可初始化
+    const cfg=getWriteCfg();
     const names=["tools","series","logs","comments","visit","meta"];
     for(const n of names){
       try{
-        const url=apiBase(getCfg())+"/contents/"+encodePath(fileUrl(getCfg(),n))+"?ref="+encodeURIComponent(getCfg().branch);
-        const res=await fetch(url,{headers:{Authorization:"Bearer "+getCfg().token,Accept:"application/vnd.github+json"}});
+        const url=apiBase(cfg)+"/contents/"+encodePath(fileUrl(cfg,n))+"?ref="+encodeURIComponent(cfg.branch);
+        const res=await fetch(url,{headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json"}});
         if(res.status===404){
           const seed=(n==="meta")?{announce:"",_seq:1,adminHash:ADMIN_PASS_SHA256}:{};
           await enqueueWrite(async()=>{try{await writeRemoteFile(n,seed);}catch(e){}});
@@ -1079,12 +1127,12 @@ const App = (function(){
     }
   }
   async function testSync(){
-    if(!isRemoteEnabled()){toast("请先填写完整的仓库信息并保存","err");return;}
+    if(!isReadEnabled()){toast("请先填写仓库 owner/repo 并保存","err");return;} // ★ 测试连接=读，匿名即可
     setSyncStatus("syncing","测试连接…");
     try{await bootstrap();renderAll();setSyncStatus("ok","连接成功");toast("连接成功，数据已拉取","ok");}catch(err){setSyncStatus("err","连接失败："+err.message);toast("连接失败："+err.message,"err");}
   }
   async function pushNow(){
-    if(!isRemoteEnabled()){toast("请先填写完整的仓库信息并保存","err");return;}
+    if(!isWriteEnabled()){toast("未配置写权限（PAT），无法上传","err");return;} // ★ 写操作需 PAT
     await persist("手动上传");
   }
 
@@ -1253,7 +1301,7 @@ const App = (function(){
     renderDash();
     applyRoute();
     // 管理入口：仅在配置好 GitHub 后提示
-    if(!isRemoteEnabled()){
+    if(!isReadEnabled()){
       // 初次使用给个温和提示（非阻塞）
       setTimeout(()=>{/* 静默：界面已有「数据同步」入口 */},0);
     }
