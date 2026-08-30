@@ -347,6 +347,7 @@
           <button class="btn" data-action="push-now">立即上传本地数据</button>
         </div>
         <p class="hint" style="margin-top:12px">说明：填写并保存后会自动从仓库拉取数据覆盖本地；之后所有增删改都会在保存时自动推送回仓库，实现多设备同步。</p>
+        <p class="hint" style="margin-top:6px">📊 访问量也会写入仓库 <b>visit.json</b>（按日期累加），因此「今日访问量」为 <b>A/B/C 任意设备访问的全局汇总</b>，不再只记本机。仓库需存在 <span class="tnum-badge">data/.keep</span> 以保证目录被 git 跟踪。</p>
       </div>
     </div>
   </div>
@@ -388,8 +389,10 @@ const App = (function(){
   }
   // 数据文件路径（相对于仓库根）
   function fileUrl(cfg, name){return (cfg.dir?cfg.dir+"/":"")+name+".json";}
-  // GitHub API base
+  // GitHub API base（owner/repo 允许含特殊字符，需编码；路径分隔符 / 必须保留）
   function apiBase(cfg){return "https://api.github.com/repos/"+encodeURIComponent(cfg.owner)+"/"+encodeURIComponent(cfg.repo);}
+  // 编码文件路径：逐段编码，保留目录分隔符（★ 关键：不能整体 encodeURIComponent，否则 / 变成 %2F，GitHub 报 404/409）
+  function encodePath(path){return path.split("/").map(encodeURIComponent).join("/");}
 
   // 是否启用远程同步（配置了必要信息即启用）
   function isRemoteEnabled(){
@@ -400,7 +403,7 @@ const App = (function(){
   // 从 GitHub 仓库拉取单个 JSON 文件；文件不存在时返回 fallback
   async function fetchRemoteFile(name, fallback){
     const cfg=getCfg();
-    const url=apiBase(cfg)+"/contents/"+encodeURIComponent(fileUrl(cfg,name))+"?ref="+encodeURIComponent(cfg.branch);
+    const url=apiBase(cfg)+"/contents/"+encodePath(fileUrl(cfg,name))+"?ref="+encodeURIComponent(cfg.branch);
     const res=await fetch(url,{headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json"}});
     if(res.status===404) return fallback; // 文件尚未创建
     if(!res.ok){const t=await res.text().catch(()=>"");throw new Error("拉取 "+name+" 失败("+res.status+"): "+(t||res.statusText));}
@@ -410,22 +413,60 @@ const App = (function(){
     return JSON.parse(decodeURIComponent(escape(content)));
   }
 
+  // 串行写入队列：GitHub Contents API 明确要求「并行会产生冲突，必须串行」
+  // （官方文档：You must use these endpoints serially instead）
+  // 并发的 save()/persist() 全部进入此队列，保证同一时刻只有一个 PUT 在网络上
+  let writeQueue=Promise.resolve();
+  function enqueueWrite(task){writeQueue=writeQueue.then(()=>task()).catch(()=>{});return writeQueue;}
+
+  // 拉取单个文件的【最新 sha】（不关心内容，专用于写前刷新乐观锁）
+  async function fetchSha(name){
+    const cfg=getCfg();
+    const url=apiBase(cfg)+"/contents/"+encodePath(fileUrl(cfg,name))+"?ref="+encodeURIComponent(cfg.branch);
+    const res=await fetch(url,{headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json"}});
+    if(res.status===404) return null;       // 文件不存在 → 将走「创建」路径（不带 sha）
+    if(!res.ok){const t=await res.text().catch(()=>"");throw new Error("获取 "+name+" 的 sha 失败("+res.status+"): "+(t||res.statusText));}
+    const j=await res.json();
+    return j.sha||null;
+  }
+
   // 将 JSON 写入 GitHub 仓库（创建或更新，需 token 有 repo 权限）
+  // ★ 修复 409：每次写前都先 fetchSha() 拿【最新】sha，并在遇到 409 时自动重试一次
   async function writeRemoteFile(name, obj){
     const cfg=getCfg();
     const path=fileUrl(cfg,name);
-    const url=apiBase(cfg)+"/contents/"+encodeURIComponent(path);
-    let sha=null;
-    // 先获取当前文件的 sha（更新必需）
-    try{
-      const head=await fetch(url+"?ref="+encodeURIComponent(cfg.branch),{headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json"}});
-      if(head.ok){const j=await head.json();sha=j.sha;}
-    }catch(e){/* 无 sha 则创建 */}
+    const url=apiBase(cfg)+"/contents/"+encodePath(path);
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(obj,null,2))));
-    const body={message:"ToolHub: update "+name+".json",content,branch:cfg.branch};
-    if(sha)body.sha=sha;
-    const res=await fetch(url,{method:"PUT",headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify(body)});
-    if(!res.ok){const t=await res.text().catch(()=>"");throw new Error("写入 "+name+" 失败("+res.status+"): "+(t||res.statusText));}
+
+    async function doPut(sha){
+      const body={message:"ToolHub: update "+name+".json",content,branch:cfg.branch};
+      if(sha)body.sha=sha;
+      const res=await fetch(url,{method:"PUT",headers:{Authorization:"Bearer "+cfg.token,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify(body)});
+      if(res.ok) return true;
+      const t=await res.text().catch(()=>"");
+      // 409 = 乐观锁冲突（他人/其他标签页已修改该文件）：刷新 sha 后由外层重试
+      if(res.status===409) throw {conflict:true,msg:"写入 "+name+" 失败(409，sha 冲突，将重试): "+(t||res.statusText)};
+      throw new Error("写入 "+name+" 失败("+res.status+"): "+(t||res.statusText));
+    }
+
+    // 先取最新 sha，再提交；冲突时【刷新 sha 并重试一次】，彻底消化并发
+    const sha1=await fetchSha(name);
+    try{return await doPut(sha1);}
+    catch(e){
+      if(e&&e.conflict){
+        const sha2=await fetchSha(name); // 重新拉取仓库当前 sha
+        return await doPut(sha2);        // 用新 sha 再提交一次
+      }
+      throw e;
+    }
+  }
+
+  // 批量写入：【串行】执行（非 Promise.all），杜绝多文件并行写导致的 409；单个失败不影响其余
+  async function writeRemoteAll(map){
+    for(const name of Object.keys(map)){
+      try{await writeRemoteFile(name,map[name]);}
+      catch(err){throw err;} // 透传第一个错误，让 persist 走 catch 分支
+    }
   }
 
   // 本地缓存（单机兜底 & 离线可读写）
@@ -478,25 +519,29 @@ const App = (function(){
     return o;
   }
 
-  // 持久化：远程启用时同时推送到 GitHub；始终保留本地缓存
+  // 持久化：远程启用时推送到 GitHub；始终保留本地缓存
+  // ★ 修复 409：写入全部进入串行队列（enqueueWrite），并发调用不再并行 PUT
   async function persist(why){
-    saveLocal();
+    why=why||"保存";
+    saveLocal(); // 本地先落盘，保证离线可用 & 队列提交前状态已固化
     if(isRemoteEnabled()){
       setSyncStatus("syncing");
-      try{
-        await Promise.all([
-          writeRemoteFile("tools",state.tools),
-          writeRemoteFile("series",state.series),
-          writeRemoteFile("logs",state.logs),
-          writeRemoteFile("comments",state.comments),
-          writeRemoteFile("meta",{announce:state.announce,_seq:state._seq,adminHash:state.adminHash}),
-        ]);
-        setSyncStatus("ok","已同步到仓库");
-        addLogSafe("数据同步","已推送至 GitHub 仓库（"+why+"）");
-      }catch(err){
-        setSyncStatus("err","同步失败："+err.message);
-        toast("远程同步失败，已保留本地："+err.message,"err");
-      }
+      enqueueWrite(async ()=>{
+        try{
+          await writeRemoteAll({
+            tools:state.tools,
+            series:state.series,
+            logs:state.logs,
+            comments:state.comments,
+            meta:{announce:state.announce,_seq:state._seq,adminHash:state.adminHash},
+          });
+          setSyncStatus("ok","已同步到仓库");
+          addLogSafe("数据同步","已推送至 GitHub 仓库（"+why+"）");
+        }catch(err){
+          setSyncStatus("err","同步失败："+err.message);
+          toast("远程同步失败，已保留本地："+err.message,"err");
+        }
+      });
     }else{
       setSyncStatus("local");
     }
@@ -515,22 +560,23 @@ const App = (function(){
   }
 
   // 启动时加载：远程启用则拉取覆盖本地；否则用本地
+  // 读取采用串行 await（读虽不冲突，但可避免启动时多条并发请求 + 与首次写入抢队列）
   async function bootstrap(){
     if(isRemoteEnabled()){
       setSyncStatus("syncing","正在从仓库拉取数据…");
       try{
-        const [tools,series,logs,comments,meta]=await Promise.all([
-          fetchRemoteFile("tools",null),fetchRemoteFile("series",null),
-          fetchRemoteFile("logs",null),fetchRemoteFile("comments",null),
-          fetchRemoteFile("meta",null),
-        ]);
+        const tools=await fetchRemoteFile("tools",null);
+        const series=await fetchRemoteFile("series",null);
+        const logs=await fetchRemoteFile("logs",null);
+        const comments=await fetchRemoteFile("comments",null);
+        const meta=await fetchRemoteFile("meta",null);
         const merged=newState();
         if(Array.isArray(tools))merged.tools=tools;
         if(Array.isArray(series))merged.series=series;
         if(Array.isArray(logs))merged.logs=logs;
         if(Array.isArray(comments))merged.comments=comments;
         if(meta&&typeof meta==="object"){if(typeof meta.announce==="string")merged.announce=meta.announce;if(typeof meta._seq==="number")merged._seq=meta._seq;}
-        // 用拉取到的数据（含本地新增未推送的合并保护：本地 _seq 取较大值）
+        // 本地 _seq 取较大值，保护「本地新增尚未推送」的序列号
         const local=loadLocal();if(local&&local._seq>merged._seq)merged._seq=local._seq;
         state=initState(merged);
         saveLocal(); // 本地也更新为远程版本
@@ -559,17 +605,56 @@ const App = (function(){
   function clearAuth(){localStorage.removeItem(AUTH_KEY);}
   function isAuthed(){const a=getAuth();return !!(a&&a.token&&a.user===ADMIN_USER);}
 
-  // 访问量：本地独立计数（访问统计天然按设备/按页，跨设备汇总需后端；此处记录本机今日访问，配合仓库 logs 记录管理操作）
-  function tickVisit(){
+  // 访问量：独立 key 存储，与主数据完全解耦 —— 彻底避免因「访问计数写入」与「主数据写入」竞争而互相覆盖
+  // ★ 跨设备汇总：GitHub Pages 为纯静态托管，无服务端。因此访问量也通过 GitHub API 写回仓库 visit.json，
+  //   格式：{"2026-08-25":12,"2026-08-26":3,...} —— 按日期为 key 累加，A/B/C 任意设备访问都 +1 到同一份文件。
+  const VISIT_KEY="qxb_visit_v1";
+  function todayStr(){return new Date().toLocaleDateString();}
+
+  // 读取仓库 visit.json（不存在则返回空对象）
+  async function fetchVisits(){
+    try{const v=await fetchRemoteFile("visit",null);return (v&&typeof v==="object")?v:{};}
+    catch(e){return {};}
+  }
+  // 写回仓库 visit.json（走同一套串行队列 + 409 重试，与 tools/logs 等一致）
+  async function writeVisits(map){
+    if(!isRemoteEnabled()) return;
+    await new Promise((res)=>enqueueWrite(async()=>{try{await writeRemoteFile("visit",map);}catch(e){}res();}));
+  }
+
+  // 记录一次访问：本地即时 +1（保证离线/断网可见），再合并上报到仓库
+  async function recordVisit(){
+    const today=todayStr();
+    // 1) 本地计数
+    let local={date:"",count:0};
+    try{const r=localStorage.getItem(VISIT_KEY);if(r)local=JSON.parse(r)||local;}catch(e){}
+    if(local.date!==today)local={date:today,count:0};
+    local.count++;
+    try{localStorage.setItem(VISIT_KEY,JSON.stringify(local));}catch(e){}
+    renderDash(); // 立即刷新本机数字
+
+    // 2) 合并到仓库 visit.json（拉取 → 累加今日 → 写回），天然支持多设备汇总
+    if(!isRemoteEnabled()) return;
     try{
-      const today=new Date().toLocaleDateString();
-      let v={date:"",count:0};
-      try{const r=localStorage.getItem("qxb_visit_v1");if(r)v=JSON.parse(r)||v;}catch(e){}
-      if(v.date!==today)v={date:today,count:0};
-      v.count++;
-      localStorage.setItem("qxb_visit_v1",JSON.stringify(v));
+      const remote=await fetchVisits();
+      const todayKey=new Date().toISOString().slice(0,10); // 用 ISO 日期作 key，跨设备时区一致
+      const base=Number(remote[todayKey])||0;
+      // 本地与远程取较大值再 +1，避免「A 设备 +1 覆盖 B 设备 +1」（防回退，非原子锁）
+      remote[todayKey]=Math.max(base,local.count)+ (base>=local.count?0:1);
+      await writeVisits(remote);
+    }catch(e){/* 上报失败不影响本机计数 */}
+
+    // 3) 数据面板「今日访问量」优先读仓库汇总（跨设备），回退到本机
+    try{
+      const remote=await fetchVisits();
+      const todayKey=new Date().toISOString().slice(0,10);
+      const el=document.getElementById("stVisits");
+      if(el&&remote[todayKey]!=null) el.textContent=remote[todayKey];
     }catch(e){}
   }
+
+  // 保留旧调用名兼容（若有外部引用），行为等同 recordVisit
+  function tickVisit(){return recordVisit();}
 
   function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -732,8 +817,19 @@ const App = (function(){
     document.getElementById("stDowns").textContent=state.tools.reduce((a,t)=>a+(t.downloads||0),0);
     document.getElementById("stCmts").textContent=state.comments.length;
     document.getElementById("stSeries").textContent=state.series.length;
-    // 今日访问量（本机）
-    try{const v=JSON.parse(localStorage.getItem("qxb_visit_v1")||"{}");document.getElementById("stVisits").textContent=v.date===new Date().toLocaleDateString()?v.count:0;}catch(e){document.getElementById("stVisits").textContent=0;}
+    // 今日访问量：优先显示仓库汇总（跨设备，A/B/C 任意设备访问都计入），无远程则回退本机
+    const visEl=document.getElementById("stVisits");
+    if(visEl){
+      const todayKey=new Date().toISOString().slice(0,10);
+      const localV=JSON.parse(localStorage.getItem(VISIT_KEY)||'{}');
+      const localToday=(localV&&localV.date===todayStr())?Number(localV.count)||0:0;
+      visEl.textContent=localToday; // 先显示本机，远程到后修正
+      // 异步拉取仓库汇总并覆盖（跨设备：A/B/C 任意设备访问都计入）
+      if(isRemoteEnabled()){
+        fetchVisits().then(remote=>{if(remote&&remote[todayKey]!=null)visEl.textContent=remote[todayKey];})
+          .catch(()=>{if(localToday)visEl.textContent=localToday;});
+      }
+    }
     const box=document.getElementById("recentLogs");
     if(!box)return;
     const recent=state.logs.filter(l=>l.published).slice(0,8);
@@ -960,9 +1056,27 @@ const App = (function(){
     const cfg={owner:document.getElementById("cfg-owner").value.trim(),repo:document.getElementById("cfg-repo").value.trim(),branch:document.getElementById("cfg-branch").value.trim()||"main",dir:document.getElementById("cfg-dir").value.trim()||"data",token:document.getElementById("cfg-token").value.trim()};
     localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
     if(window.DB_CONFIG)Object.assign(window.DB_CONFIG,cfg);
-    toast("配置已保存，下次操作将使用新配置","ok");
-    // 配置完整时自动拉取一次
-    if(cfg.owner&&cfg.repo&&cfg.token){setSyncStatus("syncing","正在拉取…");bootstrap().then(()=>{renderAll();toast("已拉取仓库数据","ok");});}
+    toast("配置已保存，正在初始化并拉取…","ok");
+    // 配置完整时：先自动创建缺失的 data/*.json，再拉取覆盖本地
+    if(cfg.owner&&cfg.repo&&cfg.token){
+      setSyncStatus("syncing","正在拉取…");
+      seedRemoteIfEmpty().then(()=>bootstrap()).then(()=>{renderAll();renderDash();toast("已拉取仓库数据","ok");});
+    }
+  }
+  // 首次启用远程：若仓库 data/*.json 尚不存在，自动初始化（避免「读 404 + 首次并发写无 sha」的竞态）
+  async function seedRemoteIfEmpty(){
+    if(!isRemoteEnabled()) return;
+    const names=["tools","series","logs","comments","visit","meta"];
+    for(const n of names){
+      try{
+        const url=apiBase(getCfg())+"/contents/"+encodePath(fileUrl(getCfg(),n))+"?ref="+encodeURIComponent(getCfg().branch);
+        const res=await fetch(url,{headers:{Authorization:"Bearer "+getCfg().token,Accept:"application/vnd.github+json"}});
+        if(res.status===404){
+          const seed=(n==="meta")?{announce:"",_seq:1,adminHash:ADMIN_PASS_SHA256}:{};
+          await enqueueWrite(async()=>{try{await writeRemoteFile(n,seed);}catch(e){}});
+        }
+      }catch(e){/* 忽略，后续操作自然会写 */}
+    }
   }
   async function testSync(){
     if(!isRemoteEnabled()){toast("请先填写完整的仓库信息并保存","err");return;}
@@ -1135,7 +1249,7 @@ const App = (function(){
     renderHome();
     await bootstrap();
     renderAll();
-    tickVisit();
+    await recordVisit(); // 页面加载即记录一次访问（本地 + 仓库 visit.json，实现跨设备汇总）
     renderDash();
     applyRoute();
     // 管理入口：仅在配置好 GitHub 后提示
@@ -1146,8 +1260,8 @@ const App = (function(){
   }
   init();
 
-  // 暴露给外部 db-config.js（可选注入配置）
-  window.ToolHub={getState:()=>state,persist,saveSyncCfg};
+  // 暴露给外部 db-config.js（可选注入配置）+ 测试钩子
+  window.ToolHub={getState:()=>state,persist,saveSyncCfg,seedRemoteIfEmpty,writeRemoteFile,fetchVisits,recordVisit,renderDash};
   return {};
 })();
 </script>
