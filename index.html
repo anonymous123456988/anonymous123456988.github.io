@@ -222,6 +222,11 @@
       <label>密码</label>
       <input id="loginPass" type="password" placeholder="密码" autocomplete="current-password">
     </div>
+    <div class="form-row">
+      <label>GitHub Fine-grained PAT（仅后台写操作需要；留空则仅能浏览，无法写入）</label>
+      <input id="loginPat" type="password" placeholder="粘贴你的 Fine-grained PAT 此处（仅本次会话有效）" autocomplete="off">
+      <span class="hint">★ 该令牌仅保存在本浏览器内存（sessionStorage），不会上传或写入任何文件，也不会出现在网页源码中，因此 GitHub 不会将其自动吊销。建议使用 Contents: Read and write、仅绑定本仓库、90 天过期的 Fine-grained PAT。登录后台后写操作自动就绪；换浏览器或清缓存后重新登录一次即可。</span>
+    </div>
     <button class="btn btn-primary" data-action="do-login">登 录</button>
     <p style="color:var(--muted);font-size:12px;margin-top:14px;text-align:center">welcome</p>
   </div>
@@ -335,12 +340,12 @@
     <div id="view-sync" style="display:none">
       <div class="panel">
         <h3>数据同步（GitHub 仓库存储）</h3>
-        <p class="hint" style="margin-bottom:14px">数据集中存储于本网站所在 GitHub 仓库的 JSON 文件中，任何设备访问均读取同一份数据。<b>读取为匿名公开访问（任何人可看，无需登录）；仅后台写入需要 Personal Access Token。</b>下方已内置 Fine-grained PAT（Contents: Read and write），默认即可使用；如需更换，可在同目录 <b>db-config.js</b> 覆盖，或在下方填写（留空即沿用内嵌值）。该 PAT 仅参与写操作，<b>绝不出现在读链路</b>。</p>
+        <p class="hint" style="margin-bottom:14px">数据集中存储于本网站所在 GitHub 仓库的 JSON 文件中，任何设备访问均读取同一份数据。<b>读取为匿名公开访问（任何人可看，无需登录，直接读取 raw 文件 URL，不占 API 配额）；仅后台写入需要 Personal Access Token。</b><br><b>★ 安全模型：</b>PAT 不再内嵌到网页源码，而是由管理员在「后台登录」时临时输入，仅保存在浏览器内存（sessionStorage）中，源码里不存在任何令牌 → GitHub Secret Scanning 无法扫描到，<b>永远不会被自动吊销</b>。请使用 Fine-grained PAT（仅绑定本仓库 + Contents: Read and write + 90 天过期）。登录后台后 PAT 自动生效；换浏览器或清缓存后重新登录一次即可。</p>
         <div class="form-row"><label>GitHub 仓库 owner/用户名</label><input id="cfg-owner" placeholder="例如：yourname"></div>
         <div class="form-row"><label>仓库名（即 GitHub Pages 所在仓库）</label><input id="cfg-repo" placeholder="例如：yourname.github.io"></div>
         <div class="form-row"><label>分支（GitHub Pages 来源分支，通常为 main 或 gh-pages）</label><input id="cfg-branch" placeholder="main"></div>
         <div class="form-row"><label>数据目录（JSON 文件存放目录，相对于仓库根目录）</label><input id="cfg-dir" placeholder="data"></div>
-        <div class="form-row"><label>Personal Access Token（留空则沿用内嵌的 Fine-grained PAT；仅在需要更换时填写）</label><input id="cfg-token" type="password" placeholder="github_pat_xxxxxxxxxxxxxxxxxxxx"><span class="hint" id="cfg-token-hint" style="display:none">★ 当前使用内嵌 PAT，直接保存即可，无需手动填写。</span></div>
+        <div class="form-row"><label>Personal Access Token（留空则沿用内嵌的 Fine-grained PAT；仅在需要更换时填写）</label><input id="cfg-token" type="password" placeholder="在此粘贴 PAT 并保存 = 登录写权限（不落盘，仅本次会话）"></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-primary" data-action="save-sync-cfg">保存配置</button>
           <button class="btn" data-action="test-sync">测试连接并拉取</button>
@@ -380,36 +385,47 @@ const App = (function(){
 
   // ==================== GitHub 存储层 ====================
   // ★ 安全模型（Fine-grained PAT，Contents: Read and write，仅绑定本仓库）：
-  //   - 读（访客/前台）：公开仓库 Contents API 支持【匿名、无需 token】读取
-  //     （官方："This endpoint can be used without authentication ... if only public resources are requested."）
-  //     → 读操作永远不带 Authorization，匿名 fetch，PAT 绝不出现在读链路
-  //   - 写（管理员/后台）：必须带 PAT，且 PAT 需有 Contents: Read and write
-  //     → 写操作才使用下方内嵌的 DB_CONFIG.token
+  //   - 读（访客/前台）：直接请求 raw.githubusercontent.com 上的【静态文件 URL】
+  //     例：https://raw.githubusercontent.com/<owner>/<repo>/<branch>/data/tools.json
+  //     → 公开仓库 raw 文件可匿名 GET，无需 token，不占 API 配额，无 CORS 问题
+  //     → 读操作永远不带 Authorization，PAT 绝不出现在读链路
+  //   - 写（管理员/后台）：管理员登录时在登录框输入 Fine-grained PAT → 仅存浏览器内存（sessionStorage）
+  //     → 写操作（fetchSha / writeRemoteFile / seedRemoteIfEmpty）带 Authorization: Bearer <pat>
+  //     → PAT 从没出现在任何公开文件里 → GitHub Secret Scanning 扫不到 → 不会被自动吊销
   //  配置可通过同目录 db-config.js 注入（window.DB_CONFIG），也可在「数据同步」页填写
   // ---------------------------------------------------------------
-  // ★ 内嵌 Fine-grained PAT（仅用于后台写操作；读操作完全不碰它）
-  //   若需更换，直接改这里（或同目录 db-config.js 覆盖），无需改动任何业务逻辑
-  const EMBEDDED_PAT = "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";;
-  const EMBEDDED_REPO = { owner:"anonymous123456988", repo:"anonymous123456988.github.io", branch:"main", dir:"data" };
+  // ★ 仓库信息（公开，无密钥，可安全内嵌）
+  const REPO = { owner:"anonymous123456988", repo:"anonymous123456988.github.io", branch:"main", dir:"data" };
+  // ★ PAT 存储键（仅存于浏览器 sessionStorage，源码中无任何令牌字符串）
+  const PAT_KEY = "toolhub_admin_pat";
+  // ★ 文件读取方式：直接读 raw.githubusercontent.com 上的静态文件 URL（匿名、无需 token、不占 API 配额）
+  //   对应仓库 data/ 目录：https://raw.githubusercontent.com/<owner>/<repo>/<branch>/data/<name>.json
+  function rawFileUrl(name){
+    return "https://raw.githubusercontent.com/"+REPO.owner+"/"+REPO.repo+"/"+REPO.branch+"/"+(REPO.dir?REPO.dir+"/":"")+name+".json";
+  }
   function defaultCfg(){return {owner:"",repo:"",branch:"main",dir:"data",token:""};}
-  // 写配置：合并 内嵌PAT + localStorage「数据同步」页填写 + window.DB_CONFIG
+  // ★ 管理员 PAT：仅从 sessionStorage 读取（后台登录时校验通过后才写入，关闭标签页即清除）
+  //   源码中不存在该令牌的任何明文 → GitHub Secret Scanning 扫不到 → 不会被自动吊销
+  function getAdminPat(){return sessionStorage.getItem(PAT_KEY)||"";}
+  function setAdminPat(pat){if(pat)sessionStorage.setItem(PAT_KEY,pat);else sessionStorage.removeItem(PAT_KEY);}
+  // 写配置：合并 sessionStorage PAT + localStorage「数据同步」页填写 + window.DB_CONFIG
   // token 仅从此处流出，且仅被 writeRemoteFile / fetchSha / seedRemoteIfEmpty 使用
   function getWriteCfg(){
     let c=defaultCfg();
     if(window.DB_CONFIG&&typeof window.DB_CONFIG==="object")Object.assign(c,window.DB_CONFIG);
     try{const s=localStorage.getItem(CFG_KEY);if(s)Object.assign(c,JSON.parse(s));}catch(e){}
-    // 内嵌 PAT 作为最终兜底（优先级：localStorage 覆盖 > DB_CONFIG > 内嵌），保证写链路始终有凭据
-    if(!c.token&&EMBEDDED_PAT)c.token=EMBEDDED_PAT;
-    if(!c.owner&&EMBEDDED_REPO.owner)c.owner=EMBEDDED_REPO.owner;
-    if(!c.repo&&EMBEDDED_REPO.repo)c.repo=EMBEDDED_REPO.repo;
-    if(!c.branch)c.branch=EMBEDDED_REPO.branch;
-    if(!c.dir)c.dir=EMBEDDED_REPO.dir;
+    // ★ 优先级：sessionStorage 管理员 PAT > localStorage 填写 > DB_CONFIG；仓库信息取自公开 REPO
+    if(!c.token)c.token=getAdminPat();
+    if(!c.owner)c.owner=REPO.owner;
+    if(!c.repo)c.repo=REPO.repo;
+    if(!c.branch)c.branch=REPO.branch;
+    if(!c.dir)c.dir=REPO.dir;
     return c;
   }
-  // 读配置：★ 强制清空 token，保证匿名读取（即使内嵌了 PAT 也不在请求头里出现）
+  // 读配置：★ 强制清空 token，走 raw 静态文件 URL（匿名、无需凭据、不占 API 配额）
   function getReadCfg(){
     const c=getWriteCfg();
-    c.token=""; // 读永远匿名，不携带任何凭据
+    c.token=""; // 读永远匿名，不携带任何凭据（直接读 raw.githubusercontent.com 文件 URL）
     return c;
   }
   // 数据文件路径（相对于仓库根）
@@ -424,26 +440,32 @@ const App = (function(){
     const c=getReadCfg();
     return !!(c.owner&&c.repo);
   }
-  // 是否启用【远程写入】（必须配置了有效 token）
+  // 是否启用【远程写入】（必须配置了 owner/repo + 管理员 PAT）
+  // ★ PAT 来自 sessionStorage（后台登录输入），未登录则仅能匿名读取，无法写入
   function isWriteEnabled(){
     const c=getWriteCfg();
     return !!(c.owner&&c.repo&&c.token);
   }
+  // 未登录 PAT 时的友好提示（写操作前调用）
+  function guardWrite(){
+    if(isWriteEnabled()) return true;
+    toast("当前为只读模式，后台写入需先登录 GitHub PAT（在「后台管理」登录框内填写）","err");
+    return false;
+  }
 
-  // 从 GitHub 仓库拉取单个 JSON 文件；文件不存在时返回 fallback
-  // ★ 读操作【匿名、不带 token】：利用公开仓库 Contents API 免鉴权读取
-  //   （访客裸读，PAT 不参与读链路，杜绝读权限泄漏）
+  // 从 GitHub 仓库拉取单个 JSON 文件；文件不存在/加载失败时返回 fallback
+  // ★ 读操作【匿名、不带 token】：直接请求 raw.githubusercontent.com 上的静态文件 URL
+  //   （对应仓库 data/ 目录下的 tools/series/logs/comments/visit/meta.json）
+  //   访客裸读，PAT 不参与读链路；且不走 API，不占 60次/小时 配额，无 CORS 问题
   async function fetchRemoteFile(name, fallback){
-    const cfg=getReadCfg(); // ★ 用读配置 → token 必为空
-    const url=apiBase(cfg)+"/contents/"+encodePath(fileUrl(cfg,name))+"?ref="+encodeURIComponent(cfg.branch);
-    // 注意：不携带 Authorization 头，纯匿名 GET（public repo 免鉴权）
-    const res=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});
+    const url=rawFileUrl(name); // ★ 直接读文件 URL，例：…/raw/…/main/data/tools.json
+    const res=await fetch(url,{cache:"no-cache"});
     if(res.status===404) return fallback; // 文件尚未创建
     if(!res.ok){const t=await res.text().catch(()=>"");throw new Error("拉取 "+name+" 失败("+res.status+"): "+(t||res.statusText));}
-    const data=await res.json();
-    // GitHub 返回 base64 内容
-    const content=atob((data.content||"").replace(/\s/g,""));
-    return JSON.parse(decodeURIComponent(escape(content)));
+    const text=await res.text();
+    if(!text||text.trim()==="") return fallback; // 空文件视为未初始化
+    try{return JSON.parse(text);}
+    catch(e){throw new Error("解析 "+name+".json 失败：文件内容不是合法 JSON（"+e.message+"）");}
   }
 
   // 串行写入队列：GitHub Contents API 明确要求「并行会产生冲突，必须串行」
@@ -594,8 +616,8 @@ const App = (function(){
     }catch(e){}
   }
 
-  // 启动时加载：远程【读】启用则匿名拉取覆盖本地；否则用本地
-  // ★ 访客无需 token 也能从公开仓库读取（匿名 GET），实现"任何人可看"
+  // 启动时加载：远程【读】启用则通过 raw 文件 URL 匿名拉取覆盖本地；否则用本地
+  // ★ 访客无需 token 也能读取（直接读 raw.githubusercontent.com 静态文件），实现"任何人可看"
   // 读取采用串行 await（读虽不冲突，但可避免启动时多条并发请求 + 与首次写入抢队列）
   async function bootstrap(){
     if(isReadEnabled()){ // ★ 只要配置了 owner/repo（访客场景已满足），即可匿名拉取
@@ -1090,23 +1112,41 @@ const App = (function(){
     const cfg=getWriteCfg(); // ★ 用写配置（含内嵌 PAT），正确回填 token 字段
     const setVal=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||"";};
     setVal("cfg-owner",cfg.owner);setVal("cfg-repo",cfg.repo);setVal("cfg-branch",cfg.branch||"main");setVal("cfg-dir",cfg.dir||"data");
-    // ★ token 来自内嵌 PAT 时，输入框显示占位提示（不暴露完整令牌），留空保存即沿用内嵌值
+    // ★ 安全：输入框不回填任何已保存的令牌（源码/本地均不存明文）；仅显示占位
+    //   若 sessionStorage 中已有有效 PAT，显示已登录提示；否则提示需登录
     const tokEl=document.getElementById("cfg-token");
-    if(tokEl){tokEl.value=(cfg.token===EMBEDDED_PAT)?"":cfg.token;}
-    if(tokEl&&cfg.token===EMBEDDED_PAT){const hint=document.getElementById("cfg-token-hint");if(hint)hint.style.display="";}
+    if(tokEl){tokEl.value="";}
+    const hint=document.getElementById("cfg-token-hint");
+    if(hint){
+      hint.style.display="";
+      hint.textContent=getAdminPat()?"★ 当前已登录 PAT（写操作就绪，仅存于浏览器内存）":"★ 未登录 PAT：仅能匿名读取；填写上方 PAT 并保存即激活写入（不落盘）";
+    }
   }
   function saveSyncCfg(){
-    // ★ token 字段留空时自动沿用内嵌 PAT（EMBEDDED_PAT），保证写权限不丢失
-    let token=document.getElementById("cfg-token").value.trim();
-    if(!token&&EMBEDDED_PAT) token=EMBEDDED_PAT;
-    const cfg={owner:document.getElementById("cfg-owner").value.trim(),repo:document.getElementById("cfg-repo").value.trim(),branch:document.getElementById("cfg-branch").value.trim()||"main",dir:document.getElementById("cfg-dir").value.trim()||"data",token};
+    // ★ 安全：token 不再写入 localStorage（避免落盘/泄漏风险）。
+    //   cfg-token 输入框仅作为「在此登录 PAT」的便捷入口：校验通过后存入 sessionStorage（内存）。
+    //   仓库信息（owner/repo/branch/dir）安全无密钥，可存 localStorage。
+    const tokenInput=document.getElementById("cfg-token").value.trim();
+    const owner=document.getElementById("cfg-owner").value.trim();
+    const repo=document.getElementById("cfg-repo").value.trim();
+    const branch=document.getElementById("cfg-branch").value.trim()||"main";
+    const dir=document.getElementById("cfg-dir").value.trim()||"data";
+    const cfg={owner,repo,branch,dir,token:""};
     localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
     if(window.DB_CONFIG)Object.assign(window.DB_CONFIG,cfg);
-    toast("配置已保存，正在初始化并拉取…","ok");
-    // 配置完整时：先自动创建缺失的 data/*.json，再拉取覆盖本地
-    if(cfg.owner&&cfg.repo&&cfg.token){
+    // 若在此页填写了 PAT：校验通过后存 sessionStorage（不落盘）
+    if(tokenInput){
+      setSyncStatus("syncing","正在校验 PAT…");
+      fetch("https://api.github.com/user",{headers:{Authorization:"Bearer "+tokenInput,Accept:"application/vnd.github+json"}})
+        .then(r=>{if(!r.ok)throw new Error("校验失败("+r.status+")");return r.json();})
+        .then(userJson=>{setAdminPat(tokenInput);document.getElementById("cfg-token").value="";toast("PAT 校验通过（"+userJson.login+"），已激活写操作","ok");seedRemoteIfEmpty().then(()=>bootstrap()).then(()=>{renderAll();renderDash();});})
+        .catch(err=>{setAdminPat("");toast("PAT 无效："+err.message,"err");});
+      return;
+    }
+    toast("配置已保存（只读）；如需写入请先登录 PAT","ok");
+    if(cfg.owner&&cfg.repo){
       setSyncStatus("syncing","正在拉取…");
-      seedRemoteIfEmpty().then(()=>bootstrap()).then(()=>{renderAll();renderDash();toast("已拉取仓库数据","ok");});
+      bootstrap().then(()=>{renderAll();renderDash();toast("已拉取仓库数据","ok");});
     }
   }
   // 首次启用远程：若仓库 data/*.json 尚不存在，自动初始化（避免「读 404 + 首次并发写无 sha」的竞态）
@@ -1198,21 +1238,45 @@ const App = (function(){
   function renderAll(){renderAnnounce();renderSeriesChips();renderTools(document.getElementById("searchInput").value);}
 
   // ---------- 登录 ----------
+  // 步骤：① 校验管理员密码（本地 SHA-256）→ ② 若填写了 PAT，调 GitHub API 校验有效性 → 通过后存 sessionStorage
+  // ★ PAT 仅保存在 sessionStorage（浏览器内存），源码中无任何令牌明文 → GitHub 无法扫描 → 永不吊销
   async function doLogin(){
     const user=document.getElementById("loginUser").value.trim();
     const pass=document.getElementById("loginPass").value;
     if(!user||!pass){toast("请输入账号和密码","err");return;}
     const hash=await sha256(pass);
-    if(user===ADMIN_USER&&constantTimeEq(hash,ADMIN_PASS_SHA256)){
-      setAuth(makeToken());
-      document.getElementById("loginPass").value="";
-      go("#/admin/dash");
-      toast("登录成功","ok");
-    }else{
-      toast("账号或密码错误","err");
+    if(!(user===ADMIN_USER&&constantTimeEq(hash,ADMIN_PASS_SHA256))){
+      toast("账号或密码错误","err");return;
     }
+    // 账号密码通过：处理可选填的 PAT
+    const patInput=document.getElementById("loginPat").value.trim();
+    if(patInput){
+      // 校验 PAT 有效性：调 GitHub /user（需身份）+ 确认可访问本仓库
+      try{
+        const me=await fetch("https://api.github.com/user",{headers:{Authorization:"Bearer "+patInput,Accept:"application/vnd.github+json"}});
+        if(!me.ok){const t=await me.text().catch(()=>"");throw new Error("PAT 校验失败("+me.status+"): "+(t||me.statusText));}
+        const userJson=await me.json();
+        const repoRes=await fetch("https://api.github.com/repos/"+encodeURIComponent(REPO.owner)+"/"+encodeURIComponent(REPO.repo),{headers:{Authorization:"Bearer "+patInput,Accept:"application/vnd.github+json"}});
+        if(!repoRes.ok){throw new Error("该 PAT 无法访问仓库（需 Contents: Read and write）("+repoRes.status+")");}
+        // 校验通过：仅存内存（sessionStorage），绝不落盘
+        setAdminPat(patInput);
+        try{localStorage.setItem(CFG_KEY,JSON.stringify({owner:REPO.owner,repo:REPO.repo,branch:REPO.branch,dir:REPO.dir,token:""}));}catch(e){}
+        toast("登录成功，PAT 已激活（"+userJson.login+"，写操作就绪）","ok");
+      }catch(err){
+        setAdminPat(""); // 校验失败，清除
+        toast("PAT 无效："+err.message,"err");
+        return;
+      }
+    }else{
+      // 未填 PAT：仍可登录浏览后台，但写操作会被 guardWrite 拦截提示
+      toast("登录成功（未填 PAT，仅可浏览；写入请重新登录并填写 PAT）","ok");
+    }
+    setAuth(makeToken());
+    document.getElementById("loginPass").value="";
+    document.getElementById("loginPat").value="";
+    go("#/admin/dash");
   }
-  function logout(){clearAuth();go("#/");toast("已退出登录");}
+  function logout(){clearAuth();setAdminPat("");go("#/");toast("已退出登录，写权限已清除");}
 
   // ---------- 事件委托 ----------
   function initEvents(){
