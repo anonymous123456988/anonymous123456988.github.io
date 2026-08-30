@@ -2,10 +2,12 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>TinySpace</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   :root{
     --bg:#ffffff;--bg-soft:#f6f8fa;--panel:#ffffff;--card:#ffffff;--border:#e4e8ee;
     --text:#1a2230;--muted:#6b7684;--brand:#2563eb;--brand-soft:#eef4ff;
@@ -13,165 +15,211 @@
     --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
     --shadow-md:0 8px 24px rgba(16,24,40,.08);
     --radius:10px;
+    --header-h:56px;
   }
   html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
+  body{min-height:100vh;overflow-x:hidden;-webkit-text-size-adjust:100%}
   a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
-  button{font-family:inherit;cursor:pointer;border:none;outline:none}
-  input,textarea,select{font-family:inherit;font-size:14px;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;outline:none;transition:border-color .15s}
+  button{font-family:inherit;cursor:pointer;border:none;outline:none;min-height:36px}
+  input,textarea,select{font-family:inherit;font-size:16px;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;outline:none;transition:border-color .15s;width:100%}
+  @media(max-width:760px){input,textarea,select{font-size:16px}} /* 防止 iOS 自动缩放 */
   input:focus,textarea:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
   textarea{resize:vertical;min-height:80px}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:8px;font-weight:600;transition:.15s;background:var(--chip);color:var(--text);border:1px solid var(--border);font-size:13px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:8px;font-weight:600;transition:.15s;background:var(--chip);color:var(--text);border:1px solid var(--border);font-size:13px;min-height:36px;white-space:nowrap}
   .btn:hover{background:#e8ecf1}
   .btn-primary{background:var(--brand);color:#fff;border-color:var(--brand)}
   .btn-primary:hover{background:#1d4ed8;border-color:#1d4ed8}
   .btn-danger{background:#fef2f2;color:var(--err);border-color:#fbd5d5}
   .btn-danger:hover{background:#fee2e2}
+  .btn-sm{padding:5px 10px;font-size:12px;min-height:30px}
   .btn-ghost{background:transparent;border-color:transparent}
   .btn-ghost:hover{background:var(--chip)}
+  .btn-block{width:100%}
   .container{max-width:1140px;margin:0 auto;padding:0 24px}
+  @media(max-width:760px){.container{padding:0 14px}}
   .header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
-  .header-inner{display:flex;align-items:center;gap:18px;height:60px}
-  .logo{font-size:17px;font-weight:800;color:var(--text);letter-spacing:.2px;display:flex;align-items:center;gap:8px}
+  .header-inner{display:flex;align-items:center;gap:12px;height:var(--header-h)}
+  .logo{font-size:16px;font-weight:800;color:var(--text);letter-spacing:.2px;display:flex;align-items:center;gap:8px;flex-shrink:0}
   .logo .mark{width:26px;height:26px;border-radius:7px;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
-  .search{display:flex;align-items:center;gap:8px;flex:1;max-width:420px;background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:5px 11px}
-  .search input{border:none;background:transparent;flex:1;padding:4px;font-size:13px}
+  .search{display:flex;align-items:center;gap:8px;flex:1;min-width:0;background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:5px 11px}
+  .search input{border:none;background:transparent;flex:1;padding:4px;font-size:14px;min-height:0;width:auto}
   .search input:focus{box-shadow:none;border:none}
-  .nav{display:flex;gap:4px;margin-left:auto}
+  .nav{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
   .nav .btn{padding:6px 12px;font-size:13px}
-  .hero{padding:56px 0 28px;text-align:left;border-bottom:1px solid var(--border);margin-bottom:8px}
-  .hero .tag{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:3px 10px;border-radius:99px;margin-bottom:14px;letter-spacing:.3px}
-  .hero h1{font-size:32px;font-weight:800;line-height:1.25;letter-spacing:-.5px;max-width:720px}
+  @media(max-width:760px){
+    .header-inner{gap:8px}
+    .logo span:not(.mark){display:none} /* 移动端只显示 T 方块 */
+    .nav .btn{padding:6px 8px;font-size:12px}
+  }
+  .hero{padding:36px 0 22px;text-align:left;border-bottom:1px solid var(--border);margin-bottom:8px}
+  @media(max-width:760px){.hero{padding:22px 0 16px}}
+  .hero .tag{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:3px 10px;border-radius:99px;margin-bottom:12px;letter-spacing:.3px}
+  .hero h1{font-size:30px;font-weight:800;line-height:1.25;letter-spacing:-.5px;max-width:720px}
   .hero p{color:var(--muted);margin-top:12px;font-size:15px;max-width:640px}
-  .section-title{display:flex;align-items:center;justify-content:space-between;margin:28px 0 16px}
+  @media(max-width:760px){.hero h1{font-size:22px}.hero p{font-size:13px}}
+  .section-title{display:flex;align-items:center;justify-content:space-between;margin:24px 0 14px;gap:10px;flex-wrap:wrap}
   .section-title h2{font-size:18px;font-weight:700}
+  @media(max-width:760px){.section-title{margin:18px 0 12px}}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr;gap:12px}}
   .tool-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,transform .15s;box-shadow:var(--shadow)}
-  .tool-card:hover{border-color:#c7d2e0;transform:translateY(-2px)}
+  .tool-card:hover{border-color:#c7d2e0}
   .tool-card .icon{height:104px;display:flex;align-items:center;justify-content:center;background:var(--bg-soft);border-bottom:1px solid var(--border);overflow:hidden}
   .tool-card .icon img{width:100%;height:100%;object-fit:cover;display:block}
   .tool-card .icon .em{font-size:40px}
+  @media(max-width:760px){.tool-card .icon{height:88px}}
   .tool-card .body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:8px}
-  .tool-card .name{font-weight:700;font-size:15px}
+  .tool-card .name{font-weight:700;font-size:15px;line-height:1.4}
   .tool-card .meta{color:var(--muted);font-size:12px;display:flex;gap:14px;flex-wrap:wrap}
   .tool-card .meta b{color:var(--text);font-weight:600}
   .tool-card .actions{display:flex;gap:8px;margin-top:auto;padding-top:12px}
   .tool-card .actions .btn{flex:1;padding:7px 0;font-size:13px}
+  .series-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:var(--brand-soft);color:var(--brand);margin-top:2px}
   .modal-mask{position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
   .modal-mask.show{display:flex}
+  @media(max-width:760px){.modal-mask{padding:0;align-items:flex-end}.modal{border-radius:14px 14px 0 0;max-height:92vh}}
   .modal{background:var(--panel);border:1px solid var(--border);border-radius:14px;width:100%;max-width:720px;max-height:86vh;overflow:auto;box-shadow:var(--shadow-md)}
   .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--panel);z-index:2;border-radius:14px 14px 0 0}
   .modal-head h3{font-size:16px;font-weight:700}
   .modal-body{padding:20px}
-  .close{background:transparent;color:var(--muted);font-size:20px;line-height:1;padding:4px 8px;border-radius:6px}
+  @media(max-width:760px){.modal-body{padding:16px}}
+  .close{background:transparent;color:var(--muted);font-size:22px;line-height:1;padding:4px 8px;border-radius:6px;min-height:0}
   .close:hover{background:var(--chip);color:var(--text)}
   .detail-icon{width:80px;height:80px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg-soft);margin-bottom:14px;border:1px solid var(--border);overflow:hidden}
   .detail-icon img{width:100%;height:100%;object-fit:cover;display:block}
   .detail-meta{display:flex;gap:20px;color:var(--muted);font-size:13px;margin:10px 0 16px;flex-wrap:wrap}
   .detail-meta b{color:var(--text)}
-  .readme{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:16px;line-height:1.7;color:#2a3342;font-size:14px;white-space:pre-wrap;word-break:break-word}
+  .readme{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:16px;line-height:1.7;color:#2a3342;font-size:14px;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
   .readme h1,.readme h2,.readme h3{color:var(--text);margin:10px 0 6px}
-  .readme code{background:#fff;border:1px solid var(--border);padding:1px 5px;border-radius:4px;font-size:13px}
-  .readme pre{background:#fff;padding:12px;border-radius:8px;border:1px solid var(--border);overflow:auto;margin:8px 0}
+  .readme code{background:#fff;border:1px solid var(--border);padding:1px 5px;border-radius:4px;font-size:13px;white-space:pre-wrap}
+  .readme pre{background:#fff;padding:12px;border-radius:8px;border:1px solid var(--border);overflow:auto;margin:8px 0;white-space:pre}
   .readme a{color:var(--brand)}
   .readme ul,.readme ol{padding-left:22px;margin:6px 0}
   .comments{margin-top:24px;border-top:1px solid var(--border);padding-top:18px}
   .comments h4{font-size:14px;margin-bottom:12px;font-weight:700}
   .comment{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
-  .comment .c-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .comment .c-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
   .comment .c-from{color:var(--muted);font-size:12px}
-  .comment .c-text{font-size:14px;line-height:1.6;white-space:pre-wrap}
+  .comment .c-text{font-size:14px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
   .comment-form{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-  .comment-form .row{display:flex;gap:8px}
-  .comment-form input{flex:1}
-  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:10px;box-shadow:var(--shadow-md);opacity:0;transition:.25s;z-index:200;font-size:14px;display:flex;align-items:center;gap:8px}
+  .comment-form .row{display:flex;gap:8px;flex-wrap:wrap}
+  .comment-form input{flex:1;min-width:120px}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:10px;box-shadow:var(--shadow-md);opacity:0;transition:.25s;z-index:200;font-size:14px;display:flex;align-items:center;gap:8px;max-width:90vw;pointer-events:none}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media(max-width:760px){.toast{bottom:16px;font-size:13px;padding:10px 14px}}
   .toast.ok{border-color:#b7e4c7}.toast.ok .dot{background:var(--ok)}
   .toast.err{border-color:#f5c2c0}.toast.err .dot{background:var(--err)}
-  .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--brand)}
-  .admin{display:flex;gap:0;min-height:calc(100vh - 60px)}
-  .sidebar{width:220px;background:var(--bg-soft);border-right:1px solid var(--border);padding:16px 10px;flex-shrink:0}
+  .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--brand);flex-shrink:0}
+  .admin{display:flex;gap:0;min-height:calc(100vh - var(--header-h))}
+  @media(max-width:760px){.admin{position:relative}}
+  .sidebar{width:220px;background:var(--bg-soft);border-right:1px solid var(--border);padding:16px 10px;flex-shrink:0;overflow-y:auto}
+  @media(max-width:760px){
+    .sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:78%;max-width:280px;z-index:90;
+      transform:translateX(-100%);transition:transform .25s;box-shadow:var(--shadow-md)}
+    .sidebar.open{transform:translateX(0)}
+    .sidebar-backdrop{display:none;position:fixed;inset:var(--header-h) 0 0 0;background:rgba(16,24,40,.3);z-index:89}
+    .sidebar-backdrop.open{display:block}
+  }
   .sidebar .brand{font-size:12px;color:var(--muted);padding:0 10px 12px;border-bottom:1px solid var(--border);margin-bottom:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
-  .sidebar a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:var(--muted);font-size:14px;margin-bottom:2px;font-weight:500}
+  .sidebar a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:8px;color:var(--muted);font-size:14px;margin-bottom:2px;font-weight:500;min-height:0}
   .sidebar a:hover{background:var(--chip);color:var(--text);text-decoration:none}
   .sidebar a.active{background:var(--brand);color:#fff}
   .sidebar a.active .ic{color:#fff}
-  .sidebar a .ic{font-size:15px;width:20px;text-align:center;color:var(--muted)}
-  .main{flex:1;padding:24px 28px;min-width:0}
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
+  .sidebar a .ic{font-size:15px;width:20px;text-align:center;color:var(--muted);flex-shrink:0}
+  .main{flex:1;padding:24px 28px;min-width:0;width:100%}
+  @media(max-width:760px){.main{padding:16px 14px}}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
   .stat{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
-  .stat .n{font-size:26px;font-weight:800;letter-spacing:-.5px}
+  .stat .n{font-size:26px;font-weight:800;letter-spacing:-.5px;word-break:break-all}
   .stat .l{color:var(--muted);font-size:12px;margin-top:4px}
-  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+  .stat .sync{font-size:11px;margin-top:6px}
+  .stat .sync.ok{color:var(--ok)}.stat .sync.err{color:var(--warn)}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+  @media(max-width:760px){.panel{padding:16px}}
   .panel h3{font-size:15px;font-weight:700;margin-bottom:14px}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border)}
-  th{color:var(--muted);font-weight:600;font-size:11px;letter-spacing:.4px;text-transform:uppercase;background:var(--bg-soft)}
+  /* 表格移动端横向滚动 */
+  .table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+  @media(max-width:760px){table{min-width:520px;font-size:12px}}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+  th{color:var(--muted);font-weight:600;font-size:11px;letter-spacing:.4px;text-transform:uppercase;background:var(--bg-soft);white-space:nowrap}
   tr:last-child td{border-bottom:none}
   td .btn{padding:5px 10px;font-size:12px}
+  td .btn+.btn{margin-left:4px}
   .empty{text-align:center;color:var(--muted);padding:40px 0}
   .empty .big{font-size:34px;margin-bottom:8px;color:#c7d2e0}
   .form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
   .form-row label{font-size:13px;color:var(--muted);font-weight:600}
   .form-row .hint{font-size:12px;color:var(--muted)}
-  .icon-pick{display:flex;gap:10px;align-items:center}
-  .icon-pick .prev{width:52px;height:52px;border-radius:11px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid var(--border);overflow:hidden}
+  .icon-pick{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .icon-pick .prev{width:52px;height:52px;border-radius:11px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid var(--border);overflow:hidden;flex-shrink:0}
   .icon-pick .prev img{width:100%;height:100%;object-fit:cover;display:block}
-  .login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:20px}
+  .icon-pick .file-box{flex:1;min-width:200px}
+  .login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - var(--header-h));padding:20px}
   .login{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:380px;box-shadow:var(--shadow-md)}
   .login h2{font-size:19px;margin-bottom:18px;text-align:center;font-weight:800}
   .login .form-row{margin-bottom:16px}
   .login .btn{width:100%;padding:11px}
-  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok)}
+  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok);white-space:nowrap}
   .badge.err{background:#fef2f2;color:var(--err)}
   .badge.warn{background:#fff4d6;color:var(--warn)}
+  .badge.brand{background:var(--brand-soft);color:var(--brand)}
   .flex-between{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
   .announce-box{background:var(--brand-soft);border:1px solid #d6e4ff;border-radius:10px;padding:12px 14px;margin-bottom:18px;display:flex;gap:10px;align-items:flex-start}
-  .announce-box .pin{font-size:16px;color:var(--brand)}
-  .announce-box .txt{font-size:13px;color:#264a7a;line-height:1.6}
+  .announce-box .pin{font-size:16px;color:var(--brand);flex-shrink:0}
+  .announce-box .txt{font-size:13px;color:#264a7a;line-height:1.6;word-break:break-word}
   .footer{color:var(--muted);text-align:center;font-size:12px;padding:30px 0 22px;border-top:1px solid var(--border);margin-top:24px}
   .muted{color:var(--muted);font-size:13px}
-  .tnum-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .tnum-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#e8f3ec;color:var(--ok);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;word-break:break-all}
   .adm-icon{width:36px;height:36px;border-radius:8px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--border)}
   .adm-icon img{width:100%;height:100%;object-fit:cover;display:block}
   .adm-icon .em{font-size:18px}
   .unlock-tip{font-size:12px;color:var(--muted);margin-top:6px}
-  @media(max-width:760px){
-    .sidebar{display:none}
-    .grid{grid-template-columns:1fr}
-    .search{display:none}
-    .hero h1{font-size:26px}
-  }
+  .menu-btn{display:none}
+  @media(max-width:760px){.menu-btn{display:inline-flex}}
+  .series-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .series-nav .chip{padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:13px;transition:.15s}
+  .series-nav .chip.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .series-nav .chip:hover{background:var(--chip)}
+  .series-nav .chip.active:hover{background:var(--brand)}
+  .series-card{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .series-card .fill{flex:1;min-width:160px}
+  .sync-banner{font-size:12px;color:var(--muted);background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .sync-banner code{background:#fff;padding:1px 6px;border-radius:4px;border:1px solid var(--border);font-size:11px;word-break:break-all}
 </style>
 </head>
 <body>
 
 <header class="header" id="header" style="display:none">
   <div class="container header-inner">
-    <div class="logo"><span class="mark">T</span>ToolHub</div>
+    <button class="btn btn-ghost menu-btn" id="menuBtn" aria-label="打开菜单" style="padding:6px 10px">☰</button>
+    <a href="#/" class="logo" style="text-decoration:none"><span class="mark">T</span><span>ToolHub</span></a>
     <div class="search">
-      <span style="color:var(--muted)">⌕</span>
-      <input id="searchInput" placeholder="搜索工具名称或输入编码(编号)解锁隐藏工具…">
+      <span style="color:var(--muted);flex-shrink:0">⌕</span>
+      <input id="searchInput" placeholder="搜索名称/系列，或输入编码解锁隐藏…">
     </div>
     <nav class="nav">
       <button class="btn btn-ghost" data-go="#/">首页</button>
-      <button class="btn btn-ghost" id="adminEnterBtn" data-action="enter-admin">后台管理</button>
+      <button class="btn btn-ghost" id="adminEnterBtn" data-action="enter-admin">后台</button>
     </nav>
   </div>
 </header>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
 <section class="container" id="homeView">
   <div class="hero">
     <span class="tag">TinySpace</span>
     <h1>发现优质工具，一键获取所需</h1>
-    <p id="heroSub">由后台统一维护工具内容与下载入口，集中展示、便捷检索。隐藏工具需输入对应编码(编号)搜索后方可显示与下载。</p>
+    <p id="heroSub">由后台统一维护工具内容与下载入口，集中展示、便捷检索。可按系列归类浏览，隐藏工具需输入对应编码(编号)搜索后方可显示与下载。</p>
   </div>
   <div class="announce-box" id="announceBox" style="display:none">
     <div class="pin">◆</div>
     <div class="txt" id="announceTxt"></div>
   </div>
-  <div class="section-title"><h2>全部工具</h2><span class="muted" id="toolCount"></span></div>
+  <div class="section-title"><h2 id="sectionTitle">全部工具</h2><span class="muted" id="toolCount"></span></div>
+  <div class="series-nav" id="seriesNav"></div>
   <div class="grid" id="toolGrid"></div>
-  <div class="footer">© <span id="footYear"></span> TinySpace 2026.08.25 交流群：1108628724</div>
+  <div class="footer">© <span id="footYear"></span> TinySpace 交流群：1108628724</div>
 </section>
 
 <div class="modal-mask" id="detailMask">
@@ -195,15 +243,16 @@
       <label>密码</label>
       <input id="loginPass" type="password" placeholder="密码" autocomplete="current-password">
     </div>
-    <button class="btn btn-primary" data-action="do-login">登 录</button>
+    <button class="btn btn-primary btn-block" data-action="do-login">登 录</button>
     <p style="color:var(--muted);font-size:12px;margin-top:14px;text-align:center">welcome</p>
   </div>
 </section>
 
 <section class="admin" id="adminView" style="display:none">
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <div class="brand">后台管理</div>
     <a href="#/admin/dash" class="active" data-view="dash"><span class="ic">▦</span>数据面板</a>
+    <a href="#/admin/series" data-view="series"><span class="ic">▤</span>系列管理</a>
     <a href="#/admin/logs" data-view="logs"><span class="ic">≡</span>日志</a>
     <a href="#/admin/publish" data-view="publish"><span class="ic">＋</span>工具上架</a>
     <a href="#/admin/tools" data-view="tools"><span class="ic">⚙</span>工具管理</a>
@@ -215,21 +264,40 @@
   </aside>
   <div class="main">
     <div id="view-dash">
+      <div class="sync-banner" id="syncBanner"></div>
       <div class="stats">
-        <div class="stat"><div class="n" id="stVisits">0</div><div class="l">今日访问量</div></div>
+        <div class="stat"><div class="n" id="stVisits">0</div><div class="l">今日访问量(PV)</div><div class="sync" id="stVisitsSync"></div></div>
         <div class="stat"><div class="n" id="stTools">0</div><div class="l">工具数量</div></div>
-        <div class="stat"><div class="n" id="stDowns">0</div><div class="l">累计下载量</div></div>
+        <div class="stat"><div class="n" id="stDowns">0</div><div class="l">累计下载量</div><div class="sync" id="stDownsSync"></div></div>
         <div class="stat"><div class="n" id="stCmts">0</div><div class="l">评论总数</div></div>
+        <div class="stat"><div class="n" id="stSeries">0</div><div class="l">系列数量</div></div>
       </div>
       <div class="panel">
         <h3>最近动态</h3>
         <div id="recentLogs" class="empty"><div class="big">∅</div>暂无日志记录</div>
       </div>
     </div>
+    <div id="view-series" style="display:none">
+      <div class="panel">
+        <div class="flex-between" style="margin-bottom:14px"><h3 style="margin:0">系列管理（可设置编号、隐藏/展示整个系列）</h3></div>
+        <div class="form-row"><label>系列名称</label><input id="s-name" placeholder="例如：设计资源、开发工具集"></div>
+        <div class="form-row"><label>系列编号/编码（可重复，仅后台可见；前台可用此编号筛选）</label><input id="s-number" placeholder="如 S01"></div>
+        <div class="form-row"><label>系列图标 emoji（可选）</label><input id="s-icon" placeholder="如 🎨" value="📁"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" id="sBtn" data-action="save-series">添加系列</button>
+          <button class="btn" data-action="reset-series-form">重置</button>
+        </div>
+        <p class="hint" style="color:var(--muted);font-size:12px;margin-top:12px">说明：隐藏系列后，该系列下所有工具在前台将不可见；隐藏工具优先于系列展示。</p>
+      </div>
+      <div class="panel">
+        <h3>已有系列</h3>
+        <div id="seriesTable"></div>
+      </div>
+    </div>
     <div id="view-logs" style="display:none">
       <div class="panel">
-        <div class="flex-between" style="margin-bottom:14px"><h3 style="margin:0">公开日志（后台编辑后发布）</h3><button class="btn btn-danger" data-action="clear-logs">清空日志</button></div>
-        <div id="logsTable"></div>
+        <div class="flex-between" style="margin-bottom:14px"><h3 style="margin:0">公开日志（后台编辑后发布）</h3><button class="btn btn-danger btn-sm" data-action="clear-logs">清空日志</button></div>
+        <div class="table-wrap"><div id="logsTable"></div></div>
       </div>
     </div>
     <div id="view-publish" style="display:none">
@@ -237,26 +305,25 @@
         <h3 id="pubTitle">工具上架</h3>
         <div class="form-row"><label>工具名称</label><input id="f-name" placeholder="例如：GitHub 加速下载器"></div>
         <div class="form-row"><label>工具编号/编码（可重复，仅后台可见；留空则不设置。前台输入此编码可解锁隐藏工具）</label><input id="f-number" placeholder="如 1001"></div>
-        <div class="form-row"><label>工具图标</label>
+        <div class="form-row"><label>所属系列</label><select id="f-series"><option value="">— 不归属任何系列 —</option></select></div>
+        <div class="form-row"><label>工具图标（上传图片，≤600KB；未上传时用下方 emoji）</label>
           <div class="icon-pick">
             <div class="prev" id="f-iconPrev">📦</div>
-            <div style="display:flex;flex-direction:column;gap:6px;flex:1">
+            <div class="file-box">
               <input id="f-iconFile" type="file" accept="image/*">
-              <span class="hint">上传图片作为图标（≤600KB，推荐 1:1 正方形）；也可在下方填写 emoji 备选。</span>
+              <span class="hint">推荐 1:1 正方形；也可填写下方 emoji 备选。</span>
             </div>
           </div>
         </div>
         <div class="form-row"><label>图标备选 emoji（未上传图片时使用）</label><input id="f-icon" placeholder="输入 emoji，如 🚀" value="📦"></div>
         <div class="form-row"><label>下载按钮文案（留空则默认"赞助下载"）</label><input id="f-btnText" placeholder="如 赞助下载 / 立即获取 / 前往官网"></div>
-        <div class="form-row"><label>赞助下载链接（用户点击按钮后跳转此链接）</label><input id="f-link" placeholder="https://example.com/download/xxx"></div>
+        <div class="form-row"><label>赞助下载链接（用户点击按钮后真实跳转此链接）</label><input id="f-link" placeholder="https://example.com/download/xxx"></div>
         <div class="form-row"><label>README.md（支持基础 Markdown；可上传 .md 文件）</label>
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <input id="f-readmeFile" type="file" accept=".md,.markdown,text/markdown">
-            <span class="hint">上传 .md 文件将自动读入下方编辑器，仍可手动继续编辑。</span>
-          </div>
+          <input id="f-readmeFile" type="file" accept=".md,.markdown,text/markdown">
+          <span class="hint">上传 .md 文件将自动读入下方编辑器，仍可手动继续编辑。</span>
         </div>
         <div class="form-row"><label>README 内容</label><textarea id="f-readme" placeholder="支持 # 标题、**加粗**、`代码`、[链接](url)、- 列表 等基础语法" style="min-height:180px"></textarea></div>
-        <div style="display:flex;gap:10px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-primary" id="pubBtn" data-action="save-tool">发布工具</button>
           <button class="btn" data-action="reset-pub-form">重置表单</button>
         </div>
@@ -266,13 +333,13 @@
     <div id="view-tools" style="display:none">
       <div class="panel">
         <h3>工具管理</h3>
-        <div id="toolsTable"></div>
+        <div class="table-wrap"><div id="toolsTable"></div></div>
       </div>
     </div>
     <div id="view-comments" style="display:none">
       <div class="panel">
         <h3>用户评论</h3>
-        <div id="commentsTable"></div>
+        <div class="table-wrap"><div id="commentsTable"></div></div>
       </div>
     </div>
     <div id="view-announce" style="display:none">
@@ -289,11 +356,22 @@
 
 <script>
 /* =========================================================
-   ToolHub · 单文件网页应用
+   TinySpace · 单文件网页应用
+   ----------------------------------------------------------
+   【统计跨设备方案】纯浏览器 localStorage 只能存本机，
+   A 电脑的统计天然无法自动同步到 B 电脑。因此本版本采用
+   「配置驱动的远程上报 + 本地兜底」双轨架构：
+     - 若配置了 REMOTE_API 端点，PV / 下载量会真实上报到
+       中心服务器（附配套接收脚本），此时统计为全站聚合、
+       跨设备/跨电脑统一；
+     - 未配置时退化为本地统计（标注"本机"），保证单文件
+       离线也能完整运行，绝不模拟伪造数据。
+   同源多标签页之间额外通过 BroadcastChannel + storage 事件
+   实时同步，做到"同站多开"即时一致。
+   ----------------------------------------------------------
    存储：localStorage | 鉴权：SHA-256 | 路由：location.hash
-   功能：工具隐藏 + 编码(编号)解锁（隐藏工具仅输入其编码搜索后显示/可下载）
-   修复：退出登录失效 / 按钮无响应 / 刷新后工具丢失
-   拒绝模拟：下载量仅在真实跳转时 +1
+   功能：系列归类(编号/隐藏) · 工具隐藏 + 编码解锁 · 公开日志
+   拒绝模拟：下载量仅在真实跳转时 +1，统计只记录真实行为
    ========================================================= */
 const App = (function(){
   const ADMIN_USER = "admin";
@@ -301,7 +379,21 @@ const App = (function(){
   const KEY = "qxb_tool_platform_v1";
   const AUTH_KEY = "qxb_auth_v1";
   const VISIT_KEY = "qxb_visit_v1";
+  const SYNC_STATE_KEY = "qxb_sync_state_v1";
   const ICON_MAX = 600 * 1024;
+
+  /* ===== 远程统计端点配置（可选）==========================
+     填写你自己的后端接收地址即可开启跨设备统计：
+       REMOTE_API = "https://你的域名/api/track"   // 结尾不要 /
+     配套接收脚本见本文件底部注释（Python Flask 示例）。
+     留空 "" 则完全使用本地统计（单文件离线模式）。
+     安全：上报仅含 event/download/toolId/number，不含敏感信息；
+     生产环境请务必自行加签/鉴权，避免被刷。
+  ========================================================= */
+  const REMOTE_API = "";
+
+  // 当前选中的系列筛选（前台，"all"=全部）
+  let currentSeries = "all";
 
   // 内存级：本次会话已通过编码解锁的工具 id 集合（刷新后重置，需重新输入编码）
   const unlocked = new Set();
@@ -341,10 +433,11 @@ const App = (function(){
       return newState();
     }
   }
-  function newState(){return {tools:[],logs:[],comments:[],announce:"",visitDate:"",visitCount:0,_seq:1,adminHash:ADMIN_PASS_SHA256};}
+  function newState(){return {tools:[],series:[],logs:[],comments:[],announce:"",visitDate:"",visitCount:0,_seq:1,adminHash:ADMIN_PASS_SHA256};}
   function initState(o){
     if(!Array.isArray(o.tools))o.tools=[];if(!Array.isArray(o.logs))o.logs=[];
-    if(!Array.isArray(o.comments))o.comments=[];if(typeof o.announce!=="string")o.announce="";
+    if(!Array.isArray(o.comments))o.comments=[];if(!Array.isArray(o.series))o.series=[];
+    if(typeof o.announce!=="string")o.announce="";
     if(typeof o.visitDate!=="string")o.visitDate="";if(typeof o.visitCount!=="number")o.visitCount=0;
     if(typeof o._seq!=="number")o._seq=1;
     if(typeof o.adminHash!=="string"||!/^[a-f0-9]{64}$/i.test(o.adminHash))o.adminHash=ADMIN_PASS_SHA256;
@@ -352,6 +445,12 @@ const App = (function(){
       if(t&&typeof t.number==="undefined")t.number="";
       if(t&&typeof t.btnText==="undefined")t.btnText="";
       if(t&&typeof t.hidden!=="boolean")t.hidden=false;
+      if(t&&typeof t.seriesId==="undefined")t.seriesId="";
+    });
+    o.series.forEach(s=>{
+      if(s&&typeof s.number==="undefined")s.number="";
+      if(s&&typeof s.icon==="undefined")s.icon="📁";
+      if(s&&typeof s.hidden!=="boolean")s.hidden=false;
     });
     o.logs.forEach(l=>{if(l&&typeof l.published!=="boolean")l.published=false;});
   }
@@ -359,7 +458,95 @@ const App = (function(){
     try{localStorage.setItem(KEY, JSON.stringify(state));}
     catch(err){toast("数据保存失败：存储空间不足，请减小图标体积或删除部分工具","err");}
   }
-  function todayStr(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();;}
+  function todayStr(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+
+  // ---------- 跨设备统计：本地计数 + 远程上报 + 同源实时同步 ----------
+  // 同步状态：记录"本站权威聚合值"（来自远程或本地合并），避免多端互相覆盖
+  function getSyncState(){try{return JSON.parse(localStorage.getItem(SYNC_STATE_KEY)||"{}")||{};}catch(e){return {};}}
+  function setSyncState(s){try{localStorage.setItem(SYNC_STATE_KEY,JSON.stringify(s));}catch(e){}}
+
+  // 同源多标签页实时同步（同浏览器多开标签页即刻一致）
+  const channel = ("BroadcastChannel" in window) ? new BroadcastChannel("tiny_space_sync") : null;
+  function broadcast(msg){try{channel&&channel.postMessage(msg);}catch(e){}}
+
+  // 今日 PV：本地按"会话首次访问"去重计数（真实访问，拒绝模拟）
+  function tickVisit(){
+    try{
+      const t=todayStr();let v={date:"",count:0};
+      try{const r=localStorage.getItem(VISIT_KEY);if(r)v=JSON.parse(r)||v;}catch(e){}
+      if(v.date!==t){v={date:t,count:0};}
+      // 同一会话(sessionStorage)只计一次 PV，避免刷新刷量
+      const sessKey="qxb_pv_today_"+t;
+      if(!sessionStorage.getItem(sessKey)){v.count++;sessionStorage.setItem(sessKey,"1");}
+      state.visitCount=v.count;state.visitDate=t;
+      localStorage.setItem(VISIT_KEY,JSON.stringify(v));
+      // 同步到同源其他标签页
+      broadcast({type:"visit",count:v.count,date:t});
+      // 远程上报（跨设备聚合的关键）
+      remoteTrack({event:"pv",date:t,count:v.count});
+    }catch(e){}
+  }
+
+  // 下载量：以远程/本地权威值合并。真实跳转时调用。
+  function addDownload(tool, by){
+    if(!tool) return;
+    const sync=getSyncState();
+    const map=sync.downloads&&typeof sync.downloads==="object"?sync.downloads:{};
+    map[tool.id]=(map[tool.id]||0)+1;
+    sync.downloads=map;setSyncState(sync);
+    tool.downloads=(tool.downloads||0)+1;
+    broadcast({type:"download",toolId:tool.id,number:tool.number,count:tool.downloads});
+    remoteTrack({event:"download",toolId:tool.id,number:tool.number,name:tool.name});
+  }
+  // 将远程拉取的权威聚合值合并进本地（仅用于跨设备恢复显示）
+  function applyRemoteStats(payload){
+    if(!payload||typeof payload!=="object") return;
+    const sync=getSyncState();
+    if(payload.visits){state.visitCount=Math.max(state.visitCount||0,payload.visits);sync.visits=payload.visits;}
+    if(payload.downloads&&typeof payload.downloads==="object"){
+      sync.downloads=payload.downloads;
+      state.tools.forEach(t=>{if(payload.downloads[t.id]!=null)t.downloads=payload.downloads[t.id];});
+    }
+    setSyncState(sync);
+    if(document.getElementById("stVisits"))renderDashboard();
+  }
+
+  // 远程上报（真实网络请求，失败不影响本地兜底，绝不模拟）
+  let remoteOnline = REMOTE_API ? null : false; // null=未知，false=不可用
+  function remoteTrack(payload){
+    if(!REMOTE_API) return; // 未配置：纯本地模式，不上报
+    payload.site = location.host || "local";
+    payload.t = Date.now();
+    fetch(REMOTE_API, {
+      method:"POST",
+      headers:{"Content-Type":"application/json","X-Track":"1"},
+      body:JSON.stringify(payload),
+      keepalive:true // 页面卸载时也能发出（PV 上报关键）
+    }).then(r=>{remoteOnline=true;renderSyncStatus();return r.json?r.json():null;})
+      .then(data=>{if(data&&data.ok) applyRemoteStats(data.stats||{});})
+      .catch(()=>{remoteOnline=false;renderSyncStatus();})
+      .finally(()=>{});
+  }
+  // 启动时尝试拉取一次远程聚合统计（用于跨设备恢复）
+  function remoteFetchInit(){
+    if(!REMOTE_API) return;
+    fetch(REMOTE_API+"?init=1",{method:"GET",headers:{"X-Track":"1"}})
+      .then(r=>r.json?r.json():null).then(data=>{if(data&&data.ok){remoteOnline=true;applyRemoteStats(data.stats||{});}renderSyncStatus();})
+      .catch(()=>{remoteOnline=false;renderSyncStatus();});
+  }
+  function renderSyncStatus(){
+    const banner=document.getElementById("syncBanner");if(!banner)return;
+    if(!REMOTE_API){
+      banner.innerHTML='<span>📊</span><span>统计模式：<b>本机本地</b>（数据存于当前浏览器）。如需 A/B 电脑统一统计，请配置 <code>REMOTE_API</code> 并部署配套后端（详见脚本底部说明）。</span>';
+      return;
+    }
+    const ok = remoteOnline!==false;
+    banner.innerHTML='<span>📡</span><span>统计模式：<b>远程聚合</b>（跨设备统一）端点 <code>'+esc(REMOTE_API)+'</code></span>'
+      + '<span class="sync '+(ok?"ok":"err")+'" style="margin-left:auto">'+(ok?"● 已连接":"● 连接失败，暂用本机数据")+'</span>';
+    const sv=document.getElementById("stVisitsSync"),sd=document.getElementById("stDownsSync");
+    if(sv)sv.innerHTML='<span class="sync '+(ok?"ok":"err")+'">'+(ok?"跨设备实时":"仅本机")+'</span>';
+    if(sd)sd.innerHTML='<span class="sync '+(ok?"ok":"err")+'">'+(ok?"跨设备实时":"仅本机")+'</span>';
+  }
 
   // ---------- 认证 ----------
   function getAuth(){try{return JSON.parse(localStorage.getItem(AUTH_KEY)||"null");}catch(e){return null;}}
@@ -367,79 +554,98 @@ const App = (function(){
   function clearAuth(){localStorage.removeItem(AUTH_KEY);}
   function isAuthed(){const a=getAuth();return !!(a&&a.token&&a.user===ADMIN_USER);}
 
-  function tickVisit(){
-    try{
-      const t=todayStr();let v={date:"",count:0};
-      try{const r=localStorage.getItem(VISIT_KEY);if(r)v=JSON.parse(r)||v;}catch(e){}
-      if(v.date!==t){v={date:t,count:0};}
-      v.count++;state.visitCount=v.count;state.visitDate=t;
-      localStorage.setItem(VISIT_KEY,JSON.stringify(v));
-    }catch(e){}
-  }
-
   function addLog(action,detail){state.logs.unshift({id:state._seq++,time:new Date().toLocaleString(),action,detail,published:false});if(state.logs.length>200)state.logs.length=200;save();}
   function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-  function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+  function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
   function fmtDate(s){if(!s)return "—";try{return new Date(s).toLocaleDateString();}catch(e){return s;}}
 
-  // ---------- Markdown ----------
+  // ---------- Markdown（含 URL 白名单，防 XSS）----------
+  function safeUrl(u){return /^https?:\/\//i.test(u)||/^data:image\//i.test(u);}
   function md(text){
     if(!text) return "<p style='color:var(--muted)'>暂无 README 内容</p>";
     let s=text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
     s=s.replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^## (.*)$/gm,"<h2>$1</h2>").replace(/^# (.*)$/gm,"<h1>$1</h1>")
-       .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/`([^`]+)`/g,"<code>$1</code>")
-       .replace(/!\[[^\]]*\]\(([^)]+)\)/g,'<img src="$1" style="max-width:100%;border-radius:8px;margin:8px 0">')
-       .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+       .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/`([^`]+)`/g,"<code>$1</code>");
+    s=s.replace(/!\[[^\]]*\]\(([^)]+)\)/g,function(_,u){return safeUrl(u)?'<img src="'+u+'" style="max-width:100%;border-radius:8px;margin:8px 0">':"";})
+       .replace(/\[([^\]]+)\]\(([^)]+)\)/g,function(_,t,u){return safeUrl(u)?'<a href="'+u+'" target="_blank" rel="noopener">'+t+'</a>':esc(t);});
     s=s.replace(/(?:^- (.+)$)+/gm,function(block){const items=block.trim().split(/\n/).map(l=>l.replace(/^- /,"")).filter(Boolean);return "<ul>"+items.map(i=>"<li>"+i+"</li>").join("")+"</ul>";});
     const lines=s.split("\n");let out="",inBlock=false;
     for(const ln of lines){if(/^<(\/)?(h[1-3]|ul|ol|li|pre|img|blockquote)/.test(ln)){out+=ln;inBlock=false;}else if(ln.trim()===""){inBlock=false;}else{out+=(inBlock?" ":"<p>")+ln+(inBlock?"":"</p>");inBlock=true;}}
     return out;
   }
 
+  // ---------- 系列 ----------
+  function getSeries(id){return state.series.find(s=>s.id===id)||null;}
+  function seriesName(id){const s=getSeries(id);return s?"s.name":"";}
+  // 某工具是否因"所属系列被隐藏"而不可见（工具自身 hidden 优先）
+  function isSeriesHidden(t){return t.seriesId?!!(getSeries(t.seriesId)&&getSeries(t.seriesId).hidden):false;}
+
   // ---------- 编码解锁 ----------
-  // 尝试用查询字符串作为编码(编号)解锁：精确匹配某隐藏工具的 number 时，临时解锁该工具
   function tryUnlockByCode(code){
     if(!code) return false;
-    const c=code.toLowerCase();
-    let unlockedAny=false;
-    state.tools.forEach(t=>{
-      if(t.hidden && t.number && t.number.toLowerCase()===c){unlocked.add(t.id);unlockedAny=true;}
-    });
+    const c=code.toLowerCase();let unlockedAny=false;
+    state.tools.forEach(t=>{if(t.hidden && t.number && t.number.toLowerCase()===c){unlocked.add(t.id);unlockedAny=true;};});
+    // 系列编号也可解锁：输入系列编号可显示该系列（含隐藏系列）
+    state.series.forEach(s=>{if(s.number && s.number.toLowerCase()===c){unlocked.add("__series__"+s.id);unlockedAny=true;};});
     return unlockedAny;
   }
-  function isUnlocked(t){return !t.hidden || unlocked.has(t.id);}
+  function isUnlocked(t){
+    if(!t.hidden) return true;
+    if(unlocked.has(t.id)) return true;
+    // 若工具所属系列被"系列编号"解锁，则其隐藏工具也一并可见
+    if(t.seriesId && unlocked.has("__series__"+t.seriesId)) return true;
+    return false;
+  }
 
   // ---------- 渲染：前台 ----------
+  function renderSeriesNav(){
+    const box=document.getElementById("seriesNav");if(!box)return;
+    const all=[{id:"all",name:"全部"}].concat(state.series.slice().sort((a,b)=>a.name.localeCompare(b.name)));
+    box.innerHTML=all.map(s=>`<span class="chip ${s.id===currentSeries?"active":""}" data-series="${esc(s.id)}">${s.id==="all"?"全部":esc(s.name)}</span>`).join("");
+  }
   function renderTools(filter){
     const grid=document.getElementById("toolGrid");
     let list=state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt);
     const q=(filter||"").trim();
     if(q){
       const ql=q.toLowerCase();
-      // 先用编码尝试解锁（即使名称不匹配，输入编码也能让对应隐藏工具显示）
       const justUnlocked=tryUnlockByCode(q);
       list=list.filter(t=>{
-        if(isUnlocked(t) && ((t.name&&t.name.toLowerCase().includes(ql))||(t.number&&t.number.toLowerCase().includes(ql)))) return true;
+        if(!isUnlocked(t)) return false;
+        // 系列筛选
+        if(currentSeries!=="all" && t.seriesId!==currentSeries) return false;
+        // 名称 / 编号 / 系列名 匹配
+        const sn=seriesName(t.seriesId).toLowerCase();
+        if((t.name&&t.name.toLowerCase().includes(ql))||(t.number&&t.number.toLowerCase().includes(ql))||sn.includes(ql)) return true;
         return false;
       });
-      if(justUnlocked) toast("已通过编码解锁隐藏工具，可查看并下载","ok");
+      if(justUnlocked) toast("已通过编码解锁隐藏内容，可查看并下载","ok");
     }else{
-      list=list.filter(t=>isUnlocked(t));
+      list=list.filter(t=>{
+        if(!isUnlocked(t)) return false;
+        if(currentSeries!=="all" && t.seriesId!==currentSeries) return false;
+        return true;
+      });
     }
     document.getElementById("toolCount").textContent=list.length+" 个工具";
+    document.getElementById("sectionTitle").textContent = currentSeries==="all" ? "全部工具" : (seriesName(currentSeries)||"系列")+" · 工具";
     if(list.length===0){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="big">∅</div>'+(q?"无匹配工具，或编码不正确":"暂无工具，管理员可前往后台上架")+'</div>';return;}
-    grid.innerHTML=list.map(t=>`
+    grid.innerHTML=list.map(t=>{
+      const sn=seriesName(t.seriesId);
+      return `
       <div class="tool-card">
         <div class="icon">${renderIcon(t.icon)}</div>
         <div class="body">
           <div class="name">${esc(t.name)}${t.hidden?' <span class="badge warn" title="隐藏工具，需编码解锁">已隐藏</span>':""}</div>
+          ${sn?'<span class="series-tag">📁 '+esc(sn)+'</span>':""}
           <div class="meta"><span>📅 ${fmtDate(t.createdAt)}</span><span>⬇ <b>${t.downloads||0}</b></span></div>
           <div class="actions">
             <button class="btn" data-action="open-detail" data-id="${t.id}">详情</button>
             <button class="btn btn-primary" data-action="sponsor-download" data-id="${t.id}">${esc(t.btnText||"赞助下载")}</button>
           </div>
         </div>
-      </div>`).join("");
+      </div>`;
+    }).join("");
   }
   function renderAnnounce(){
     const box=document.getElementById("announceBox");const t=state.announce&&state.announce.trim();
@@ -449,11 +655,12 @@ const App = (function(){
   // ---------- 详情 ----------
   function openDetail(id){
     const t=state.tools.find(x=>x.id===id);if(!t)return;
-    if(t.hidden && !unlocked.has(t.id)){toast("该工具已隐藏，请输入对应编码(编号)搜索后解锁查看","err");return;}
+    if(t.hidden && !isUnlocked(t)){toast("该工具已隐藏，请输入对应编码(编号)搜索后解锁查看","err");return;}
     document.getElementById("detailTitle").textContent=t.name;
+    const sn=seriesName(t.seriesId);
     document.getElementById("detailBody").innerHTML=`
       <div class="detail-icon">${renderIcon(t.icon)}</div>
-      <div class="detail-meta"><span>发布：<b>${fmtDate(t.createdAt)}</b></span><span>下载量：<b>${t.downloads||0}</b></span></div>
+      <div class="detail-meta"><span>发布：<b>${fmtDate(t.createdAt)}</b></span><span>下载量：<b>${t.downloads||0}</b></span>${sn?'<span>系列：<b>'+esc(sn)+'</b></span>':""}</div>
       <div class="readme">${md(t.readme||"")}</div>
       <div class="comments">
         <h4>评论区（${state.comments.filter(c=>c.toolId===id).length}）</h4>
@@ -486,56 +693,141 @@ const App = (function(){
   // ---------- 赞助下载（真实跳转，拒绝模拟）----------
   function sponsorDownload(id){
     const t=state.tools.find(x=>x.id===id);if(!t)return;
-    if(t.hidden && !unlocked.has(t.id)){toast("该工具已隐藏，请输入对应编码(编号)搜索解锁后再下载","err");return;}
+    if(t.hidden && !isUnlocked(t)){toast("该工具已隐藏，请输入对应编码(编号)搜索解锁后再下载","err");return;}
     if(!t.link){toast("该工具尚未配置下载链接","err");return;}
     if(!/^https?:\/\//i.test(t.link)){toast("下载链接协议不合法","err");return;}
-    t.downloads=(t.downloads||0)+1;addLog("赞助下载","《"+t.name+"》下载量 +1（真实跳转）");save();
+    // 先记录下载（远程聚合 + 本地），再真实跳转——只有真正执行到这里才算一次有效下载
+    addDownload(t, "user");
+    addLog("赞助下载","《"+t.name+"》下载量 +1（真实跳转）");save();
     renderTools(document.getElementById("searchInput").value.trim());
     window.open(t.link,"_blank","noopener,noreferrer");toast("正在跳转下载链接…","ok");
   }
 
-  // ---------- 后台：数据/日志/工具/评论/公告 ----------
+  // ---------- 后台：数据/系列/日志/工具/评论/公告 ----------
   function renderDashboard(){
     document.getElementById("stVisits").textContent=state.visitCount;
     document.getElementById("stTools").textContent=state.tools.length;
     document.getElementById("stDowns").textContent=state.tools.reduce((s,t)=>s+(t.downloads||0),0);
     document.getElementById("stCmts").textContent=state.comments.length;
+    document.getElementById("stSeries").textContent=state.series.length;
+    renderSyncStatus();
     const box=document.getElementById("recentLogs");
     if(state.logs.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无日志记录</div>';return;}
-    box.innerHTML='<table><thead><tr><th>时间</th><th>操作</th><th>详情</th></tr></thead><tbody>'+
-      state.logs.slice(0,10).map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td></tr>`).join("")+'</tbody></table>';
+    box.innerHTML='<div class="table-wrap"><table><thead><tr><th>时间</th><th>操作</th><th>详情</th></tr></thead><tbody>'+
+      state.logs.slice(0,10).map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td></tr>`).join("")+'</tbody></table></div>';
   }
+
+  // ---------- 系列管理 ----------
+  let editSeriesId=null;
+  function resetSeriesForm(){editSeriesId=null;document.getElementById("sBtn").textContent="添加系列";document.getElementById("s-name").value="";document.getElementById("s-number").value="";document.getElementById("s-icon").value="📁";}
+  function saveSeries(){
+    const name=document.getElementById("s-name").value.trim();
+    const number=(document.getElementById("s-number").value||"").trim();
+    const icon=document.getElementById("s-icon").value.trim()||"📁";
+    if(!name){toast("请输入系列名称","err");return;}
+    if(editSeriesId){
+      const s=state.series.find(x=>x.id===editSeriesId);if(!s)return;
+      s.name=name;s.number=number;s.icon=icon;
+      addLog("修改系列","修改了系列《"+name+"》");toast("系列已更新","ok");
+    }else{
+      state.series.push({id:uid(),name,number,icon,hidden:false});
+      addLog("添加系列","添加了系列《"+name+"》");toast("系列已添加","ok");
+    }
+    save();resetSeriesForm();renderSeriesAdmin();renderSeriesOptions();
+  }
+  function editSeries(id){
+    const s=state.series.find(x=>x.id===id);if(!s)return;editSeriesId=id;
+    document.getElementById("sBtn").textContent="保存修改";
+    document.getElementById("s-name").value=s.name;
+    document.getElementById("s-number").value=s.number||"";
+    document.getElementById("s-icon").value=s.icon||"📁";
+  }
+  function delSeries(id){
+    const s=state.series.find(x=>x.id===id);if(!s)return;
+    const used=state.tools.filter(t=>t.seriesId===id).length;
+    if(used>0 && !confirm("该系列下还有 "+used+" 个工具，删除后这些工具的「所属系列」将变为「不归属」。确定删除系列《"+s.name+"》？")) return;
+    if(!confirm("确定删除系列《"+s.name+"》？")) return;
+    state.series=state.series.filter(x=>x.id!==id);
+    state.tools.forEach(t=>{if(t.seriesId===id)t.seriesId="";});
+    addLog("删除系列","删除了系列《"+s.name+"》");save();renderSeriesAdmin();renderSeriesOptions();renderTools();toast("系列已删除","ok");
+  }
+  // 隐藏/展示整个系列
+  function toggleSeriesHidden(id){
+    const s=state.series.find(x=>x.id===id);if(!s)return;
+    s.hidden=!s.hidden;
+    addLog(s.hidden?"隐藏系列":"展示系列","《"+s.name+"》"+(s.hidden?"已隐藏":"已展示"));
+    save();renderSeriesAdmin();renderTools();
+    toast(s.hidden?"系列已隐藏（其下工具前台不可见，输入系列编号 "+esc(s.number||"")+" 可解锁）":"系列已展示","ok");
+  }
+  function renderSeriesAdmin(){
+    const box=document.getElementById("seriesTable");
+    if(state.series.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无系列，先在上方添加</div>';return;}
+    box.innerHTML='<div class="table-wrap"><table><thead><tr><th>图标</th><th>名称</th><th>编号/编码</th><th>工具数</th><th>状态</th><th>操作</th></tr></thead><tbody>'+
+      state.series.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(s=>{
+        const cnt=state.tools.filter(t=>t.seriesId===s.id).length;
+        return `<tr>
+          <td><div class="adm-icon">${isImageIcon(s.icon)?'<img src="'+s.icon+'">':'<span class="em">'+esc(s.icon||"📁")+'</span>'}</div></td>
+          <td><b>${esc(s.name)}</b></td>
+          <td>${s.number?`<span class="tnum-badge">${esc(s.number)}</span>`:`<span class="muted">—</span>`}</td>
+          <td>${cnt}</td>
+          <td>${s.hidden?'<span class="badge warn">已隐藏</span>':'<span class="badge">公开</span>'}</td>
+          <td><button class="btn btn-sm" data-action="toggle-series-hidden" data-id="${s.id}">${s.hidden?"展示":"隐藏"}</button> <button class="btn btn-sm" data-action="edit-series" data-id="${s.id}">修改</button> <button class="btn btn-sm btn-danger" data-action="del-series" data-id="${s.id}">删除</button></td>
+        </tr>`;
+      }).join("")+'</tbody></table></div>';
+  }
+  // 工具上架/编辑的下拉框
+  function renderSeriesOptions(){
+    const sel=document.getElementById("f-series");if(!sel)return;
+    const cur=sel.value;
+    sel.innerHTML='<option value="">— 不归属任何系列 —</option>'+
+      state.series.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(s=>`<option value="${esc(s.id)}">${esc(s.name)}${s.number?" (#"+esc(s.number)+")":""}</option>`).join("");
+    if(cur) sel.value=cur;
+  }
+
   function renderLogs(){
     const box=document.getElementById("logsTable");
     if(state.logs.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无日志</div>';return;}
     box.innerHTML='<table><thead><tr><th>时间</th><th>操作</th><th>详情</th><th>状态</th><th>操作</th></tr></thead><tbody>'+
-      state.logs.map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td><td>${l.published?'<span class="badge">已公开</span>':'<span class="badge err">未公开</span>'}</td><td><button class="btn" data-action="toggle-log-pub" data-id="${l.id}">${l.published?'撤下':'发布'}</button> <button class="btn btn-danger" data-action="del-log" data-id="${l.id}">删除</button></td></tr>`).join("")+'</tbody></table>';
+      state.logs.map(l=>`<tr><td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(l.time)}</td><td>${esc(l.action)}</td><td>${esc(l.detail||"")}</td><td>${l.published?'<span class="badge">已公开</span>':'<span class="badge err">未公开</span>'}</td><td><button class="btn btn-sm" data-action="toggle-log-pub" data-id="${l.id}">${l.published?'撤下':'发布'}</button> <button class="btn btn-sm btn-danger" data-action="del-log" data-id="${l.id}">删除</button></td></tr>`).join("")+'</tbody></table>';
   }
   function toggleLogPub(id){const l=state.logs.find(x=>x.id===id);if(!l)return;l.published=!l.published;addLog("日志操作","《"+l.action+"》"+(l.published?"已发布公开":"已撤下"));save();renderLogs();renderDashboard();toast(l.published?"日志已公开":"日志已撤下","ok");}
   function delLog(id){state.logs=state.logs.filter(l=>l.id!==id);save();renderLogs();renderDashboard();toast("日志已删除","ok");}
   function clearLogs(){if(!confirm("确定清空全部日志？"))return;state.logs=[];save();renderLogs();renderDashboard();toast("日志已清空","ok");}
 
   let editId=null;
-  function resetPubForm(){editId=null;document.getElementById("pubTitle").textContent="工具上架";document.getElementById("pubBtn").textContent="发布工具";document.getElementById("f-name").value="";document.getElementById("f-number").value="";document.getElementById("f-icon").value="📦";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";document.getElementById("f-btnText").value="";const prev=document.getElementById("f-iconPrev");prev.style.backgroundImage="none";prev.textContent="📦";document.getElementById("f-link").value="";document.getElementById("f-readme").value="";document.getElementById("f-readmeFile").value="";}
+  function resetPubForm(){editId=null;document.getElementById("pubTitle").textContent="工具上架";document.getElementById("pubBtn").textContent="发布工具";document.getElementById("f-name").value="";document.getElementById("f-number").value="";renderSeriesOptions();document.getElementById("f-icon").value="📦";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";document.getElementById("f-btnText").value="";const prev=document.getElementById("f-iconPrev");prev.style.backgroundImage="none";prev.textContent="📦";document.getElementById("f-link").value="";document.getElementById("f-readme").value="";document.getElementById("f-readmeFile").value="";}
   function handleIconFile(input){const f=input.files&&input.files[0];if(!f)return;if(!/^image\//.test(f.type)){toast("请选择图片文件","err");input.value="";return;}if(f.size>ICON_MAX){toast("图标图片需 ≤ 600KB","err");input.value="";return;}const r=new FileReader();r.onload=function(){const b64=r.result;input.dataset.b64=b64;const prev=document.getElementById("f-iconPrev");prev.style.backgroundImage="url("+b64+")";prev.style.backgroundSize="cover";prev.style.backgroundPosition="center";prev.textContent="";};r.readAsDataURL(f);}
   function handleReadmeFile(input){const f=input.files&&input.files[0];if(!f)return;if(!/\.(md|markdown)$/i.test(f.name)){toast("请选择 .md / .markdown 文件","err");input.value="";return;}if(f.size>20*1024){toast("README 文件需 ≤ 20KB","err");input.value="";return;}const r=new FileReader();r.onload=function(){document.getElementById("f-readme").value=String(r.result||"");toast("README 已读入编辑器","ok");};r.readAsText(f);}
   function saveTool(){
-    const name=document.getElementById("f-name").value.trim();const number=(document.getElementById("f-number").value||"").trim();const link=document.getElementById("f-link").value.trim();const readme=document.getElementById("f-readme").value;const btnText=(document.getElementById("f-btnText").value||"").trim();
-    const iconB64=document.getElementById("f-iconFile").dataset.b64||"";const iconEmoji=document.getElementById("f-icon").value.trim();const icon=iconB64||iconEmoji||"📦";
+    const name=document.getElementById("f-name").value.trim();
+    const number=(document.getElementById("f-number").value||"").trim();
+    const seriesId=(document.getElementById("f-series").value||"").trim();
+    const link=document.getElementById("f-link").value.trim();
+    const readme=document.getElementById("f-readme").value;
+    const btnText=(document.getElementById("f-btnText").value||"").trim();
+    const iconB64=document.getElementById("f-iconFile").dataset.b64||"";
+    const iconEmoji=document.getElementById("f-icon").value.trim();
+    const icon=iconB64||iconEmoji||"📦";
     if(!name){toast("请输入工具名称","err");return;}if(!link){toast("请填写赞助下载链接","err");return;}
-    if(editId){const t=state.tools.find(x=>x.id===editId);if(!t)return;t.name=name;t.number=number;t.icon=icon;t.btnText=btnText;t.link=link;t.readme=readme;addLog("修改工具","修改了《"+name+"》");toast("工具已更新","ok");}
-    else{state.tools.push({id:uid(),name,number,icon,btnText,link,readme,downloads:0,createdAt:Date.now(),hidden:false});addLog("上架工具","发布了《"+name+"》");toast("工具已发布","ok");}
-    save();resetPubForm();renderTools();
+    if(editId){
+      const t=state.tools.find(x=>x.id===editId);if(!t)return;
+      t.name=name;t.number=number;t.seriesId=seriesId;t.icon=icon;t.btnText=btnText;t.link=link;t.readme=readme;
+      addLog("修改工具","修改了《"+name+"》");toast("工具已更新","ok");
+    }else{
+      state.tools.push({id:uid(),name,number,seriesId,icon,btnText,link,readme,downloads:0,createdAt:Date.now(),hidden:false});
+      addLog("上架工具","发布了《"+name+"》");toast("工具已发布","ok");
+    }
+    save();resetPubForm();renderTools();renderSeriesNav();
   }
-  function editTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;editId=id;document.getElementById("pubTitle").textContent="修改工具";document.getElementById("pubBtn").textContent="保存修改";document.getElementById("f-name").value=t.name;document.getElementById("f-number").value=t.number||"";document.getElementById("f-icon").value=t.icon||"📦";document.getElementById("f-btnText").value=t.btnText||"";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";const prev=document.getElementById("f-iconPrev");if(isImageIcon(t.icon)){prev.style.backgroundImage="url("+t.icon+")";prev.style.backgroundSize="cover";prev.style.backgroundPosition="center";prev.textContent="";}else{prev.style.backgroundImage="none";prev.textContent=t.icon||"📦";}document.getElementById("f-link").value=t.link||"";document.getElementById("f-readme").value=t.readme||"";App.go("#/admin/publish");}
-  function delTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;if(!confirm("确定删除工具《"+t.name+"》？相关评论也会一并删除。"))return;state.tools=state.tools.filter(x=>x.id!==id);state.comments=state.comments.filter(c=>c.toolId!==id);addLog("删除工具","删除了《"+t.name+"》");save();renderToolsAdmin();renderTools();renderDashboard();toast("工具已删除","ok");}
-  // 隐藏/展示切换
+  function editTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;editId=id;document.getElementById("pubTitle").textContent="修改工具";document.getElementById("pubBtn").textContent="保存修改";renderSeriesOptions();document.getElementById("f-name").value=t.name;document.getElementById("f-number").value=t.number||"";document.getElementById("f-series").value=t.seriesId||"";document.getElementById("f-icon").value=t.icon||"📦";document.getElementById("f-btnText").value=t.btnText||"";document.getElementById("f-iconFile").value="";document.getElementById("f-iconFile").dataset.b64="";const prev=document.getElementById("f-iconPrev");if(isImageIcon(t.icon)){prev.style.backgroundImage="url("+t.icon+")";prev.style.backgroundSize="cover";prev.style.backgroundPosition="center";prev.textContent="";}else{prev.style.backgroundImage="none";prev.textContent=t.icon||"📦";}document.getElementById("f-link").value=t.link||"";document.getElementById("f-readme").value=t.readme||"";App.go("#/admin/publish");}
+  function delTool(id){const t=state.tools.find(x=>x.id===id);if(!t)return;if(!confirm("确定删除工具《"+t.name+"》？相关评论也会一并删除。"))return;state.tools=state.tools.filter(x=>x.id!==id);state.comments=state.comments.filter(c=>c.toolId!==id);addLog("删除工具","删除了《"+t.name+"》");save();renderToolsAdmin();renderTools();renderDashboard();renderSeriesNav();toast("工具已删除","ok");}
   function toggleHidden(id){const t=state.tools.find(x=>x.id===id);if(!t)return;if(!t.number){toast("该工具尚未设置编号(编码)，请先到「修改工具」中设置编号后再隐藏","err");return;}t.hidden=!t.hidden;addLog(t.hidden?"隐藏工具":"展示工具","《"+t.name+"》"+(t.hidden?"已隐藏":"已展示"));save();renderToolsAdmin();renderTools();toast(t.hidden?"工具已隐藏（输入编码 "+esc(t.number)+" 可解锁）":"工具已展示","ok");}
-  function renderToolsAdmin(){const box=document.getElementById("toolsTable");if(state.tools.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无工具</div>';return;}box.innerHTML=`<table><thead><tr><th>图标</th><th>名称</th><th>编号/编码</th><th>状态</th><th>下载量</th><th>发布时间</th><th>操作</th></tr></thead><tbody>`+state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt).map(t=>{
+  function renderToolsAdmin(){const box=document.getElementById("toolsTable");if(state.tools.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无工具</div>';return;}box.innerHTML=`<div class="table-wrap"><table><thead><tr><th>图标</th><th>名称</th><th>编号/编码</th><th>系列</th><th>状态</th><th>下载量</th><th>发布时间</th><th>操作</th></tr></thead><tbody>`+state.tools.slice().sort((a,b)=>b.createdAt-a.createdAt).map(t=>{
     const ic=isImageIcon(t.icon)?`<div class="adm-icon"><img src="${t.icon}" alt=""></div>`:`<div class="adm-icon"><span class="em">${t.icon||"📦"}</span></div>`;
-    return `<tr><td>${ic}</td><td>${esc(t.name)}</td><td>${t.number?`<span class="tnum-badge">${esc(t.number)}</span>`:`<span class="muted">—</span>`}</td><td>${t.hidden?'<span class="badge warn">已隐藏</span>':'<span class="badge">公开</span>'}</td><td>${t.downloads||0}</td><td style="color:var(--muted);font-size:12px">${fmtDate(t.createdAt)}</td><td><button class="btn" data-action="toggle-hidden" data-id="${t.id}">${t.hidden?"展示":"隐藏"}</button> <button class="btn" data-action="edit-tool" data-id="${t.id}">修改</button> <button class="btn btn-danger" data-action="del-tool" data-id="${t.id}">删除</button></td></tr>`;
-  }).join("")+`</tbody></table>`;}
-  function renderCommentsAdmin(){const box=document.getElementById("commentsTable");if(state.comments.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无评论</div>';return;}box.innerHTML='<table><thead><tr><th>用户</th><th>来源工具</th><th>内容</th><th>时间</th><th>操作</th></tr></thead><tbody>'+state.comments.slice().sort((a,b)=>b.time-a.time).map(c=>`<tr><td><b>${esc(c.name||"匿名")}</b></td><td>${esc(c.from||"")}</td><td style="max-width:360px;white-space:pre-wrap">${esc(c.text)}</td><td style="color:var(--muted);font-size:12px;white-space:nowrap">${fmtDate(c.time)}</td><td><button class="btn btn-danger" data-action="del-comment" data-id="${c.id}">删除</button></td></tr>`).join("")+'</tbody></table>';}
+    const sn=seriesName(t.seriesId);
+    return `<tr><td>${ic}</td><td>${esc(t.name)}</td><td>${t.number?`<span class="tnum-badge">${esc(t.number)}</span>`:`<span class="muted">—</span>`}</td><td>${sn?`<span class="series-tag">${esc(sn)}</span>`:`<span class="muted">—</span>`}</td><td>${t.hidden?'<span class="badge warn">已隐藏</span>':(isSeriesHidden(t)?'<span class="badge brand">系列隐藏</span>':'<span class="badge">公开</span>')}</td><td>${t.downloads||0}</td><td style="color:var(--muted);font-size:12px;white-space:nowrap">${fmtDate(t.createdAt)}</td><td><button class="btn btn-sm" data-action="toggle-hidden" data-id="${t.id}">${t.hidden?"展示":"隐藏"}</button> <button class="btn btn-sm" data-action="edit-tool" data-id="${t.id}">修改</button> <button class="btn btn-sm btn-danger" data-action="del-tool" data-id="${t.id}">删除</button></td></tr>`;
+  }).join("")+`</tbody></table></div>`;}
+  function renderCommentsAdmin(){const box=document.getElementById("commentsTable");if(state.comments.length===0){box.innerHTML='<div class="empty"><div class="big">∅</div>暂无评论</div>';return;}box.innerHTML='<div class="table-wrap"><table><thead><tr><th>用户</th><th>来源工具</th><th>内容</th><th>时间</th><th>操作</th></tr></thead><tbody>'+state.comments.slice().sort((a,b)=>b.time-a.time).map(c=>`<tr><td><b>${esc(c.name||"匿名")}</b></td><td>${esc(c.from||"")}</td><td style="max-width:360px;white-space:pre-wrap;word-break:break-word">${esc(c.text)}</td><td style="color:var(--muted);font-size:12px;white-space:nowrap">${fmtDate(c.time)}</td><td><button class="btn btn-sm btn-danger" data-action="del-comment" data-id="${c.id}">删除</button></td></tr>`).join("")+'</tbody></table></div>';}
   function delComment(id){state.comments=state.comments.filter(c=>c.id!==id);save();renderCommentsAdmin();renderDashboard();toast("评论已删除","ok");}
   function saveAnnounce(){state.announce=(document.getElementById("f-announce").value||"").trim();save();addLog("编辑公告",state.announce?"更新了首页公告":"清空了首页公告");toast("公告已保存","ok");renderAnnounce();}
   function renderAnnounceAdmin(){document.getElementById("f-announce").value=state.announce||"";}
@@ -556,7 +848,7 @@ const App = (function(){
     const h=location.hash||"#/";
     const m=h.match(/^#\/tool\/([^/]+)$/);
     if(m) return {view:"tool",id:m[1]};
-    if(h.startsWith("#/admin")){const v=(h.match(/^#\/admin\/([^/]+)/)||[])[1]||"dash";return {view:"admin",adminView:v};}
+    if(h.startsWith("#/admin")){const v=(h.match(/#\/admin\/([^/]+)/)||[])[1]||"dash";return {view:"admin",adminView:v};}
     return {view:"home"};
   }
   function applyRoute(){
@@ -564,7 +856,7 @@ const App = (function(){
     if(r.view==="tool"){showHome();openDetail(r.id);return;}
     if(r.view==="admin"){
       if(!isAuthed()){showLogin();return;}
-      const map={dash:1,logs:1,publish:1,tools:1,comments:1,announce:1};
+      const map={dash:1,series:1,logs:1,publish:1,tools:1,comments:1,announce:1};
       const v=map[r.adminView]?r.adminView:"dash";
       showAdmin();switchAdmin(v);return;
     }
@@ -575,19 +867,25 @@ const App = (function(){
   window.addEventListener("hashchange",applyRoute);
 
   function switchAdmin(view){
-    const valid=["dash","logs","publish","tools","comments","announce"];
+    const valid=["dash","series","logs","publish","tools","comments","announce"];
     if(!valid.includes(view)) view="dash";
-    document.querySelectorAll(".sidebar a").forEach(a=>a.classList.remove("active"));
+    document.querySelectorAll(".sidebar a[data-view]").forEach(a=>a.classList.remove("active"));
     const activeLink=document.querySelector(".sidebar a[data-view='"+view+"']");
     if(activeLink) activeLink.classList.add("active");
     valid.forEach(v=>{const dv=document.getElementById("view-"+v);if(dv)dv.style.display=(v===view?"block":"none");});
-    if(view==="logs")renderLogs();
+    if(view==="series"){resetSeriesForm();renderSeriesAdmin();}
+    else if(view==="logs")renderLogs();
     else if(view==="tools")renderToolsAdmin();
     else if(view==="comments")renderCommentsAdmin();
-    else if(view==="publish")resetPubForm();
+    else if(view==="publish"){resetPubForm();renderSeriesOptions();}
     else if(view==="announce")renderAnnounceAdmin();
     else if(view==="dash")renderDashboard();
+    closeMobileSidebar();
   }
+
+  // ---------- 移动端侧边栏 ----------
+  function openMobileSidebar(){document.getElementById("sidebar").classList.add("open");document.getElementById("sidebarBackdrop").classList.add("open");}
+  function closeMobileSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarBackdrop").classList.remove("open");}
 
   // ---------- 登录/登出 ----------
   const LOGIN_FAIL_KEY="qxb_login_fail_v1";const FAIL_MAX=5;const LOCK_MS=5*60*1000;
@@ -602,11 +900,11 @@ const App = (function(){
     else{const c=(fi&&fi.count)||0;const n=c+1;if(n>=FAIL_MAX){setLoginFailInfo({count:n,lockUntil:Date.now()+LOCK_MS});toast("密码错误次数过多，已临时锁定 5 分钟","err");}else{setLoginFailInfo({count:n,lockUntil:0});toast("账号或密码错误","err");}}
   }
   function enterAdmin(){if(isAuthed()){go("#/admin/dash");}else{showLogin();}}
-  function logout(){clearAuth();addLog("后台登出","管理员已退出");go("#/");toast("已退出登录","ok");}
+  function logout(){addLog("后台登出","管理员已退出");clearAuth();go("#/");toast("已退出登录","ok");}
 
   // ---------- Modal / Toast ----------
-  function openModal(id){document.getElementById(id).classList.add("show");}
-  function closeModal(id){document.getElementById(id).classList.remove("show");if(location.hash.startsWith("#/tool"))history.back();}
+  function openModal(id){document.getElementById(id).classList.add("show");document.body.style.overflow="hidden";}
+  function closeModal(id){document.getElementById(id).classList.remove("show");document.body.style.overflow="";if(location.hash.startsWith("#/tool"))history.back();}
   let toastT;function toast(msg,type){const t=document.getElementById("toast");document.getElementById("toastTxt").textContent=msg;t.className="toast show "+(type||"");clearTimeout(toastT);toastT=setTimeout(()=>t.className="toast",2200);}
 
   // ---------- 全局事件委托 ----------
@@ -619,6 +917,8 @@ const App = (function(){
     if(action==="close-modal"){closeModal(el.dataset.target||"");return;}
     if(action==="save-tool"){saveTool();return;}
     if(action==="reset-pub-form"){resetPubForm();return;}
+    if(action==="save-series"){saveSeries();return;}
+    if(action==="reset-series-form"){resetSeriesForm();return;}
     if(action==="save-announce"){saveAnnounce();return;}
     if(action==="clear-logs"){clearLogs();return;}
     if(action==="open-detail"){openDetail(el.dataset.id);return;}
@@ -629,28 +929,87 @@ const App = (function(){
     if(action==="edit-tool"){editTool(el.dataset.id);return;}
     if(action==="del-tool"){delTool(el.dataset.id);return;}
     if(action==="toggle-hidden"){toggleHidden(el.dataset.id);return;}
+    if(action==="edit-series"){editSeries(el.dataset.id);return;}
+    if(action==="del-series"){delSeries(el.dataset.id);return;}
+    if(action==="toggle-series-hidden"){toggleSeriesHidden(el.dataset.id);return;}
     if(action==="del-comment"){delComment(el.dataset.id);return;}
   });
+  // 系列筛选（前台导航 chips）
+  document.addEventListener("click", function(ev){
+    const el=ev.target.closest("[data-series]");if(!el) return;
+    currentSeries=el.dataset.series;renderSeriesNav();renderTools(document.getElementById("searchInput").value.trim());
+  });
   document.querySelectorAll(".sidebar a[data-view]").forEach(a=>{
-    a.addEventListener("click", function(ev){ev.preventDefault();const v=this.dataset.view;go("#/admin/"+v);});
+    a.addEventListener("click", function(ev){ev.preventDefault();const v=this.dataset.view;closeMobileSidebar();go("#/admin/"+v);});
   });
   document.querySelectorAll("[data-go]").forEach(b=>{b.addEventListener("click",function(){go(this.dataset.go);});});
+  document.getElementById("menuBtn").addEventListener("click",openMobileSidebar);
+  document.getElementById("sidebarBackdrop").addEventListener("click",closeMobileSidebar);
 
   document.getElementById("f-iconFile").addEventListener("change",function(){handleIconFile(this);});
   document.getElementById("f-readmeFile").addEventListener("change",function(){handleReadmeFile(this);});
   document.getElementById("f-icon").addEventListener("input",function(){if(!document.getElementById("f-iconFile").dataset.b64){const p=document.getElementById("f-iconPrev");p.style.backgroundImage="none";p.textContent=this.value||"📦";}});
 
-  // 搜索：输入即过滤；若输入内容精确匹配某隐藏工具编号(编码)，则临时解锁
+  // 搜索：输入即过滤；若输入内容精确匹配某隐藏工具/系列编号(编码)，则临时解锁
   document.getElementById("searchInput").addEventListener("input",e=>renderTools(e.target.value.trim()));
+
+  // 监听同源其他标签页的实时同步（同浏览器多开即时一致）
+  if(channel){channel.addEventListener("message",function(ev){const m=ev.data||{};
+    if(m.type==="visit"){state.visitCount=m.count;if(document.getElementById("stVisits"))renderDashboard();}
+    else if(m.type==="download"){const t=state.tools.find(x=>x.id===m.toolId);if(t)t.downloads=m.count;renderTools(document.getElementById("searchInput").value.trim());if(document.getElementById("stDowns"))renderDashboard();}
+  });}
+  window.addEventListener("storage",function(ev){
+    if(ev.key===KEY){try{const o=JSON.parse(ev.newValue||"{}");if(o&&o.tools)state.tools=o.tools;}catch(e){}renderTools(document.getElementById("searchInput").value.trim());}
+  });
 
   // ---------- 启动 ----------
   tickVisit();
+  remoteFetchInit();
   document.getElementById("footYear").textContent=new Date().getFullYear();
   renderAnnounce();
+  renderSeriesNav();
+  renderSeriesOptions();
   applyRoute();
 
-  return {go,enterAdmin,doLogin,logout,switchAdmin,openDetail,postComment,sponsorDownload,saveTool,editTool,delTool,delComment,saveAnnounce,delLog,clearLogs,toggleLogPub,resetPubForm,openModal,closeModal,toast,toggleHidden};
+  return {go,enterAdmin,doLogin,logout,switchAdmin,openDetail,postComment,sponsorDownload,saveTool,editTool,delTool,delComment,saveAnnounce,delLog,clearLogs,toggleLogPub,resetPubForm,openModal,closeModal,toast,toggleHidden,renderTools};
 })();
 </script>
+<!--
+=================================================================
+  配套远程统计后端示例（Python Flask，可选）
+  ----------------------------------------------------------------
+  为何需要：浏览器 localStorage 只能存本机。要让 A/B/C 多台电脑
+  的统计汇总到一处，必须有一个中心端点。把下方脚本部署到服务器，
+  再把前端 REMOTE_API 设为该接口的 URL 即可。
+
+  pip install flask
+  ---
+  from flask import Flask, request, jsonify
+  from collections import defaultdict
+  app = Flask(__name__)
+  PV = 0
+  DOWN = defaultdict(int)   # toolId -> count
+
+  @app.route("/api/track", methods=["POST"])
+  def track():
+      global PV
+      d = request.get_json(force=True) or {}
+      if d.get("event") == "pv":
+          PV += 1
+      elif d.get("event") == "download":
+          DOWN[d.get("toolId")] = DOWN.get(d.get("toolId"), 0) + 1
+      return jsonify(ok=True, stats={"visits": PV, "downloads": dict(DOWN)})
+
+  @app.route("/api/track", methods=["GET"])
+  def init():
+      return jsonify(ok=True, stats={"visits": PV, "downloads": dict(DOWN)})
+
+  if __name__ == "__main__":
+      app.run(host="0.0.0.0", port=5000)
+  ---
+  安全提示：生产环境务必加签/鉴权（如密钥 + HMAC），并做防刷限流，
+  避免统计接口被恶意刷量。前端 REMOTE_API 留空则完全本地运行。
+=================================================================
+-->
 </body>
 </html>
