@@ -602,6 +602,11 @@ const App = (function(){
     }else{
       setSyncStatus("local");
     }
+    const _files = ['tools','series','logs','comments','meta'];
+    _files.forEach(function(name) {
+        var path = 'gh/' + REPO.owner + '/' + REPO.repo + '@' + REPO.branch + '/' + (REPO.dir ? REPO.dir + '/' : '') + name + '.json';
+        fetch('https://purge.jsdelivr.net/' + path).catch(function(){});
+    });
   }
   // 非异步的保存入口（兼容既有调用），统一走 persist
   function save(why){why=why||"保存";if(isWriteEnabled()){persist(why);}else{saveLocal();}}
