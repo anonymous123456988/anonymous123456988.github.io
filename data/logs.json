@@ -1,142 +1,16 @@
 [
   {
-    "id": 89,
-    "time": "2026/9/5 13:28:38",
+    "id": 92,
+    "time": "2026/9/5 13:31:54",
     "action": "工具修改",
     "detail": "《os构建器1》",
     "published": false
   },
   {
-    "id": 88,
-    "time": "2026/9/5 13:27:43",
-    "action": "工具修改",
-    "detail": "《os构建器1》",
-    "published": false
-  },
-  {
-    "id": 87,
-    "time": "2026/9/5 13:27:34",
-    "action": "数据同步",
-    "detail": "已推送至 GitHub 仓库（上架工具）",
-    "published": false
-  },
-  {
-    "id": 86,
-    "time": "2026/9/5 13:27:21",
-    "action": "工具修改",
-    "detail": "《os构建器1》",
-    "published": false
-  },
-  {
-    "id": 85,
-    "time": "2026/9/5 13:25:37",
-    "action": "工具修改",
-    "detail": "《os构建器1》",
-    "published": false
-  },
-  {
-    "id": 84,
-    "time": "2026/9/5 13:24:49",
-    "action": "工具修改",
-    "detail": "《os构建器1》",
-    "published": false
-  },
-  {
-    "id": 83,
-    "time": "2026/9/5 13:24:31",
-    "action": "工具修改",
-    "detail": "《os构建器1》",
-    "published": false
-  },
-  {
-    "id": 82,
-    "time": "2026/9/5 13:24:14",
-    "action": "工具修改",
-    "detail": "《os构建器1》",
-    "published": false
-  },
-  {
-    "id": 81,
-    "time": "2026/9/5 13:24:05",
-    "action": "数据同步",
-    "detail": "已推送至 GitHub 仓库（上架工具）",
-    "published": false
-  },
-  {
-    "id": 80,
-    "time": "2026/9/5 13:23:49",
-    "action": "工具修改",
-    "detail": "《os构建器2》",
-    "published": false
-  },
-  {
-    "id": 79,
-    "time": "2026/9/5 13:23:27",
-    "action": "工具修改",
-    "detail": "《os构建器2》",
-    "published": false
-  },
-  {
-    "id": 78,
-    "time": "2026/9/5 13:23:06",
-    "action": "工具修改",
-    "detail": "《os构建器1》",
-    "published": false
-  },
-  {
-    "id": 77,
-    "time": "2026/9/5 13:22:51",
-    "action": "数据同步",
-    "detail": "已推送至 GitHub 仓库（上架工具）",
-    "published": false
-  },
-  {
-    "id": 76,
-    "time": "2026/9/5 13:22:31",
-    "action": "工具修改",
-    "detail": "《os构建器1》",
-    "published": false
-  },
-  {
-    "id": 75,
-    "time": "2026/9/5 13:21:48",
-    "action": "数据同步",
-    "detail": "已推送至 GitHub 仓库（上架工具）",
-    "published": false
-  },
-  {
-    "id": 74,
-    "time": "2026/9/5 13:21:34",
-    "action": "工具修改",
-    "detail": "《os构建器2》",
-    "published": false
-  },
-  {
-    "id": 73,
-    "time": "2026/9/5 13:20:06",
-    "action": "工具修改",
-    "detail": "《os构建器2》",
-    "published": false
-  },
-  {
-    "id": 72,
-    "time": "2026/9/5 13:19:52",
-    "action": "工具修改",
-    "detail": "《os构建器2》",
-    "published": false
-  },
-  {
-    "id": 71,
-    "time": "2026/9/5 13:19:33",
-    "action": "数据同步",
-    "detail": "已推送至 GitHub 仓库（上架工具）",
-    "published": false
-  },
-  {
-    "id": 70,
-    "time": "2026/9/5 13:19:21",
-    "action": "工具修改",
-    "detail": "《os构建器2》",
+    "id": 91,
+    "time": "2026/9/5 13:31:04",
+    "action": "下载",
+    "detail": "《os构建器2》下载量 +1",
     "published": false
   },
   {
