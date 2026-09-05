@@ -401,7 +401,7 @@ const App = (function(){
   // ★ 文件读取方式：直接读 raw.githubusercontent.com 上的静态文件 URL（匿名、无需 token、不占 API 配额）
   //   对应仓库 data/ 目录：https://raw.githubusercontent.com/<owner>/<repo>/<branch>/data/<name>.json
   function rawFileUrl(name){
-    return "https://cdn.jsdelivr.net/gh/"+REPO.owner+"/"+REPO.repo+"@"+REPO.branch+"/"+(REPO.dir?REPO.dir+"/":"")+name+".json";
+  return "https://raw.githubusercontent.com/"+REPO.owner+"/"+REPO.repo+"/"+REPO.branch+"/"+(REPO.dir?REPO.dir+"/":"")+name+".json?_t="+Date.now();
 }
   function defaultCfg(){return {owner:"",repo:"",branch:"main",dir:"data",token:""};}
   // ★ 管理员 PAT：仅从 sessionStorage 读取（后台登录时校验通过后才写入，关闭标签页即清除）
