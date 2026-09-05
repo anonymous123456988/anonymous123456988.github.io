@@ -1,42 +1,7 @@
 [
   {
-    "id": 114,
-    "time": "2026/9/5 14:07:49",
-    "action": "工具修改",
-    "detail": "《os构建器2》",
-    "published": false
-  },
-  {
-    "id": 113,
-    "time": "2026/9/5 13:59:59",
-    "action": "数据同步",
-    "detail": "已推送至 GitHub 仓库（上架工具）",
-    "published": false
-  },
-  {
-    "id": 112,
-    "time": "2026/9/5 13:59:45",
-    "action": "工具修改",
-    "detail": "《os构建器2》",
-    "published": false
-  },
-  {
-    "id": 111,
-    "time": "2026/9/5 13:59:24",
-    "action": "工具修改",
-    "detail": "《os构建器2》",
-    "published": false
-  },
-  {
-    "id": 110,
-    "time": "2026/9/5 13:58:46",
-    "action": "数据同步",
-    "detail": "已推送至 GitHub 仓库（上架工具）",
-    "published": false
-  },
-  {
-    "id": 109,
-    "time": "2026/9/5 13:58:33",
+    "id": 116,
+    "time": "2026/9/5 14:10:06",
     "action": "工具修改",
     "detail": "《os构建器2》",
     "published": false
