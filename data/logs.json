@@ -1,16 +1,9 @@
 [
   {
-    "id": 92,
-    "time": "2026/9/5 13:31:54",
+    "id": 96,
+    "time": "2026/9/5 13:33:59",
     "action": "工具修改",
-    "detail": "《os构建器1》",
-    "published": false
-  },
-  {
-    "id": 91,
-    "time": "2026/9/5 13:31:04",
-    "action": "下载",
-    "detail": "《os构建器2》下载量 +1",
+    "detail": "《os构建器2》",
     "published": false
   },
   {
